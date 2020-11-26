@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">myJobCard_Library</string>
+
+    <!-- Status Change Alert messages-->
+
+    <string name="noAlert"></string>
+    <string name="enrouteAlert">You are leaving for job location. Do you want to continue?</string>
+    <string name="arrivedAlert">Have you arrived at job location?</string>
+    <string name="acceptAlert">You are accepting this job. Do you want to continue?</string>
+    <string name="startAlert">You are starting this job. Do you want to continue?</string>
+
+    <!-- Notification Status Change Alert messages-->
+    <string name="notificationAcceptAlert">You are accepting this notification. Do you want to continue?</string>
+    <string name="notificationRejectAlert">You are rejecting this notification. Do you want to continue?</string>
+    <string name="notificationStartAlert">You are starting this notification. Do you want to continue?</string>
+    <string name="notificationCompleteAlert">You are completing this notification. Do you want to continue?</string>
+
 </resources>

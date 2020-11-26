@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Status Change Alert messages-->
+
+    <string name="noAlert"></string>
+    <string name="enrouteAlert">Vous partez pour un lieu de travail. Voulez-vous continuer?</string>
+    <string name="arrivedAlert">Êtes-vous arrivé sur le lieu de travail?</string>
+    <string name="acceptAlert">Vous acceptez cet emploi. Voulez-vous continuer?</string>
+    <string name="startAlert">Vous commencez ce travail. Voulez-vous continuer?</string>
+
+    <!-- Notification Status Change Alert messages-->
+    <string name="notificationAcceptAlert">Vous acceptez cette notification. Voulez-vous continuer?</string>
+    <string name="notificationRejectAlert">Vous rejetez cette notification. Voulez-vous continuer?</string>
+    <string name="notificationStartAlert">Vous commencez cette notification. Voulez-vous continuer?</string>
+    <string name="notificationCompleteAlert">Vous complétez cette notification. Voulez-vous continuer?</string>
+</resources>
