@@ -12,7 +12,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import com.ods.ods_sdk.AppSettings;
+import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.ods_sdk.utils.Common;
 import com.ods.ods_sdk.utils.ConfigManager;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -49,7 +49,7 @@ public class ZCommon extends Common {
         try {
             dt = (GregorianCalendar) GregorianCalendar.getInstance();
         } catch (Exception e) {
-            WriteLog(Common.class.getClass(), AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
             return null;
         }
         return dt.getTime();
@@ -64,7 +64,7 @@ public class ZCommon extends Common {
             }
             return mSecsStr;
         } catch (Exception e) {
-            WriteLog(Common.class.getClass(), AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return null;
     }
@@ -74,7 +74,7 @@ public class ZCommon extends Common {
         try {
             dt = (GregorianCalendar) GregorianCalendar.getInstance();
         } catch (Exception e) {
-            WriteLog(Common.class.getClass(), AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
             return null;
         }
         return dt;
@@ -84,7 +84,7 @@ public class ZCommon extends Common {
         try {
             dt = Calendar.getInstance();
         } catch (Exception e) {
-            WriteLog(Common.class.getClass(), AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
             return null;
         }
         return dt;
@@ -131,7 +131,7 @@ public class ZCommon extends Common {
                 doubleVal = Double.valueOf(value);
             }
         } catch (Exception e) {
-            WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return doubleVal;
     }
@@ -152,7 +152,7 @@ public class ZCommon extends Common {
                 return "" + totalHours;
             }
         } catch (Exception e) {
-            WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return duration;
     }
@@ -180,7 +180,7 @@ public class ZCommon extends Common {
                 return elapsedHours + "." + elapsedMinutes;
             }
         } catch (Exception e) {
-            WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return duration;
     }
@@ -222,7 +222,7 @@ public class ZCommon extends Common {
             }
             entitySetName = resPath;
         } catch (Exception e) {
-            WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return entitySetName;
     }
@@ -294,7 +294,7 @@ public class ZCommon extends Common {
                                 return res;
                             }
                         } catch (Exception e) {
-                            DliteLogger.WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+                            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
                             return new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null);
                         }
                     }
@@ -327,7 +327,7 @@ public class ZCommon extends Common {
                                                 stringBuilder.append(error.getMessage().getMessage().getValue())
                                                         //.append("\nDetails: " + error.getObjectName())
                                                         .append(count == errors.size() ? "" : "\n---------------------------------\n");
-                                                DliteLogger.WriteLog(Common.class, AppSettings.LogLevel.Error, error.getMessage().getMessage().getValue() + "\n[Request Method] " + error.getRequestMethod() + "\n[Request Body] " + error.getRequestBody());
+                                                DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, error.getMessage().getMessage().getValue() + "\n[Request Method] " + error.getRequestMethod() + "\n[Request Body] " + error.getRequestBody());
                                             }
                                             count++;
                                         }
@@ -362,7 +362,7 @@ public class ZCommon extends Common {
                                     }
                                 }*//*
                             }
-                            *//*if (ConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(AppSettings.AssignmentType.WorkCenterSingleIdLevel.getAssignmentTypeText()) && (storeList.get(0).getFlush().equalsIgnoreCase("1"))) {
+                            *//*if (ConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.WorkCenterSingleIdLevel.getAssignmentTypeText()) && (storeList.get(0).getFlush().equalsIgnoreCase("1"))) {
                                 SharedPreferences preferences = activityContext.getSharedPreferences(Collections.SERVER_DETAILS_SP_NAME, Context.MODE_PRIVATE);
                                 PersonResponsible user = new PersonResponsible();
                                 user.setEmplApplName(preferences.getString(Collections.ARG_SECONDARY_USER_FULLNAME, ""));
@@ -378,7 +378,7 @@ public class ZCommon extends Common {
                             if(!isError)
                                 activityContext.onTransmitCompleted();
                         } catch (Exception e) {
-                            DliteLogger.WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+                            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
                         }
                     }
 
@@ -393,7 +393,7 @@ public class ZCommon extends Common {
                 DialogsUtility.showAlertPopup(context, context.getString(R.string.alertNetworkUnAvailableTitle), context.getString(R.string.alertNetworkUnAvailableMsg));
             }
         } catch (Exception e) {
-            DliteLogger.WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
     }
     public static void ShowErrorLogProgress(final FrameLayout frameLayout, final TextView textView, final ArrayList<AppStoreSet> storeList, final BaseActivity activityContext) {
@@ -418,7 +418,7 @@ public class ZCommon extends Common {
                         res = DataHelper.getInstance().getErrorLogs(storeList);
                         return res;
                     } catch (Exception e) {
-                        DliteLogger.WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+                        DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
                         return new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null);
                     }
                 }
@@ -446,7 +446,7 @@ public class ZCommon extends Common {
                                             stringBuilder.append(error.getMessage().getMessage().getValue())
                                                     //.append("\nDetails: " + error.getObjectName())
                                                     .append(count == errors.size() ? "" : "\n---------------------------------\n");
-                                            DliteLogger.WriteLog(Common.class, AppSettings.LogLevel.Error, error.getMessage().getMessage().getValue() + "\n[Request Method] " + error.getRequestMethod() + "\n[Request Body] " + error.getRequestBody());
+                                            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, error.getMessage().getMessage().getValue() + "\n[Request Method] " + error.getRequestMethod() + "\n[Request Body] " + error.getRequestBody());
                                         }
                                         count++;
                                     }
@@ -475,7 +475,7 @@ public class ZCommon extends Common {
                             return;
                         }
                     } catch (Exception e) {
-                        DliteLogger.WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+                        DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
                     }
                 }
 
@@ -485,7 +485,7 @@ public class ZCommon extends Common {
                 }
             }.execute(storeList, null, null);
         } catch (Exception e) {
-            DliteLogger.WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
     }*/
 
@@ -541,11 +541,11 @@ public class ZCommon extends Common {
                     @Override
                     protected Boolean doInBackground(Void... params) {
                         try {
-                            if (AppSettings.isHttps)
+                            if (ZAppSettings.isHttps)
                                 return isInternetAvailable();
                             Socket socket = new Socket();
-                            socket.connect(new InetSocketAddress(AppSettings.App_IP, AppSettings.App_Port), 5000);
-                            return true;//InetAddress.getByName(AppSettings.App_IP).isReachable(1000);
+                            socket.connect(new InetSocketAddress(ZAppSettings.App_IP, ZAppSettings.App_Port), 5000);
+                            return true;//InetAddress.getByName(ZAppSettings.App_IP).isReachable(1000);
                         } catch (Exception e) {
                             return false;
                         }
@@ -554,7 +554,7 @@ public class ZCommon extends Common {
                 }.execute().get();
             }
         } catch (Exception e) {
-            WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return false;
     }
@@ -589,7 +589,7 @@ public class ZCommon extends Common {
             if (text != null)
                 return text.length() <= length;
         } catch (Exception e) {
-            WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return false;
     }
@@ -599,7 +599,7 @@ public class ZCommon extends Common {
         try {
             nextClass = Class.forName(ScreenMapping.getClassName(screenName));
         } catch (Exception e) {
-            DliteLogger.WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return nextClass;
     }*/
@@ -610,7 +610,7 @@ public class ZCommon extends Common {
             Constructor constructor = nextClass.getConstructor();
             return constructor.newInstance();
         } catch (Exception e) {
-            WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return nextObject;
     }
@@ -621,7 +621,7 @@ public class ZCommon extends Common {
             Constructor constructor = nextClass.getConstructor(Context.class);
             return constructor.newInstance(context);
         } catch (Exception e) {
-            WriteLog(Common.class, AppSettings.LogLevel.Error, e.getMessage());
+            WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return nextObject;
     }
@@ -637,7 +637,7 @@ public class ZCommon extends Common {
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            WriteLog(Common.class, AppSettings.LogLevel.Error, e.getLocalizedMessage());
+            WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getLocalizedMessage());
             result = false;
         }
         return result;

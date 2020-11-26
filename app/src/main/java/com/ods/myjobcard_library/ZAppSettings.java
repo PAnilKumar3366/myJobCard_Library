@@ -3,13 +3,14 @@ package com.ods.myjobcard_library;
 import android.content.Context;
 import android.view.View;
 
+import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ZAppSettings extends AppSettings{
+public class ZAppSettings extends AppSettings {
     public static String App_Name = "com.ods.myJobCard"; //"com.sap.wmUpd";
     public static String App_ID = "com.ods.myJobCard";//"com.sap.wmNupd"; //"com.sap.wmDlite"; //"com.sap.wmWin";// "com.sap.wmNupd"; //"com.sap.wmUpd";
     /*//added by Shubham
@@ -43,25 +44,6 @@ public class ZAppSettings extends AppSettings{
     public static boolean Bt_Secure;
     public static int conn_State;
     public static String resopr;
-
-    public enum LogLevel {
-        Trace(0),
-        Debug(1),
-        Info(2),
-        Warning(3),
-        Error(4),
-        Assert(5);
-
-        private final int value;
-
-        LogLevel(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return this.value;
-        }
-    }
 
     public enum FetchLevel {
         ListMap(0),
