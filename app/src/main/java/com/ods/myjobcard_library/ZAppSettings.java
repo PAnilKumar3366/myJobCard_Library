@@ -1,13 +1,9 @@
 package com.ods.myjobcard_library;
 
 import android.content.Context;
-import android.view.View;
 
-import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.ods_sdk.AppSettings;
-import com.ods.ods_sdk.utils.DliteLogger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ZAppSettings extends AppSettings {
@@ -67,6 +63,7 @@ public class ZAppSettings extends AppSettings {
             return this.value;
         }
     }
+
     public enum FormAssignmentType {
         WorkOrderLevel("1"),
         OperationLevel("2"),
@@ -104,24 +101,6 @@ public class ZAppSettings extends AppSettings {
             return this.charType;
         }
 
-    }
-
-    public enum EntityMode {
-        Read(0),
-        Create(1),
-        Update(2),
-        Patch(3),
-        Delete(4);
-
-        private final int value;
-
-        EntityMode(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return this.value;
-        }
     }
 
     public enum Hierarchy {
@@ -203,6 +182,7 @@ public class ZAppSettings extends AppSettings {
             return typeID;
         }
     }
+
     public enum AssignmentType {
 
         WorkOrderLevel("1", "WorkOrderLevel", false),

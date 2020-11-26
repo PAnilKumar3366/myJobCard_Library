@@ -1,6 +1,5 @@
 package com.ods.myjobcard_library;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -8,14 +7,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import com.ods.myjobcard_library.ZAppSettings;
+
 import com.ods.ods_sdk.utils.Common;
-import com.ods.ods_sdk.utils.ConfigManager;
-import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
@@ -27,11 +20,9 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.ods.ods_sdk.utils.DliteLogger.WriteLog;
@@ -41,9 +32,10 @@ import static com.ods.ods_sdk.utils.DliteLogger.WriteLog;
  */
 public class ZCommon extends Common {
 
-    private static DateFormat df = new SimpleDateFormat(ConfigManager.DATE_FORMAT);
-    private static DateFormat tf = new SimpleDateFormat(ConfigManager.TIME_FORMAT);
     private static final String TAG = "Common";
+    private static DateFormat df = new SimpleDateFormat(ZConfigManager.DATE_FORMAT);
+    private static DateFormat tf = new SimpleDateFormat(ZConfigManager.TIME_FORMAT);
+
     public static Date getDeviceTime() {
         GregorianCalendar dt = null;
         try {
@@ -79,6 +71,7 @@ public class ZCommon extends Common {
         }
         return dt;
     }
+
     public static Calendar getDevicDateTime() {
         Calendar dt = null;
         try {
@@ -91,13 +84,13 @@ public class ZCommon extends Common {
     }
 
     public static String getFormattedDate(Date date) {
-        if (date == null || date.getTime() == ConfigManager.getDefaultCalendarVal().getTimeInMillis())
+        if (date == null || date.getTime() == ZConfigManager.getDefaultCalendarVal().getTimeInMillis())
             return "";
         return df.format(date);
     }
 
     public static String getFormattedTime(Date date) {
-        if (date == null || date.getTime() == ConfigManager.getDefaultCalendarVal().getTimeInMillis())
+        if (date == null || date.getTime() == ZConfigManager.getDefaultCalendarVal().getTimeInMillis())
             return "";
         return tf.format(date);
     }
@@ -157,7 +150,7 @@ public class ZCommon extends Common {
         return duration;
     }
 
-    public static BigDecimal getDurationInHours(int hours, int minutes){
+    public static BigDecimal getDurationInHours(int hours, int minutes) {
         return BigDecimal.valueOf(hours + (minutes / 60.0f));
     }
 
@@ -184,15 +177,15 @@ public class ZCommon extends Common {
         }
         return duration;
     }
+
     public static String getTimeDuration(long startTimeInMilli, long endTimeInMilli) {
         String duration = "0";
 
         long difference;
         try {
-            if(startTimeInMilli<endTimeInMilli) {
+            if (startTimeInMilli < endTimeInMilli) {
                 difference = endTimeInMilli - startTimeInMilli;
-            }
-            else {
+            } else {
                 difference = startTimeInMilli - endTimeInMilli;
             }
 
@@ -201,7 +194,7 @@ public class ZCommon extends Common {
             int min = (int) (difference - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours))
                     / (1000 * 60);
             hours = (hours < 0 ? -hours : hours);
-            return String.valueOf(Double.valueOf(hours)+(Double.valueOf(min)/60));
+            return String.valueOf(Double.valueOf(hours) + (Double.valueOf(min) / 60));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -256,7 +249,7 @@ public class ZCommon extends Common {
                             //storeList = new StoreSettings.Stores[1];
                             //storeList[0] = StoreSettings.Stores.Tx;
                             res = DataHelper.getInstance().PendingRequestExists(storeList);
-                            if (res != null && res.getStatus() == ConfigManager.Status.Warning) {
+                            if (res != null && res.getStatus() == ZConfigManager.Status.Warning) {
                                 publishProgress("Uploading...");
                                 res = DataHelper.getInstance().Flush(storeList);
                             }
@@ -295,7 +288,7 @@ public class ZCommon extends Common {
                             }
                         } catch (Exception e) {
                             DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
-                            return new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null);
+                            return new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
                         }
                     }
 
@@ -362,7 +355,7 @@ public class ZCommon extends Common {
                                     }
                                 }*//*
                             }
-                            *//*if (ConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.WorkCenterSingleIdLevel.getAssignmentTypeText()) && (storeList.get(0).getFlush().equalsIgnoreCase("1"))) {
+                            *//*if (ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.WorkCenterSingleIdLevel.getAssignmentTypeText()) && (storeList.get(0).getFlush().equalsIgnoreCase("1"))) {
                                 SharedPreferences preferences = activityContext.getSharedPreferences(Collections.SERVER_DETAILS_SP_NAME, Context.MODE_PRIVATE);
                                 PersonResponsible user = new PersonResponsible();
                                 user.setEmplApplName(preferences.getString(Collections.ARG_SECONDARY_USER_FULLNAME, ""));
@@ -372,7 +365,7 @@ public class ZCommon extends Common {
                             if(storeList.get(0).getRefresh().equalsIgnoreCase("2")){
                                 AppStoreSet.getAppOfflineStores(true,false);
                                 TableConfigSet.getTableDetails();
-                                ConfigManager.setAppConfigurations();
+                                ZConfigManager.setAppConfigurations();
                                 AppFeature.setUserRoleFeatures();
                             }
                             if(!isError)
@@ -419,7 +412,7 @@ public class ZCommon extends Common {
                         return res;
                     } catch (Exception e) {
                         DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
-                        return new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null);
+                        return new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
                     }
                 }
 
@@ -604,7 +597,7 @@ public class ZCommon extends Common {
         return nextClass;
     }*/
 
-    public static Object getClassInstance(Class nextClass){
+    public static Object getClassInstance(Class nextClass) {
         Object nextObject = null;
         try {
             Constructor constructor = nextClass.getConstructor();
@@ -615,7 +608,7 @@ public class ZCommon extends Common {
         return nextObject;
     }
 
-    public static Object getClassInstanceWithContext(Class nextClass,  Context context){
+    public static Object getClassInstanceWithContext(Class nextClass, Context context) {
         Object nextObject = null;
         try {
             Constructor constructor = nextClass.getConstructor(Context.class);
@@ -625,7 +618,6 @@ public class ZCommon extends Common {
         }
         return nextObject;
     }
-
 
 
     public static boolean isTwoNumericStringValuesEqual(String one, String two) {
