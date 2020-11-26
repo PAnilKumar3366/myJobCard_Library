@@ -45,6 +45,28 @@ public class ZAppSettings extends AppSettings {
     public static int conn_State;
     public static String resopr;
 
+    public enum FetchLevel {
+        ListMap(0),
+        List(1),
+        ListWithStatusAllowed(2),
+        Header(3),
+        Single(4),
+        SingleWithItemCauses(5),
+        All(6),
+        ListSpinner(7),
+        Count(8),
+        Last(9);
+
+        private final int value;
+
+        FetchLevel(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return this.value;
+        }
+    }
     public enum FormAssignmentType {
         WorkOrderLevel("1"),
         OperationLevel("2"),
