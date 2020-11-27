@@ -205,7 +205,8 @@ public class DocsUtil {
                 if (filePath != null && !filePath.isEmpty()) {
                     File file = new File(filePath);
                     if (ZCommon.convertBytesToMB(file.length()) > ZConfigManager.MAX_UPLOAD_FILE_SIZE) {
-                        DialogsUtility.showAlertPopup(context, context.getString(R.string.alertTitle), context.getString(R.string.alertUploadFileSizeAboveLimit, String.valueOf(ZConfigManager.MAX_UPLOAD_FILE_SIZE)));
+                        //DialogsUtility.showAlertPopup(context, context.getString(R.string.alertTitle), context.getString(R.string.alertUploadFileSizeAboveLimit, String.valueOf(ZConfigManager.MAX_UPLOAD_FILE_SIZE)));
+                        Toast.makeText(context, context.getString(R.string.alertUploadFileSizeAboveLimit, String.valueOf(ZConfigManager.MAX_UPLOAD_FILE_SIZE)), Toast.LENGTH_LONG).show();
                         return null;
                     }
                 }

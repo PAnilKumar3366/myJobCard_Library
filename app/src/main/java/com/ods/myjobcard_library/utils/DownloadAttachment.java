@@ -134,8 +134,8 @@ public class DownloadAttachment {
             @Override
             protected void onPostExecute(String urlStr) {
                 if (urlStr.contains("Error") || urlStr.contains("FileSizeUnavailable")) {
-                    DialogsUtility.showAlertPopup(ctx, ctx.getString(R.string.errorTitle), (urlStr.contains("FileSizeUnavailable") ? ctx.getString(R.string.alertDownloadSizeZeroErrorMsg) : ctx.getString(R.string.alertDownloadFailedErrorMsg, urlStr.substring(urlStr.indexOf(":") + 1))));
-                    //Toast.makeText(ctx, "Download Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, (urlStr.contains("FileSizeUnavailable") ? ctx.getString(R.string.alertDownloadSizeZeroErrorMsg) : ctx.getString(R.string.alertDownloadFailedErrorMsg, urlStr.substring(urlStr.indexOf(":") + 1))), Toast.LENGTH_LONG).show();
+                    //DialogsUtility.showAlertPopup(ctx, ctx.getString(R.string.errorTitle), (urlStr.contains("FileSizeUnavailable") ? ctx.getString(R.string.alertDownloadSizeZeroErrorMsg) : ctx.getString(R.string.alertDownloadFailedErrorMsg, urlStr.substring(urlStr.indexOf(":") + 1))));
                     if (Build.VERSION.SDK_INT >= 26) {
                         notificationBuilder.setContentText("File download has failed");
                         notificationBuilder.setSmallIcon(android.R.drawable.stat_sys_warning);
@@ -184,12 +184,14 @@ public class DownloadAttachment {
                                 intent.setDataAndType(Uri.fromFile(f), mimeType);
                                 ctx.startActivity(intent);
                             } else {
-                                DialogsUtility.showAlertPopup(ctx, ctx.getString(R.string.alertTitle), ctx.getString(R.string.msgNoFileFound));
+                                Toast.makeText(ctx, ctx.getString(R.string.msgNoFileFound), Toast.LENGTH_SHORT).show();
+                                //DialogsUtility.showAlertPopup(ctx, ctx.getString(R.string.alertTitle), ctx.getString(R.string.msgNoFileFound));
                             }
                         }
                     } catch (Exception e) {
                         if (e instanceof ActivityNotFoundException)
-                            DialogsUtility.showAlertPopup(ctx, ctx.getString(R.string.errorTitle), ctx.getString(R.string.msgNoApplicationFound));
+                            Toast.makeText(ctx, ctx.getString(R.string.msgNoApplicationFound), Toast.LENGTH_SHORT).show();
+                        //DialogsUtility.showAlertPopup(ctx, ctx.getString(R.string.errorTitle), ctx.getString(R.string.msgNoApplicationFound));
                     }
                 }
             }
