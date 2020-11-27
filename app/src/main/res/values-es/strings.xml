@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="app_name">myJobCard_Library</string>
     <!-- Status Change Alert messages-->
 
     <string name="noAlert"></string>
@@ -13,4 +13,10 @@
     <string name="notificationRejectAlert">Estás rechazando esta notificación. ¿Quieres continuar?</string>
     <string name="notificationStartAlert">Estás iniciando esta notificación. ¿Quieres continuar?</string>
     <string name="notificationCompleteAlert">Estás completando esta notificación. ¿Quieres continuar?</string>
+    <!--Attachments-->
+    <string name="alertUploadFileSizeAboveLimit">El tamaño del archivo no debe superar los %1$s MB</string>
+    <string name="alertDownloadSizeZeroErrorMsg">Se produjo un error al descargar el archivo adjunto. ¡Intente descargar de nuevo!</string>
+    <string name="alertDownloadFailedErrorMsg">Se produjo un error al descargar el archivo adjunto. Código de error: %1$s</string>
+    <string name="msgNoFileFound">¡Archivo no encontrado en el dispositivo!</string>
+    <string name="msgNoApplicationFound">¡No se encontró ninguna aplicación compatible para abrir este archivo!</string>
 </resources>

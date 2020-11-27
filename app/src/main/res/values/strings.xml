@@ -2,7 +2,6 @@
     <string name="app_name">myJobCard_Library</string>
 
     <!-- Status Change Alert messages-->
-
     <string name="noAlert"></string>
     <string name="enrouteAlert">You are leaving for job location. Do you want to continue?</string>
     <string name="arrivedAlert">Have you arrived at job location?</string>
@@ -15,4 +14,10 @@
     <string name="notificationStartAlert">You are starting this notification. Do you want to continue?</string>
     <string name="notificationCompleteAlert">You are completing this notification. Do you want to continue?</string>
 
+    <!--Attachments-->
+    <string name="alertUploadFileSizeAboveLimit">File size should not be more than %1$s MB</string>
+    <string name="alertDownloadSizeZeroErrorMsg">Something went wrong while downloading attachment. Please try to download again!</string>
+    <string name="alertDownloadFailedErrorMsg">Something went wrong while downloading attachment. Error code: %1$s</string>
+    <string name="msgNoFileFound">File not found on device!</string>
+    <string name="msgNoApplicationFound">No supported application found to open this file!</string>
 </resources>
