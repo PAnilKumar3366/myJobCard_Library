@@ -1,9 +1,14 @@
 package com.ods.myjobcard_library;
 
+import com.ods.ods_sdk.StoreHelpers.DataHelper;
+import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.ConfigManager;
 import com.ods.ods_sdk.utils.DliteLogger;
+import com.sap.smp.client.odata.ODataEntity;
 
+import java.lang.reflect.Field;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class ZConfigManager extends ConfigManager {
 
@@ -259,6 +264,47 @@ public class ZConfigManager extends ConfigManager {
         TAB_FL_OVERVIEW,
         TAB_FL_CLASSIFICATIONS,
         TAB_FL_MEASURING_POINTS
+    }
+    public static void setAppConfigurations(){
+        try{
+            ResponseObject result = DataHelper.getInstance().getEntities(ZCollections.APPLICATION_CONFIG_COLLECTION, ZCollections.APPLICATION_CONFIG_COLLECTION);
+            if(result != null && !result.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
+                for (ODataEntity entity : entities) {
+                    try {
+                        String keyName = String.valueOf(entity.getProperties().get("Key").getValue());
+                        Class cls = ZAppSettings.class;
+                        Field field = cls.getField(keyName);
+                        String value = String.valueOf(entity.getProperties().get("Value").getValue());
+                        if (field != null && value != null) {
+                            if(field.getType() == boolean.class)
+                                field.set(null, Boolean.parseBoolean(value));
+                            else if(field.getType() == int.class)
+                                field.set(null, Integer.valueOf(value));
+                            else if(field.getType() == long.class)
+                                field.set(null, Long.valueOf(value));
+                            else if(field.getType() == float.class)
+                                field.set(null, Float.valueOf(value));
+                            else if(field.getType() == ZAppSettings.MobileStatus.class)
+                                field.set(null, ZAppSettings.MobileStatus.valueOf(value.substring((value.lastIndexOf(".")+1))));
+                            else if(field.getType() == String.class) {
+                                if(field.getName().equalsIgnoreCase("Push_Service_Name"))
+                                    //todo replace Push_Service_Name with 'value' after the updated add-on installed on HANA
+                                    field.set(null, String.format(value, ZAppSettings.App_IP, ZAppSettings.App_Port));
+                                else
+                                    field.set(null, value);
+                            }
+                        }
+                    }
+                    catch (Exception e){
+                        DliteLogger.WriteLog(ZConfigManager.class, ZAppSettings.LogLevel.Warning, e.getMessage());
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            DliteLogger.WriteLog(ZConfigManager.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
     }
 
 }

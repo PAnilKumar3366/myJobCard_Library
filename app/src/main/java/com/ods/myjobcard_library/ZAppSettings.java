@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.ods.ods_sdk.AppSettings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ZAppSettings extends AppSettings {
@@ -552,5 +553,216 @@ public class ZAppSettings extends AppSettings {
         public String getFeatureValue() {
             return featureValue;
         }
+    }
+    public enum MobileStatus {
+        AWTAPEST("AWT-AP-ESTM", "assigned", "AWAE", false, 0, R.string.noAlert, false, R.drawable.accept),
+        AWTAPPLN("AWT-AP-PLND", "assigned", "AWAP", false, 0, R.string.noAlert, false, R.drawable.accept),
+        AWTEXTSVC("AWT-E-SVC", "assigned", "AESE", false, 0, R.string.noAlert, false, R.drawable.user_avatar),
+        AWTMAT("AWT-MAT", "assigned", "AWMT", false, 0, R.string.noAlert, false, R.drawable.components),
+        SKIPED("SCH-NT-EXE", "assigned", "SKIP", false, 0, R.string.noAlert, false, R.drawable.reject),
+        INIT("INITIAL", "assigned", "INIT", false, 0, R.string.noAlert, false, R.drawable.download),
+        REPLAN("REPLAN", "assigned", "RPLN", false, 0, R.string.noAlert, false, R.drawable.ic_trans_horiz),
+        MATRDY("MAT-RDY", "assigned", "MRDY", false, 0, R.string.noAlert, false, R.drawable.issue_component),
+        WOCREATED("RDY-SCH", "assigned", "REFS", false, 0, R.string.noAlert, false, R.drawable.download),
+        SERREQ("SVC-REQ", "assigned", "RQSE", false, 0, R.string.noAlert, false, R.drawable.user_avatar),
+        SERRDY("SVC-RDY", "assigned", "SEDY", false, 0, R.string.noAlert, false, R.drawable.accept),
+        AWTSDN("AWT-STDN", "assigned", "AWSD", false, 0, R.string.noAlert, false, R.drawable.ic_alert),
+        AWTTURN("AWT-TURN", "assigned", "AWTA", false, 0, R.string.noAlert, false, R.drawable.ic_alert),
+        ASSIGNED("ASSIGNED", "assigned", "ASGD", false, 0, R.string.noAlert, false, R.drawable.download),
+        RECEIVED("RECEIVED", "received", "MOBI", false, 1, R.string.noAlert, true, R.drawable.download),
+        WORECEIVED("RDY-EXE", "received", "REFE", false, 1, R.string.noAlert, true, R.drawable.download),
+        ENROUTE("ENROUTE", "enroute", "ENRT", true, 2, R.string.enrouteAlert, true, R.drawable.enrote),
+        ENROUT("ENROUTE", "enroute", "ENRT", true, 2, R.string.enrouteAlert, false, R.drawable.enrote),
+        ARRIVED("ONSITE", "arrived", "ARRI", true, 3, R.string.arrivedAlert, true, R.drawable.onsite),
+        ARRIVE("ONSITE", "arrived", "ARRI", true, 3, R.string.arrivedAlert, false, R.drawable.onsite),
+        ACCEPT("ACCEPT", "accept", "ACCP", false, 4, R.string.acceptAlert, true, R.drawable.accept),
+        START("START", "start", "INPR", true, 5, R.string.startAlert, false, R.drawable.start),
+        STARTED("START", "start", "STRT", true, 5, R.string.startAlert, true, R.drawable.start),
+        HOLD("HOLD", "hold", "HOLD", false, 6, R.string.noAlert, true, R.drawable.hold),
+        SUSPEND("SUSPEND", "suspend", "SUSP", false, 7, R.string.noAlert, false, R.drawable.suspend),
+        SUSPENDED("SUSPEND", "suspend", "SUSP", false, 7, R.string.noAlert, false, R.drawable.suspend),
+        COMPLETE("COMPLETE", "complete", "CPLT", false, 8, R.string.noAlert, true, R.drawable.complete),
+        COMPLETED("COMPLETE", "complete", "COMP", false, 8, R.string.noAlert, false, R.drawable.complete),
+        REJECT("REJECT", "reject", "REJC", false, 9, R.string.noAlert, false, R.drawable.reject),
+        REJC("REJECT", "reject", "REJC", false, 9, R.string.noAlert, false, R.drawable.reject),
+        TRANSFER("TRANSFER", "transfer", "TRNS", false, 10, R.string.noAlert, false, R.drawable.ic_trans_horiz),
+        TRNS("TRANSFER", "transfer", "TRNS", false, 10, R.string.noAlert, false, R.drawable.ic_trans_horiz),
+        InComplete("INCOMPLETE", "incomplete", "INCP", false, 11, R.string.noAlert, false, R.drawable.download),
+        CREATED("CREATED", "create", "CRTD", false, 12, R.string.noAlert, false, R.drawable.download),
+        Released("Released", "release", "REL", false, 13, R.string.noAlert, false, R.drawable.download),
+        CONFIRMED("Confirmed", "confirm", "CNF", false, 14, R.string.noAlert, false, R.drawable.download),
+        PARTIALCONFIRMED("Partial Confirmed", "partial confirm", "PCNF", false, 14, R.string.noAlert, false, R.drawable.download),
+        Deleted("Deleted", "delete", "DLT", false, 15, R.string.noAlert, false, R.drawable.download),
+
+        INSTALLED("INSTALLED", "install", "INST", false, 16, R.string.noAlert, false, R.drawable.equipment_install),
+        ASSOCIATEDTOEQUIPMENT("Associated to Equipment", "install", "ASEQ", false, 17, R.string.noAlert, false, R.drawable.equipment_install),
+        EQUIPMENTAVAILABLE("AVAILABLE", "available", "AVLB", false, 17, R.string.noAlert, false, R.drawable.equipment_install),
+        INACTIVE("INACTIVE", "inactive", "INAC", false, 18, R.string.noAlert, false, R.drawable.equipment_install),
+
+        NotSet("", "", "NTST", false, 16, R.string.noAlert, false, R.drawable.download);
+
+        boolean consideredAsActive;
+        boolean showOnChart;
+        int drawableResId;
+        private String mobileStatusCode, mobileStatusDesc, voiceActionDesc, viewID;
+        private int mobileStatusIcon, mobileStatusChangeAlertText;
+
+        MobileStatus(String mobileStatusDesc, String voiceActionDesc, String MobileStatusCode, boolean ConsideredAsActive, int MobileStatusIcon,
+                     int MobileStatusChangeAlertText, boolean showOnChart, int drawableResId) {
+            this.mobileStatusCode = MobileStatusCode;
+            this.voiceActionDesc = voiceActionDesc;
+            this.mobileStatusDesc = mobileStatusDesc;
+            this.mobileStatusIcon = MobileStatusIcon;
+            this.consideredAsActive = ConsideredAsActive;
+            this.mobileStatusChangeAlertText = MobileStatusChangeAlertText;
+            this.showOnChart = showOnChart;
+            this.drawableResId = drawableResId;
+        }
+
+        public static ArrayList<MobileStatus> getAllActiveStatus() {
+            ArrayList<MobileStatus> arrayList = new ArrayList<>();
+            for (MobileStatus status : MobileStatus.values()) {
+                if (status.getMobileStatusIsConsideredActive())
+                    arrayList.add(status);
+            }
+            return arrayList;
+        }
+
+        public String getMobileStatusCode() {
+            return mobileStatusCode;
+        }
+
+        public String getMobileStatusDesc() {
+            return mobileStatusDesc;
+        }
+
+        public String getVoiceActionDesc() {
+            return voiceActionDesc;
+        }
+
+        public int getDrawableResId() {
+            return drawableResId;
+        }
+
+        public int getMobileStatusIcon() {
+            return mobileStatusIcon;
+        }
+
+        public boolean getMobileStatusIsConsideredActive() {
+            return consideredAsActive;
+        }
+
+        public int getMobileStatusChangeAlertText() {
+            return mobileStatusChangeAlertText;
+        }
+
+        public boolean isShowOnChart() {
+            return showOnChart;
+        }
+    }
+
+    //Added by Anil
+    public enum NotificationUserStatus {
+
+        CREATED("RECEIVED", "created", "PEND", false, 0, R.string.noAlert, true, R.drawable.download),
+        ACCEPTED("ACCEPT", "accept", "ACCP", false, 4, R.string.notificationAcceptAlert, true, R.drawable.accept),
+        REJECTED("REJECT", "reject", "MRJC", false, 9, R.string.notificationRejectAlert, true, R.drawable.reject),
+        INPROGRESS("START", "in progress", "SCRN", true, 5, R.string.notificationStartAlert, true, R.drawable.start),
+        COMPLETED("COMPLETE", "complete", "NOCO", false, 8, R.string.notificationCompleteAlert, true, R.drawable.complete),
+        NotSet("", "", "NTST", false, 16, R.string.noAlert, false, R.drawable.download);
+
+        boolean consideredAsActive;
+        boolean showOnChart;
+        int drawableResId;
+        private String mobileStatusCode;
+        private String mobileStatusDesc;
+        private String voiceActionDesc;
+        private String viewID;
+        private int mobileStatusIcon, mobileStatusChangeAlertText;
+
+        NotificationUserStatus(String mobileStatusDesc, String voiceActionDesc, String MobileStatusCode, boolean ConsideredAsActive, int MobileStatusIcon,
+                               int MobileStatusChangeAlertText, boolean showOnChart, int drawableResId) {
+            this.mobileStatusCode = MobileStatusCode;
+            this.voiceActionDesc = voiceActionDesc;
+            this.mobileStatusDesc = mobileStatusDesc;
+            this.mobileStatusIcon = MobileStatusIcon;
+            this.consideredAsActive = ConsideredAsActive;
+            this.mobileStatusChangeAlertText = MobileStatusChangeAlertText;
+            this.showOnChart = showOnChart;
+            this.drawableResId = drawableResId;
+        }
+
+        public String getMobileStatusCode() {
+            return mobileStatusCode;
+        }
+
+        public void setMobileStatusCode(String mobileStatusCode) {
+            this.mobileStatusCode = mobileStatusCode;
+        }
+
+        public String getMobileStatusDesc() {
+            return mobileStatusDesc;
+        }
+
+        public void setMobileStatusDesc(String mobileStatusDesc) {
+            this.mobileStatusDesc = mobileStatusDesc;
+        }
+
+        public String getVoiceActionDesc() {
+            return voiceActionDesc;
+        }
+
+        public void setVoiceActionDesc(String voiceActionDesc) {
+            this.voiceActionDesc = voiceActionDesc;
+        }
+
+        public String getViewID() {
+            return viewID;
+        }
+
+        public void setViewID(String viewID) {
+            this.viewID = viewID;
+        }
+
+        public int getMobileStatusIcon() {
+            return mobileStatusIcon;
+        }
+
+        public void setMobileStatusIcon(int mobileStatusIcon) {
+            this.mobileStatusIcon = mobileStatusIcon;
+        }
+
+        public int getMobileStatusChangeAlertText() {
+            return mobileStatusChangeAlertText;
+        }
+
+        public void setMobileStatusChangeAlertText(int mobileStatusChangeAlertText) {
+            this.mobileStatusChangeAlertText = mobileStatusChangeAlertText;
+        }
+
+        public boolean isConsideredAsActive() {
+            return consideredAsActive;
+        }
+
+        public void setConsideredAsActive(boolean consideredAsActive) {
+            this.consideredAsActive = consideredAsActive;
+        }
+
+        public boolean isShowOnChart() {
+            return showOnChart;
+        }
+
+        public void setShowOnChart(boolean showOnChart) {
+            this.showOnChart = showOnChart;
+        }
+
+        public int getDrawableResId() {
+            return drawableResId;
+        }
+
+        public void setDrawableResId(int drawableResId) {
+            this.drawableResId = drawableResId;
+        }
+
     }
 }
