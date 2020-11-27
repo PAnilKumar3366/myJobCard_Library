@@ -59,10 +59,8 @@ public class WorkOrder extends BaseEntity {
     private ArrayList<StatusCategory> validStatuses = null;
     private boolean isAttachmentAvailable;
     //private ZAppSettings.Features features;
-    private ZAppSettings.BusinessProcess businessProcess;
     private StatusCategory statusDetail;
     private ArrayList<Operation> workOrderOperations;
-    private ArrayList<ZAppSettings.Features> featuresList;
     private PartnerAddress defaultPartnerAddress;
     private com.ods.myjobcard_library.entities.Address defaultAddress;
     //WO header details
@@ -1572,12 +1570,6 @@ public class WorkOrder extends BaseEntity {
         return ErrorMsg;
     }
 
-    /*public ZAppSettings.BusinessProcess getWOBusinessProcess() {
-        if (businessProcess == null)
-            businessProcess = deriveWOBusinessProcess();
-        return businessProcess;
-    }*/
-
     public void setErrorMsg(String errorMsg) {
         ErrorMsg = errorMsg;
     }
@@ -1833,12 +1825,6 @@ public class WorkOrder extends BaseEntity {
                     DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
                 }
 
-                try {
-                    businessProcess = deriveWOBusinessProcess();
-                } catch (Exception e) {
-                    DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
-                }
-
                 //Set operations and Components for the Work Order
                 if (!result.isError()) //&& !entity.getNavigationPropertyNames().isEmpty()
                 {
@@ -1890,12 +1876,6 @@ public class WorkOrder extends BaseEntity {
             DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return R.drawable.download;
-    }
-
-    public int getWOTypeDrawable() {
-        if (businessProcess == null)
-            businessProcess = deriveWOBusinessProcess();
-        return businessProcess.getBusinessProcessDrawable();
     }
 
     public ResponseObject UpdateTransferStatus(StatusCategory status, String Notes, String StatusReason, String Priority, String LabourCode, boolean autoFlush, Location location, String Plant, String WorkCenter) {
@@ -2774,42 +2754,6 @@ public class WorkOrder extends BaseEntity {
         } catch (Exception e) {
             DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
         }
-    }
-
-    private ZAppSettings.BusinessProcess deriveWOBusinessProcess() {
-        ZAppSettings.BusinessProcess process = ZAppSettings.BusinessProcess.NONE;
-        try {
-            /*ResponseObject response = WorkOrderType.getWorkOrderType(getOrderType());
-            if(response != null && !response.isError()){
-                ArrayList<WorkOrderType> orderTypes = (ArrayList<WorkOrderType>) response.Content();
-                if(orderTypes!= null && orderTypes.size() > 0){
-                    WorkOrderType type = orderTypes.get(0);
-                    for(ZAppSettings.BusinessProcess businessProcess : ZAppSettings.BusinessProcess.values()){
-                        if(type.getBusinessProcess().equals(businessProcess.getBusinessProcessCode())) {
-                            return businessProcess;
-                        }
-                    }
-                }
-            }*/
-            for (ZAppSettings.BusinessProcess businessProcess : ZAppSettings.BusinessProcess.values()) {
-                if (getOrderType().equalsIgnoreCase(businessProcess.getOrderType())) {
-                    return businessProcess;
-                }
-            }
-        } catch (Exception e) {
-            DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
-        }
-        return process;
-    }
-
-    public ArrayList<ZAppSettings.Features> getFeatures() {
-
-        if (featuresList == null) {
-
-            //businessProcess = deriveWOBusinessProcess();
-            featuresList = ZConfigManager.getBusinessProcessFeatures(businessProcess);
-        }
-        return featuresList;
     }
 
     public String getTruncated(String number) {

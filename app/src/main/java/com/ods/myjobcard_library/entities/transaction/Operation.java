@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import com.ods.myjobcard_library.R;
 
 public class Operation extends BaseEntity implements Serializable {
 
@@ -1415,7 +1416,6 @@ public class Operation extends BaseEntity implements Serializable {
                         confirmation.setComplete("");
                         confirmation.setFinConf("");
                         confirmation.setConfText(ZCollections.OPERATION_INCOMPLETE_TEXT);
-                        confirmation.setEntitySetName(ZCollections.WO_CONFIRMATION__COLLECTION);
                         confirmation.setMode(ZAppSettings.EntityMode.Update);
                     }
                 }
@@ -1695,29 +1695,29 @@ public class Operation extends BaseEntity implements Serializable {
     public ResponseObject CompletionPreChecks() {
         ResponseObject responseObject = null;
         Boolean result = false;
-        HashMap<ZAppSettings.TabList, String> strErrorMessages;
+        ArrayList<String> strErrorMessages;
         String strErrorMessage;
         try {
-            strErrorMessages = new HashMap<>();
+            strErrorMessages = new ArrayList<>();
             ArrayList<String> strList = OrderTypeFeature.getOrderTypeFeatures(WorkOrder.getCurrWo().getCurrentOperation().getOrderType());
             //check all components are issued
             if (ZConfigManager.COMPONENT_ISSUE_REQUIRED && strList.contains(ZAppSettings.Features.COMPONENT.getFeatureValue())) {
                 int totalNumUnIssuedComponents = getTotalNumUnIssuedComponents() + (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? 0 : getTotalNumPartialIssuedComponents());
                 if (totalNumUnIssuedComponents > 0) {
                     strErrorMessage = "It is mandatory to issue all the components. Currently un-issued components are: " + totalNumUnIssuedComponents;
-                    strErrorMessages.put(ZAppSettings.TabList.Parts, strErrorMessage);
+                    strErrorMessages.add(strErrorMessage);
                 }
             }
             //check if any mandatory form is not submitted even once
             if (WorkOrder.getCurrWo().getTotalNumUnSubmittedMandatoryForms() > 0 && ZConfigManager.MANDATORY_FORMS_REQUIRED) {
                 strErrorMessage = "It is mandatory to submit all the required / mandatory forms for this Job.";
-                strErrorMessages.put(ZAppSettings.TabList.Forms, strErrorMessage);
+                strErrorMessages.add(strErrorMessage);
             }
             //check the operation inspection is done
             if (strList.contains(ZAppSettings.Features.INSPECTIONLOT.getFeatureValue()) && getSystemStatus().toLowerCase().contains(ZConfigManager.OPR_INSP_ENABLE_STATUS.toLowerCase())
                     && getSystemStatus().toLowerCase().contains(ZConfigManager.OPR_INSP_RESULT_RECORDED_STATUS.toLowerCase())) {
                 strErrorMessage = "User decision is pending for inspection lot Operation ";//+ getInspectionLot();
-                strErrorMessages.put(ZAppSettings.TabList.InspectionLot, strErrorMessage);
+                strErrorMessages.add(strErrorMessage);
             }
             /*//check atleast one attachment is uploaded
             if( getTotalNumUserUploadedAttachments() == 0 && ZConfigManager.ATTACHMENT_REQUIRED)

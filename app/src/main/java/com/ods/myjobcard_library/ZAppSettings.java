@@ -523,4 +523,34 @@ public class ZAppSettings extends AppSettings {
             this.description = description;
         }
     }
+
+    public enum Features {
+
+        OPERATION("OPERATION", "OPERATION"),
+        COMPONENT("COMPONENT", "COMPONENT"),
+        ATTACHMENT("ATTACHMENT", "ATTACHMENT"),
+        //FORMS("FORMS","FORMS"),
+        RECORDPOINTS("RECORDPOINTS", "RECORD_POINT"),
+        SIGNATURESCREEN("SIGNATURESCREEN", "SIGNATURE"),
+        INSPECTIONLOT("INSPECTIONLOT", "INSPECTIONLOT"),
+        NOTIFICATION("NOTIFICATION", "NOTIFICATION"),
+        ITEM("ITEM", "ITEM"),
+        ITEMCAUSE("ITEMCAUSE", "ITEMCAUSE"),
+        ;
+
+        private String featureName, featureValue;
+
+        Features(String featureName, String featureValue) {
+            this.featureName = featureName;
+            this.featureValue = featureValue;
+        }
+
+        public String getFeatureName() {
+            return featureName;
+        }
+
+        public String getFeatureValue() {
+            return featureValue;
+        }
+    }
 }

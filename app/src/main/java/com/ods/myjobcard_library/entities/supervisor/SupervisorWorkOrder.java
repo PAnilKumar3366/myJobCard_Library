@@ -60,7 +60,6 @@ public class SupervisorWorkOrder extends BaseEntity {
     private String Technician;
     private com.ods.myjobcard_library.entities.Address defaultAddress;
     private TeamMember TeamMember;
-    private ZAppSettings.BusinessProcess businessProcess;
     private boolean isReadingOutOfRange;
     private String MaintActivityTypeText;
 
@@ -831,22 +830,10 @@ public class SupervisorWorkOrder extends BaseEntity {
         return status == null ? ZAppSettings.MobileStatus.NotSet : status;
     }
 
-    public int getWOTypeDrawable() {
-        if (businessProcess == null)
-            businessProcess = deriveWOBusinessProcess();
-        return businessProcess.getBusinessProcessDrawable();
-    }
-
     public ResponseObject create(ODataEntity entity, ZAppSettings.FetchLevel fetchLevel, boolean fetchAddress) {
         ResponseObject result = null;
         try {
             super.create(entity);
-
-            try {
-                businessProcess = deriveWOBusinessProcess();
-            } catch (Exception e) {
-                DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
-            }
 
             //set team member details
             try {
@@ -862,7 +849,7 @@ public class SupervisorWorkOrder extends BaseEntity {
             if (fetchAddress && AddressNumber != null && !AddressNumber.isEmpty()) {
                 result = com.ods.myjobcard_library.entities.Address.getSupervisorWOAddress(AddressNumber);
                 if (result != null && !result.isError()) {
-                    defaultAddress = ((ArrayList<com.ods.myjobcard.types.Address>) result.Content()).get(0);
+                    defaultAddress = ((ArrayList<Address>) result.Content()).get(0);
                 }
             }
 
@@ -998,26 +985,5 @@ public class SupervisorWorkOrder extends BaseEntity {
             mobileStatus = ZAppSettings.MobileStatus.NotSet;
         }
         return mobileStatus;
-    }
-
-    private ZAppSettings.BusinessProcess deriveWOBusinessProcess() {
-        ZAppSettings.BusinessProcess process = ZAppSettings.BusinessProcess.NONE;
-        try {
-            ResponseObject response = WorkOrderType.getWorkOrderType(getOrderType());
-            if (response != null && !response.isError()) {
-                ArrayList<WorkOrderType> orderTypes = (ArrayList<WorkOrderType>) response.Content();
-                if (orderTypes != null && orderTypes.size() > 0) {
-                    WorkOrderType type = orderTypes.get(0);
-                    for (ZAppSettings.BusinessProcess businessProcess : ZAppSettings.BusinessProcess.values()) {
-                        if (type.getBusinessProcess().equals(businessProcess.getBusinessProcessCode())) {
-                            return businessProcess;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
-        }
-        return process;
     }
 }

@@ -418,10 +418,10 @@ public class Equipment extends BaseEntity {
                 }
                 result = new ResponseObject(ZConfigManager.Status.Success, "", equipments);
             } else
-                result = new ResponseObject(ConfigManager.Status.Error);
+                result = new ResponseObject(ZConfigManager.Status.Error);
         } catch (Exception e) {
             DliteLogger.WriteLog(Equipment.class, ZAppSettings.LogLevel.Error, e.getMessage());
-            result = new ResponseObject(ConfigManager.Status.Error, e.getMessage(), e);
+            result = new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), e);
         }
         return result;
     }

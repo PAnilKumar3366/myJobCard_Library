@@ -73,6 +73,7 @@ public class ZConfigManager extends ConfigManager {
     public static boolean CAPTURE_TIME_ON_WORK_HALT = true;
     public static boolean OPERATION_LEVEL_ASSIGNMENT_ENABLED = false;
     public static String WO_OP_OBJS_DISPLAY = "X";
+    public static ZAppSettings.MobileStatus WO_ACTIVE_STATUS_DISABLED = ZAppSettings.MobileStatus.ENROUTE;
     public static String DEFAULT_ASSIGNMENT_TYPE = ZAppSettings.AssignmentType.WorkOrderLevel.getAssignmentTypeText();
     public static ZAppSettings.AssignmentType ASSIGNMENT_TYPE = ZAppSettings.AssignmentType.WorkOrderLevel;
     public static ZAppSettings.NotificationAssignmentType NOTIFICATION_ASSIGNMENT_TYPE = ZAppSettings.NotificationAssignmentType.PersonelNumber;

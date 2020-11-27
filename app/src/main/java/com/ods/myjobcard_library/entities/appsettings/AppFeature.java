@@ -64,10 +64,10 @@ public class AppFeature extends BaseEntity {
         }
     }
 
-    public static boolean isFeatureActive(ZAppSettings.AppFeature appFeature) {
+    public static boolean isFeatureActive(String viewType, String featureName) {
         boolean isActive = false;
         try {
-            isActive = !ZConfigManager.SHOW_ROLE_BASED_FEATURES || (appFeature == null || getAppFeatureState(appFeature.getViewType(), appFeature.getFeatureName()));
+            isActive = getAppFeatureState(viewType, featureName);
         } catch (Exception e) {
             DliteLogger.WriteLog(AppFeature.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }

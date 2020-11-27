@@ -118,7 +118,6 @@ public class Notification extends BaseEntity {
     private StatusCategory statusDetail;
     private ArrayList<StatusCategory> validStatuses;
 
-    private ZAppSettings.BusinessProcess businessProcess;
     private ArrayList<NotificationItem> notificationItems = new ArrayList<>();
 
     //End of Setters and Getters Method
@@ -973,12 +972,6 @@ public class Notification extends BaseEntity {
         return R.drawable.emergency_very_high;
     }
 
-    public int getNotificationTypeDrawable() {
-        if (businessProcess == null)
-            businessProcess = deriveNotifBusinessProcess();
-        return businessProcess.getBusinessProcessDrawable();
-    }
-
     public Time getMalFunctStartTime() {
         return MalFunctStartTime;
     }
@@ -1131,7 +1124,6 @@ public class Notification extends BaseEntity {
             }
 
             try {
-                businessProcess = deriveNotifBusinessProcess();
                 deriveNotificationStatus();
             } catch (Exception e) {
                 DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
@@ -1424,28 +1416,6 @@ public class Notification extends BaseEntity {
         }
         return result;
     }
-
-    private ZAppSettings.BusinessProcess deriveNotifBusinessProcess() {
-        ZAppSettings.BusinessProcess process = ZAppSettings.BusinessProcess.NONE;
-        try {
-            ResponseObject response = NotificationTypes.getNotificationType(getNotificationType());
-            if (response != null && !response.isError()) {
-                ArrayList<NotificationTypes> orderTypes = (ArrayList<NotificationTypes>) response.Content();
-                if (orderTypes != null && orderTypes.size() > 0) {
-                    NotificationTypes type = orderTypes.get(0);
-                    for (ZAppSettings.BusinessProcess businessProcess : ZAppSettings.BusinessProcess.values()) {
-                        if (type.getBusinessProcess().equals(businessProcess.getBusinessProcessCode())) {
-                            return businessProcess;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
-        }
-        return process;
-    }
-
     private void deriveNotificationStatus() {
         try {
             StatusCategory statusDetail = StatusCategory.getStatusDetails(getMobileStatus(), getNotificationType(), ZConfigManager.Fetch_Object_Type.Notification);
