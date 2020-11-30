@@ -314,14 +314,12 @@ public class ZCollections extends Collections {
 	public static final String ARG_APP_NAME = "APP_NAME";
 	public static final String ARG_FCM_TOKEN = "APP_FCM_TOKEN";
 	public static final String ARG_IS_HTTPS = "IS_HTTPS";
-	public static final String ARG_IS_LOGGED_IN = "IS_LOGGED_IN";
 	public static final String ARG_USER_ID = "USER_ID";
 	public static final String ARG_USER_PASSWORD = "Encrypted_Password";
 	public static final String ARG_IS_HISTORY = "IsHistory";
 	public static final String ARG_USER_NEW_PASSWORD = "NEW_PASSWORD";
 	public static final String ARG_USER_WORKCENTER = "USER_WORKCENTER";
 	public static final String ARG_USER_PLANT = "USER_PLANT";
-	public static final String ARG_APP_CONNECTION_ID = "APP_CONNECTION_ID";
 	public static final String ARG_APP_PUSH_ID = "APPPID";
 	public static final String ARG_SECONDARY_USER_FULLNAME = "SECONDARY_USER_FULLNAME";
 	public static final String ARG_SECONDARY_USER_ID = "SECONDARY_USER_ID";

@@ -39,7 +39,6 @@ public class AssetHierarchy extends BaseEntity {
     /**
      * Fetching the list of Asset Hierarchy.
      *
-     * @return ArrayList<AssetHierarchy>
      */
     public static ArrayList<AssetHierarchy> getAllAssetHierarchies() {
         ArrayList<AssetHierarchy> hierarchies = new ArrayList<>();

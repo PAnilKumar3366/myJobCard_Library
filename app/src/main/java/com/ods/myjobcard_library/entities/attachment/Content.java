@@ -5,6 +5,7 @@ import android.content.Context;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
+import com.ods.myjobcard_library.utils.DownloadAttachment;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.entities.ResponseObject;

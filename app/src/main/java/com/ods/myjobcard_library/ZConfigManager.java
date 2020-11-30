@@ -273,7 +273,7 @@ public class ZConfigManager extends ConfigManager {
                 for (ODataEntity entity : entities) {
                     try {
                         String keyName = String.valueOf(entity.getProperties().get("Key").getValue());
-                        Class cls = ZAppSettings.class;
+                        Class cls = ZConfigManager.class;
                         Field field = cls.getField(keyName);
                         String value = String.valueOf(entity.getProperties().get("Value").getValue());
                         if (field != null && value != null) {

@@ -1,6 +1,7 @@
 package com.ods.myjobcard_library;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -8,7 +9,16 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 
+import com.ods.myjobcard_library.entities.appsettings.AppFeature;
+import com.ods.ods_sdk.StoreHelpers.DataHelper;
+import com.ods.ods_sdk.StoreHelpers.StoreSettings;
+import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
+import com.ods.ods_sdk.entities.ErrorObject;
+import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
 import com.ods.ods_sdk.utils.Common;
+import com.ods.ods_sdk.utils.ConfigManager;
+import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
@@ -20,6 +30,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -219,269 +230,6 @@ public class ZCommon extends Common {
         }
         return entitySetName;
     }
-
-   /* public static void ShowTransmitProgress(final FrameLayout frameLayout, final TextView textView, final ArrayList<AppStoreSet> storeList, final BaseActivity activityContext) {
-        try {
-            final Context context = frameLayout.getContext();
-            if (chkNetworkAvailable(context)) {
-                if (DataHelper.isBGFlushInProgress) {
-                    frameLayout.setVisibility(View.GONE);
-                    ((BaseActivity)context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    DialogsUtility.showAlertPopup(context, context.getString(R.string.warningAlertComponentAvailabilityTitle), context.getString(R.string.alertBackgroundSyncInProgressMsg));
-
-                    return;
-                }
-                new AsyncTask<Void, String, ResponseObject>() {
-
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                        frameLayout.setVisibility(View.VISIBLE);
-                        ((BaseActivity)context).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    }
-
-                    @Override
-                    protected ResponseObject doInBackground(Void... params) {
-                        ResponseObject res = null;
-                        //StoreSettings.Stores[] storeList = null;
-                        try {
-                            //storeList = new StoreSettings.Stores[1];
-                            //storeList[0] = StoreSettings.Stores.Tx;
-                            res = DataHelper.getInstance().PendingRequestExists(storeList);
-                            if (res != null && res.getStatus() == ZConfigManager.Status.Warning) {
-                                publishProgress("Uploading...");
-                                res = DataHelper.getInstance().Flush(storeList);
-                            }
-                            if (res != null && !res.isError()) {
-//                            publishProgress("uploaded successfully!");
-//                            Thread.sleep(1000);
-                                publishProgress("Downloading...");
-                                res = DataHelper.getInstance().Refresh(storeList);
-                                if (!res.isError()) {
-                                    //publishProgress("downloaded successfully!");
-                                    //-----------------------------------------------
-                                    publishProgress("Synchronisation completed");
-                                    //-----------------------------------------------
-
-
-                                    Thread.sleep(1000);
-                                    SharedPreferences preferences = context.getSharedPreferences(Collections.SERVER_DETAILS_SP_NAME, Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = preferences.edit();
-                                    if (storeList.get(0).getFlush().equalsIgnoreCase("1"))
-                                        editor.putLong(Collections.ARG_LAST_SYNC_TIME, getDeviceDateTime().getTimeInMillis());
-                                    else
-                                        editor.putLong(Collections.ARG_LAST_MASTER_DATA_SYNC_TIME, getDeviceDateTime().getTimeInMillis());
-                                    editor.apply();
-
-
-                                    return res;
-                                } else {
-                                    publishProgress("Something went wrong while downloading!");
-                                    Thread.sleep(1000);
-                                    return res;
-                                }
-                            } else {
-                                publishProgress("Something went wrong while uploading!");
-                                Thread.sleep(1000);
-                                return res;
-                            }
-                        } catch (Exception e) {
-                            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
-                            return new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
-                        }
-                    }
-
-                    @Override
-                    protected void onProgressUpdate(String... values) {
-                        super.onProgressUpdate(values);
-                        textView.setText(values[0]);
-                    }
-
-                    @Override
-                    protected void onPostExecute(ResponseObject response) {
-                        super.onPostExecute(response);
-                        try {
-                            boolean isError = false;
-                            frameLayout.setVisibility(View.GONE);
-                            ((BaseActivity)context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                            if (response.isError()) {
-                                ErrorViewDialog errorViewDialog = new ErrorViewDialog(context, storeList, (BaseActivity) (context), false);
-                                errorViewDialog.show();
-                                errorViewDialog.setWindowSize();
-                                isError = true;
-                                *//*if (response.Content() != null) {
-                                    ArrayList<ErrorObject> errors = (ArrayList<ErrorObject>) response.Content();
-                                    if (errors != null && errors.size() > 0) {
-                                        StringBuilder stringBuilder = new StringBuilder();
-                                        int count = 1;
-                                        for (ErrorObject error : errors) {
-                                            if (error.getMessage() != null && error.getMessage().getMessage() != null) {
-                                                stringBuilder.append(error.getMessage().getMessage().getValue())
-                                                        //.append("\nDetails: " + error.getObjectName())
-                                                        .append(count == errors.size() ? "" : "\n---------------------------------\n");
-                                                DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, error.getMessage().getMessage().getValue() + "\n[Request Method] " + error.getRequestMethod() + "\n[Request Body] " + error.getRequestBody());
-                                            }
-                                            count++;
-                                        }
-                                        isError = true;
-                                        //todo remover hardcoding 'Error'
-//                                    DialogsUtility.showAlertPopup(pDialog.getContext(), "Error", stringBuilder.toString());
-                                    *//**//*DialogsUtility.showAlertPopupWithOneOpt(pDialog.getContext(), "Error", stringBuilder.toString(), pDialog.getContext().getString(R.string.txtNeutralBtn),
-                                            new DialogsUtility.OnPositiveBtnClickListener(){
-                                                @Override
-                                                public void onPositiveBtnClick(Dialog dialog) {
-                                                    DataHelper.getInstance().DeleteErrors();
-                                                    dialog.dismiss();
-                                                }
-                                            });*//**//*
-
-                                        DialogsUtility.showAlertPopupWithTwoOpt(context, activityContext.getString(R.string.errorTitle), !stringBuilder.toString().isEmpty() ? stringBuilder.toString() : context.getString(R.string.backendError), "Clear Errors", "Cancel",
-                                                new DialogsUtility.OnPositiveBtnClickListener() {
-                                                    @Override
-                                                    public void onPositiveBtnClick(Dialog dialog) {
-                                                        DataHelper.getInstance().DeleteErrors(storeList);
-                                                        activityContext.onTransmitCompleted();
-                                                        dialog.dismiss();
-                                                    }
-                                                },
-                                                new DialogsUtility.OnNegativeBtnClickListener() {
-                                                    @Override
-                                                    public void onNegativeBtnClick(Dialog dialog) {
-                                                        activityContext.onTransmitCompleted();
-                                                        dialog.dismiss();
-                                                    }
-                                                });
-                                    }
-                                }*//*
-                            }
-                            *//*if (ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.WorkCenterSingleIdLevel.getAssignmentTypeText()) && (storeList.get(0).getFlush().equalsIgnoreCase("1"))) {
-                                SharedPreferences preferences = activityContext.getSharedPreferences(Collections.SERVER_DETAILS_SP_NAME, Context.MODE_PRIVATE);
-                                PersonResponsible user = new PersonResponsible();
-                                user.setEmplApplName(preferences.getString(Collections.ARG_SECONDARY_USER_FULLNAME, ""));
-                                user.setPersonnelNo(preferences.getString(Collections.ARG_SECONDARY_USER_ID, ""));
-                                UserTable.setUserDetails(user);
-                            }*//*
-                            if(storeList.get(0).getRefresh().equalsIgnoreCase("2")){
-                                AppStoreSet.getAppOfflineStores(true,false);
-                                TableConfigSet.getTableDetails();
-                                ZConfigManager.setAppConfigurations();
-                                AppFeature.setUserRoleFeatures();
-                            }
-                            if(!isError)
-                                activityContext.onTransmitCompleted();
-                        } catch (Exception e) {
-                            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
-                        }
-                    }
-
-                    @Override
-                    protected void onCancelled() {
-                        isCancelled();
-                    }
-                }.execute(null, null, null);
-            } else {
-                frameLayout.setVisibility(View.GONE);
-                ((BaseActivity)context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                DialogsUtility.showAlertPopup(context, context.getString(R.string.alertNetworkUnAvailableTitle), context.getString(R.string.alertNetworkUnAvailableMsg));
-            }
-        } catch (Exception e) {
-            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
-        }
-    }
-    public static void ShowErrorLogProgress(final FrameLayout frameLayout, final TextView textView, final ArrayList<AppStoreSet> storeList, final BaseActivity activityContext) {
-        try {
-            final Context context = frameLayout.getContext();
-            new AsyncTask<ArrayList<AppStoreSet>, String, ResponseObject>() {
-
-                @SuppressLint("WrongThread")
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                    frameLayout.setVisibility(View.VISIBLE);
-                    publishProgress("Erro Logs are loading ... Please wait");
-                    ((BaseActivity)context).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                }
-
-                @Override
-                protected ResponseObject doInBackground(ArrayList<AppStoreSet>... params) {
-                    ResponseObject res = null;
-                    try {
-                        res = DataHelper.getInstance().getErrorLogs(storeList);
-                        return res;
-                    } catch (Exception e) {
-                        DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
-                        return new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
-                    }
-                }
-
-                @Override
-                protected void onProgressUpdate(String... values) {
-                    super.onProgressUpdate(values);
-                    textView.setText(values[0]);
-                }
-
-                @Override
-                protected void onPostExecute(ResponseObject response) {
-                    super.onPostExecute(response);
-                    try {
-                        frameLayout.setVisibility(View.GONE);
-                        ((BaseActivity)context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        if (response.isError()) {
-                            if (response.Content() != null) {
-                                ArrayList<ErrorObject> errors = (ArrayList<ErrorObject>) response.Content();
-                                if (errors != null && errors.size() > 0) {
-                                    StringBuilder stringBuilder = new StringBuilder();
-                                    int count = 1;
-                                    for (ErrorObject error : errors) {
-                                        if (error.getMessage() != null && error.getMessage().getMessage() != null) {
-                                            stringBuilder.append(error.getMessage().getMessage().getValue())
-                                                    //.append("\nDetails: " + error.getObjectName())
-                                                    .append(count == errors.size() ? "" : "\n---------------------------------\n");
-                                            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, error.getMessage().getMessage().getValue() + "\n[Request Method] " + error.getRequestMethod() + "\n[Request Body] " + error.getRequestBody());
-                                        }
-                                        count++;
-                                    }
-                                    DialogsUtility.showAlertPopupWithTwoOpt(context, activityContext.getString(R.string.errorTitle), !stringBuilder.toString().isEmpty() ? stringBuilder.toString() : context.getString(R.string.backendError), "Clear Errors", "Cancel",
-                                            new DialogsUtility.OnPositiveBtnClickListener() {
-                                                @Override
-                                                public void onPositiveBtnClick(Dialog dialog) {
-                                                    DataHelper.getInstance().DeleteErrors(storeList);
-                                                    //activityContext.onTransmitCompleted();
-                                                    dialog.dismiss();
-                                                }
-                                            },
-                                            new DialogsUtility.OnNegativeBtnClickListener() {
-                                                @Override
-                                                public void onNegativeBtnClick(Dialog dialog) {
-                                                    //activityContext.onTransmitCompleted();
-                                                    dialog.dismiss();
-                                                }
-                                            });
-                                }
-                            }
-                        }
-                        else
-                        {
-                            DialogsUtility.showAlertPopup(context, activityContext.getString(R.string.errorTitle), activityContext.getString(R.string.errorLogsMsg));
-                            return;
-                        }
-                    } catch (Exception e) {
-                        DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
-                    }
-                }
-
-                @Override
-                protected void onCancelled() {
-                    isCancelled();
-                }
-            }.execute(storeList, null, null);
-        } catch (Exception e) {
-            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
-        }
-    }*/
-
     public static boolean isLocationEnabled(Context context) {
         int locationMode = 0;
         String locationProviders;
@@ -633,6 +381,113 @@ public class ZCommon extends Common {
             result = false;
         }
         return result;
+    }
+
+    public static void showTransmitProgress(final Context context, final TransmitProgressCallback callback,final ArrayList<AppStoreSet> storeList) {
+        try {
+
+            if (isNetworkAvailable(context)) {
+                if (DataHelper.isFEngFlushInProgress || DataHelper.isTxFlushInProgress) {
+                    ResponseObject response = new ResponseObject(ZConfigManager.Status.Warning);
+                    response.setMessage("Background sync in progress");
+                    callback.errorCallback(response);
+                    return;
+                }
+                new AsyncTask<Void, String, ResponseObject>() {
+
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                    }
+
+                    @Override
+                    protected ResponseObject doInBackground(Void... voids) {
+                        ResponseObject res = null;
+                        try {
+                                res = DataHelper.getInstance().PendingRequestExists();
+                                if (res != null && res.getStatus() == ConfigManager.Status.Warning) {
+                                    publishProgress(context.getString(R.string.msg_uploading));
+                                    res = DataHelper.getInstance().changeStoreStatus(StoreSettings.SyncOptions.Flush_Tx_Only);
+                                }
+                            if ((res != null && !res.isError())) {
+                                publishProgress(context.getString(R.string.msg_downloading));
+                                res = DataHelper.getInstance().changeStoreStatus(StoreSettings.SyncOptions.Refresh_All);
+                                if (!res.isError()) {
+                                    publishProgress(context.getString(R.string.msg_sync_complete));
+                                    Thread.sleep(1000);
+                                    SharedPreferences preferences = context.getSharedPreferences(ZCollections.SERVER_DETAILS_SP_NAME, Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = preferences.edit();
+                                    GregorianCalendar deviceTime = getDeviceDateTime();
+                                    if (deviceTime != null) {
+                                        if (storeList.get(0).getFlush().equalsIgnoreCase("1"))
+                                            editor.putLong(ZCollections.ARG_LAST_SYNC_TIME, getDeviceDateTime().getTimeInMillis());
+                                        else
+                                            editor.putLong(ZCollections.ARG_LAST_MASTER_DATA_SYNC_TIME, getDeviceDateTime().getTimeInMillis());
+                                        editor.apply();
+                                    }
+                                    return res;
+                                } else {
+                                    publishProgress(context.getString(R.string.msg_something_went_wrong_downloading));
+                                    Thread.sleep(1000);
+                                    return res;
+                                }
+                            } else {
+                                publishProgress(context.getString(R.string.msg_something_went_wrong_uploading));
+                                Thread.sleep(1000);
+                                return res;
+                            }
+                        } catch (Exception e) {
+                            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
+                            return new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null);
+                        }
+                    }
+
+                    @Override
+                    protected void onProgressUpdate(String... values) {
+                        super.onProgressUpdate(values);
+                        callback.update(values[0]);
+                    }
+
+                    @Override
+                    protected void onPostExecute(ResponseObject response) {
+                        super.onPostExecute(response);
+                        try {
+                            boolean isError = false;
+                            if (response.isError()) {
+                                isError = true;
+                                response.setMessage("BE Errors");
+                                callback.errorCallback(response);
+                            }
+                            if(storeList.get(0).getRefresh().equalsIgnoreCase("2")){
+                                AppStoreSet.getStoreList();
+                                TableConfigSet.getTableDetails();
+                                ConfigManager.setAppConfigurations();
+                                AppFeature.setUserRoleFeatures();
+                            }
+
+                            if (!isError)
+                                callback.onSuccess(response);
+                        } catch (Exception e) {
+                            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
+                        }
+                    }
+                }.execute(null, null, null);
+            } else {
+                callback.noNetworkError();
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+    }
+
+    public interface TransmitProgressCallback {
+        void update(String text);
+
+        void errorCallback(ResponseObject response);
+
+        void onSuccess(ResponseObject response);
+
+        void noNetworkError();
     }
 
 }

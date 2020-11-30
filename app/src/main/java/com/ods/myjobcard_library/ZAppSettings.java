@@ -765,4 +765,56 @@ public class ZAppSettings extends AppSettings {
         }
 
     }
+
+    public enum Priorities {
+
+        VeryHigh("1", "Very High", "#f23b3b", R.drawable.emergency_veryhigh),
+        High("2", "High", "#FFBB33", R.drawable.emergency_high),
+        Medium("3", "Medium", "#99CC00", R.drawable.emergency_low),
+        Low("4", "Low", "#33B5E5", R.drawable.emergency_medium);
+
+        private String value;
+        private String description;
+        private String colorCode;
+        private int drawableResId;
+
+        Priorities(String value, String description, String colorCode, int drawableResId) {
+            this.value = value;
+            this.description = description;
+            this.colorCode = colorCode;
+            this.drawableResId = drawableResId;
+        }
+
+        public static int getDrawableByValue(String value) {
+            for (Priorities priority : Priorities.values()) {
+                if (priority.getValue().equalsIgnoreCase(value))
+                    return priority.getDrawableResId();
+            }
+            return 0;
+        }
+
+        public static String getDescriptionByValue(String value) {
+            for (Priorities priority : Priorities.values()) {
+                if (priority.getValue().equalsIgnoreCase(value))
+                    return priority.getDescription();
+            }
+            return "";
+        }
+
+        public String getValue() {
+            return this.value;
+        }
+
+        public String getDescription() {
+            return this.description;
+        }
+
+        public String getColorCode() {
+            return this.colorCode;
+        }
+
+        public int getDrawableResId() {
+            return drawableResId;
+        }
+    }
 }
