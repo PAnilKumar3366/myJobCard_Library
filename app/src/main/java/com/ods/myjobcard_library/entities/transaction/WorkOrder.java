@@ -1,8 +1,6 @@
 package com.ods.myjobcard_library.entities.transaction;
 
 import android.location.Location;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -2601,6 +2599,7 @@ public class WorkOrder extends BaseEntity {
      *
      * @param inspectionLot   Inspection Lot Number.
      * @param operationNumber Operation Number in case of Operation Assignment.
+     * @return Count of Inspection Characteristics.
      */
     public int getTotalInspectionCharacteristicsCount(String inspectionLot, @Nullable String operationNumber) {
         int totalNumber = 0;
@@ -2625,6 +2624,7 @@ public class WorkOrder extends BaseEntity {
      *
      * @param inspectionLot   Inspection Lot Number.
      * @param operationNumber Operation Number in case of Operation Assignment.
+     * @return Count of Inspection Characteristics.
      */
     public int getSavedInspectionCharacteristicsCount(String inspectionLot, @Nullable String operationNumber) {
         int totalNumber = 0;

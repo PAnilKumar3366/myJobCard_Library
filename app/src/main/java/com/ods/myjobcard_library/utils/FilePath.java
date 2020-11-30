@@ -23,8 +23,8 @@ public class FilePath {
     /**
      * Method for return file path of Gallery image/ Document / Video / Audio
      *
-     * @param context
-     * @param uri
+     * @param context Activity Context.
+     * @param uri     URI object.
      * @return path of the selected image file from gallery
      */
     public static String getPath(final Context context, final Uri uri) {

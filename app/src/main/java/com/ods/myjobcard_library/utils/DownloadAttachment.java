@@ -28,7 +28,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -201,11 +200,15 @@ public class DownloadAttachment {
     /**
      * Downloads a file from a URL
      *
-     * @param fileURL HTTP URL of the file to be downloaded
-     * @throws IOException
+     * @param fileURL       HTTP URL of the file to be downloaded
+     * @param fileName      Name of the file.
+     * @param ctx           Activity Context.
+     * @param entitySetName Entity Set Name.
+     * @param mime          Mime Type of the attachment.
+     * @param isURL         if it is URL or not.
+     * @return attachment URL as a String.
      */
-    public static String downloadFile(String fileURL, String fileName, String mime, boolean isURL, Context ctx, String entitySetName)
-            throws IOException {
+    public static String downloadFile(String fileURL, String fileName, String mime, boolean isURL, Context ctx, String entitySetName) {
         String saveDir, saveFilePath, uid = null, pwd = null, attachURL = "";
         InputStream inputStream;
         FileOutputStream outputStream;
@@ -215,24 +218,7 @@ public class DownloadAttachment {
         URL url;
         HttpURLConnection httpConn;
         try {
-
-                /*uid = ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.WorkCenterSingleIdLevel.getAssignmentTypeText()) ? ZAppSettings.strPrimaryUser : ZAppSettings.strUser;
-                pwd = ZAppSettings.strPswd;
-                if (uid != null && pwd != null) {*/
-
-                    /*url = new URL(fileURL);
-                    httpConn = (HttpURLConnection) url.openConnection();
-                    httpConn.setReadTimeout(60 * 1000);
-                    httpConn.setConnectTimeout(60 * 1000);
-                    String authorization = uid + ":" + pwd;
-                    DliteLogger.WriteLog(DownloadAttachment.class, ZAppSettings.LogLevel.Debug,"Download Attachment Url:"+fileURL);
-                    //String authorization="mkanungo:maddy5294";
-                    String encodedAuth = "Basic " + Base64.encodeToString(authorization.getBytes(), Base64.DEFAULT);
-                    httpConn.setRequestProperty("Authorization", encodedAuth);
-
-                    int responseCode = httpConn.getResponseCode();*/
             int responseCode = 0;
-
             ResponseObject result = DataHelper.getInstance().downloadMedia(entitySetName, fileURL);
 
             // always check HTTP response code first
@@ -244,9 +230,6 @@ public class DownloadAttachment {
                 inputStream = new ByteArrayInputStream(DocsUtil.hexStringToByteArray(String.valueOf(result.Content())));
 
                 if (!isURL) {
-            /*String disposition = httpConn.getHeaderField("Content-Disposition");
-            String contentType = httpConn.getContentType();
-            int contentLength = httpConn.getContentLength();*/
                     saveDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + ZConfigManager.AttachmentsFolder).getAbsolutePath();
                     saveFilePath = saveDir + File.separator + fileName;
                     actualFile = new File(saveFilePath);
@@ -257,16 +240,13 @@ public class DownloadAttachment {
                             attachmentDirectory = new File(saveDir);
                             attachmentDirectory.mkdirs();
                         }
-
                         // opens an output stream to save into file
                         outputStream = new FileOutputStream(saveFilePath);
-
                         bytesRead = -1;
                         buffer = new byte[BUFFER_SIZE];
                         while ((bytesRead = inputStream.read(buffer)) != -1) {
                             outputStream.write(buffer, 0, bytesRead);
                         }
-
                         outputStream.close();
                         File downloadedFile = new File(saveFilePath);
                         if (downloadedFile.exists() && downloadedFile.length() == 0) {
@@ -275,7 +255,6 @@ public class DownloadAttachment {
                         System.out.println("File downloaded");
                     }
                 } else {
-
                     BufferedReader br = new BufferedReader(new InputStreamReader(
                             inputStream));
                     StringBuffer sb = new StringBuffer();
@@ -285,11 +264,6 @@ public class DownloadAttachment {
                     }
                     String urlPath = "";
                     urlPath = result.Content().toString();
-                    //String json=sb.toString();
-                            /*JSONObject jsonObj = new JSONObject(json);
-                            jsonObj = jsonObj.getJSONObject("d");
-                            */
-                    //String urlStr = jsonObj.getString("Line");
                     if (!urlPath.isEmpty() && urlPath.contains("KEY&")) {
                         attachURL = urlPath.split("KEY&")[1];
                     }
@@ -299,12 +273,9 @@ public class DownloadAttachment {
             } else {
                 attachURL = "Error" + ":" + responseCode;
             }
-            //httpConn.disconnect();
-
-            /*}*/
         } catch (Exception e) {
             attachURL = "Error" + ":Exception Occurred";
-            DliteLogger.WriteLog(DownloadAttachment.class.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            DliteLogger.WriteLog(DownloadAttachment.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return attachURL;
     }

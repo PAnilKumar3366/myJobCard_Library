@@ -39,6 +39,7 @@ public class AssetHierarchy extends BaseEntity {
     /**
      * Fetching the list of Asset Hierarchy.
      *
+     * @return List of Asset Hierarchies.
      */
     public static ArrayList<AssetHierarchy> getAllAssetHierarchies() {
         ArrayList<AssetHierarchy> hierarchies = new ArrayList<>();
@@ -58,6 +59,7 @@ public class AssetHierarchy extends BaseEntity {
     /**
      * Fetching the Asset Hierarchy Object.
      *
+     * @param objectId Object Id.
      * @return AssetHierarchy
      */
     public static AssetHierarchy getAssetHierarchy(String objectId) {
