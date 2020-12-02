@@ -4,8 +4,8 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 
-public class NotificationDetailBaseViewModel extends NotificationBaseViewModel {
-    public NotificationDetailBaseViewModel(@NonNull Application application) {
+public class NotificationDetailViewModel extends NotificationBaseViewModel {
+    public NotificationDetailViewModel(@NonNull Application application) {
         super(application);
     }
 

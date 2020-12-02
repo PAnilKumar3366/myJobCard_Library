@@ -11,11 +11,11 @@ import com.ods.ods_sdk.entities.ResponseObject;
 
 import java.util.ArrayList;
 
-public class TasksBaseViewModel extends NotificationBaseViewModel {
+public class TasksViewModel extends NotificationBaseViewModel {
     private MutableLiveData<ArrayList<NotificationTask>> notificationTaskList = new MutableLiveData<>();
     private MutableLiveData<NotificationTask> singleTaskItem = new MutableLiveData<>();
 
-    public TasksBaseViewModel(@NonNull Application application) {
+    public TasksViewModel(@NonNull Application application) {
         super(application);
     }
 

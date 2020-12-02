@@ -11,12 +11,12 @@ import com.ods.ods_sdk.entities.ResponseObject;
 
 import java.util.ArrayList;
 
-public class ActivitiesFragmentBaseViewModel extends NotificationBaseViewModel {
+public class ActivitiesFragmentViewModel extends NotificationBaseViewModel {
 
     private MutableLiveData<ArrayList<NotificationActivity>> mActivitiesList = new MutableLiveData<>();
     private MutableLiveData<NotificationActivity> singleActivityItem = new MutableLiveData<>();
 
-    public ActivitiesFragmentBaseViewModel(@NonNull Application application) {
+    public ActivitiesFragmentViewModel(@NonNull Application application) {
         super(application);
     }
 

@@ -14,7 +14,7 @@ import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.util.ArrayList;
 
-public class NotificationListBaseViewModel extends NotificationBaseViewModel {
+public class NotificationListViewModel extends NotificationBaseViewModel {
 
     private static final String TAG = "NotificationListBaseViewModel";
     private String filterQuery;
@@ -29,7 +29,7 @@ public class NotificationListBaseViewModel extends NotificationBaseViewModel {
     //  public CurrentNotificationLiveData mLiveData;
     private NotificationRepository mRepository;
 
-    public NotificationListBaseViewModel(@NonNull Application application) {
+    public NotificationListViewModel(@NonNull Application application) {
         super(application);
         // mLiveData=new CurrentNotificationLiveData(application);
         if (mRepository == null)

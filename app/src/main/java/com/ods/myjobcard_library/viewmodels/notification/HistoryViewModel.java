@@ -11,14 +11,14 @@ import com.ods.ods_sdk.entities.ResponseObject;
 
 import java.util.ArrayList;
 
-public class HistoryBaseViewModel extends NotificationBaseViewModel {
+public class HistoryViewModel extends NotificationBaseViewModel {
 
     private ArrayList<NotificationHistoryPending> historyItems;
     private ArrayList<NotificationHistoryPending> pendingItems;
     private MutableLiveData<ArrayList<NotificationHistoryPending>> historyLiveData = new MutableLiveData<>();
     private MutableLiveData<ArrayList<NotificationHistoryPending>> pendingLiveData = new MutableLiveData<>();
 
-    public HistoryBaseViewModel(@NonNull Application application) {
+    public HistoryViewModel(@NonNull Application application) {
         super(application);
     }
 

@@ -12,13 +12,13 @@ import com.ods.ods_sdk.entities.ResponseObject;
 
 import java.util.ArrayList;
 
-public class ItemsDetailsBaseViewModel extends NotificationBaseViewModel {
+public class ItemsDetailsViewModel extends NotificationBaseViewModel {
 
     MutableLiveData<Notification> notification = new MutableLiveData<>();
     MutableLiveData<NotificationItem> singleItem = new MutableLiveData<>();
 
     //private NotificationRepository mRepository;
-    public ItemsDetailsBaseViewModel(@NonNull Application application) {
+    public ItemsDetailsViewModel(@NonNull Application application) {
         super(application);
 
     }
