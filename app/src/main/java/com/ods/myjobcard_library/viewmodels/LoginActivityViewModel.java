@@ -117,6 +117,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
             ZAppSettings.strUser = userName;
             ZAppSettings.strPassword = password;
             ZAppSettings.isLoggedIn = true;
+            ZAppSettings.isOpenOnlineAPStore=preferences.getBoolean(ZCollections.IS_ONLINE_APPSTORE,true);
         }
         ZConfigManager.setAppConfigurations();
         updateUI("success");
@@ -158,7 +159,12 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
             new StoreStatusAsyncHelper(StoreSettings.SyncOptions.InitStores, new StoreStatusAsyncHelper.Callbacks() {
                 @Override
                 public void onResult(ResponseObject response) {
+                    if(response.getMessage().equalsIgnoreCase("Error opening App Settings store"))
+                        putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE,true);
+                    else
+                        putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE,false);
                     putSharedPreferences(ZCollections.ARG_IS_LOGGED_IN, true);
+
                     /*if (response.getStatus().equals(ZConfigManager.Status.Success) && (ZAppSettings.App_FCM_Token == null || ZAppSettings.App_FCM_Token.isEmpty())) {
                         updateUI("FCM Registration");
                     }*/

@@ -1,4 +1,4 @@
-package com.ods.myjobcard_library.entities;
+package com.ods.myjobcard_library.entities.assettree;
 
 /**
  * Created by cindyoakes on 9/11/16.

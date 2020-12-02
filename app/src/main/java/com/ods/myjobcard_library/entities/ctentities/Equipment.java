@@ -4,7 +4,7 @@ import android.os.Build;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
-import com.ods.myjobcard_library.entities.TreeViewData;
+import com.ods.myjobcard_library.entities.assettree.TreeViewData;
 import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
