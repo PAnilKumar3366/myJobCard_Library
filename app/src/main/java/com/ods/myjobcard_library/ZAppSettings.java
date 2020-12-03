@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class ZAppSettings extends AppSettings {
     public static String App_Name = "com.ods.myJobCard"; //"com.sap.wmUpd";
-    public static String App_ID = "com.ods.myJobCard";//"com.sap.wmNupd"; //"com.sap.wmDlite"; //"com.sap.wmWin";// "com.sap.wmNupd"; //"com.sap.wmUpd";
+   // public static String App_ID = "com.ods.myJobCard";//"com.sap.wmNupd"; //"com.sap.wmDlite"; //"com.sap.wmWin";// "com.sap.wmNupd"; //"com.sap.wmUpd";
     /*//added by Shubham
     public static String App_LowVol_CT_Service_Root = "ctRootService";
     public static String App_HighVol_CT_ServiceRoot = "HighVolumeCTService";
