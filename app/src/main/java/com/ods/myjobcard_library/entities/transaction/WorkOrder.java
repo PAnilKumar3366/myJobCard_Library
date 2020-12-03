@@ -1797,8 +1797,7 @@ public class WorkOrder extends BaseEntity {
         return result;
     }
 
-    public ResponseObject create(ODataEntity entity, ZAppSettings.FetchLevel fetchLevel, boolean fetchAddress) {
-        ResponseObject result = null;
+    public void create(ODataEntity entity, ZAppSettings.FetchLevel fetchLevel, boolean fetchAddress) {
         Operation opr = null;
         ZAppSettings.FetchLevel operationsFetchLevel, componentsFetchLevel;
         /*ODataPropMap properties = null;
@@ -1822,35 +1821,12 @@ public class WorkOrder extends BaseEntity {
                 } catch (Exception e) {
                     DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
                 }
-
+                deriveWOStatus();
                 //Set operations and Components for the Work Order
-                if (!result.isError()) //&& !entity.getNavigationPropertyNames().isEmpty()
-                {
-                    //set allowed status for WorkOrder
-                    try {
-                        ResponseObject resultAllowedStatus = null;
-                        deriveWOStatus();
-                        /*if (fetchLevel.equals(ZAppSettings.FetchLevel.Single) || fetchLevel.equals(ZAppSettings.FetchLevel.All) || fetchLevel.equals(ZAppSettings.FetchLevel.ListWithStatusAllowed)) {
-                            resultAllowedStatus = getWOAllowedStatus(woMobileStatus.getMobileStatusCode());
-                            if (resultAllowedStatus != null) {
-                                if (!resultAllowedStatus.isError()) {
-                                    if (resultAllowedStatus.Content() != null) {
-                                        setValidStatus((ArrayList<String>) resultAllowedStatus.Content());
-                                    }
-                                }
-                            }
-                        }*/
-                    } catch (Exception e) {
-                        DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
-                    }
-                    result = new ResponseObject(ZConfigManager.Status.Success, "", this);
-                }
             }
         } catch (Exception e) {
             DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
-            result = new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
         }
-        return result;
     }
 
     public int getPriorityDrawable() {

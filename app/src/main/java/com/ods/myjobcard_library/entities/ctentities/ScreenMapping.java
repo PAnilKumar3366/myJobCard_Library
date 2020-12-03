@@ -33,35 +33,35 @@ public class ScreenMapping extends BaseEntity {
             if (screenName.toLowerCase().equals("loginscreen")) {
                 className = "com.ods.myjobcard.LoginActivity";
             } else if (screenName.toLowerCase().equals("dashboardscreen"))
-                className = "com.ods.myjobcard.UI.DashboardActivity";
+                className = "com.ods.myjobcard.activities.DashboardActivity";
             else if (screenName.toLowerCase().equals("completejobscreen"))
-                className = "com.ods.myjobcard.UI.WOStatus.CompleteWorkOrderActivity";
+                className = "com.ods.myjobcard.activities.CompleteWorkOrderActivity";
             else if (screenName.toLowerCase().equals("operationdetailsfragment"))
-                className = "com.ods.myjobcard.UI.fragments.workorders.OperationDetailsFragment";
+                className = "com.ods.myjobcard.fragments.workorders.OperationDetailsFragment";
             else if (screenName.toLowerCase().equals("operationdetailsfragment_oprassgin"))
-                className = "com.ods.myjobcard.UI.fragments.workorders.OperationDetailsFragment_OprAssgin";
+                className = "com.ods.myjobcard.fragments.workorders.OperationDetailsFragment_OprAssgin";
             else if (screenName.toLowerCase().equals("workorderdetailactivity"))
-                className = "com.ods.myjobcard.UI.WorkorderDetailActivity";
+                className = "com.ods.myjobcard.activities.WorkOrder.WorkorderDetailActivity";
             else if (screenName.toLowerCase().equals("workorderdetailactivity_opr"))
-                className = "com.ods.myjobcard.UI.WorkorderDetailActivity_Opr";
+                className = "com.ods.myjobcard.activities.WorkOrder.WorkorderDetailActivity_Opr";
             else if (screenName.toLowerCase().equals("wooverviewfragment"))
-                className = "com.ods.myjobcard.UI.fragments.workorders.WOOverviewFragment";
+                className = "com.ods.myjobcard.fragments.workorders.WOOverviewFragment";
             else if (screenName.toLowerCase().equals("workorderlistactivity"))
-                className = "com.ods.myjobcard.UI.WorkorderListActivity";
+                className = "com.ods.myjobcard.activities.WorkOrder.WorkorderListActivity";
             else if (screenName.toLowerCase().equals("workorderswithoperationslistactivity"))
-                className = "com.ods.myjobcard.UI.WorkordersWithOperationsListActivity";
+                className = "com.ods.myjobcard.activities.WorkOrder.WorkordersWithOperationsListActivity";
             else if (screenName.toLowerCase().equals("workorderaddedit"))
-                className = "com.ods.myjobcard.UI.WorkOrderAddEdit";
+                className = "com.ods.myjobcard.activities.WorkOrder.WorkOrderAddEdit";
             else if (screenName.toLowerCase().equals(ZCollections.NOTIFICATION_DOCS_FRAGMENT))
-                className = "com.ods.myjobcard.UI.fragments.notifications.DocsFragment";
+                className = "com.ods.myjobcard.fragments.notifications.DocsFragment";
             else if (screenName.toLowerCase().equals(ZCollections.EQUIPMENT_OVERVIEW_FRAGMENT))
-                className = "com.ods.myjobcard.UI.equipment.OverviewFragment";
+                className = "com.ods.myjobcard.fragments.equipment.OverviewFragment";
             else if (screenName.toLowerCase().equals(ZCollections.SUPERVISOR_VIEW_ACTIVITY))
-                className = "com.ods.myjobcard.UI.supervisor.SupervisorViewActivity";
+                className = "com.ods.myjobcard.activities.Supervisor.SupervisorViewActivity";
             else if (screenName.toLowerCase().equals(ZCollections.NOTIFICATION_LIST_ACTIVITY))
-                className = "com.ods.myjobcard.UI.NotificationListActivity";
+                className = "com.ods.myjobcard.activities.Notifications.NotificationListActivity";
             else if (screenName.toLowerCase().equals("generalformactivity"))
-                className = "com.ods.myjobcard.formsEngine.activity.GeneralFormActivity";
+                className = "com.ods.myjobcard.activities.Forms.GeneralFormActivity";
         } catch (Exception e) {
             DliteLogger.WriteLog(ScreenMapping.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
