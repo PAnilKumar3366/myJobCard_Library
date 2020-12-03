@@ -157,6 +157,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         else {
             updateUI("We are keeping the things ready. Please Wait...");
             ZAppSettings.AppStoreName="APLLICATIONSTORE";
+            ZAppSettings.isOpenOnlineAPStore=preferences.getBoolean("IS_ONLINE_APPSTORE",true);
             new StoreStatusAsyncHelper(StoreSettings.SyncOptions.InitStores, new StoreStatusAsyncHelper.Callbacks() {
                 @Override
                 public void onResult(ResponseObject response) {

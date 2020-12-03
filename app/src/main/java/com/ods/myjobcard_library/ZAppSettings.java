@@ -16,12 +16,12 @@ public class ZAppSettings extends AppSettings {
     //end by Shubham*/
     public static String App_Asset_Service_Root = "Equipment"; //"com.sap.wmUpd";
     public static String HTML_FOMRS_PATH = ""; //"com.sap.wmUpd";
-    public static String App_IP = "mobile-a53d86cd7.hana.ondemand.com";//"52.166.195.165";//"52.18.115.57"; // "192.168.0.52";
-    public static int App_Port = 443; //8080;
+    //public static String App_IP = "mobile-a53d86cd7.hana.ondemand.com";//"52.166.195.165";//"52.18.115.57"; // "192.168.0.52";
+   // public static int App_Port = 443; //8080;
     public static int Log_Level = 0;
     public static Context context = null;
     public static String strPrimaryUser;
-    public static String strUser;
+   // public static String strUser;
     public static String strPswd;
     public static String userFirstName;
     public static String userLastName;
