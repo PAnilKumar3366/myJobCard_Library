@@ -2,13 +2,13 @@ package com.ods.myjobcard_library.entities.ctentities;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class WoBomHeader extends BaseEntity {
+public class WoBomHeader extends ZBaseEntity {
     private String BOMCategory;
     private String BOM;
     private String EnteredBy;

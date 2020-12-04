@@ -5,14 +5,14 @@ import android.content.Context;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.utils.DownloadAttachment;
 import com.ods.ods_sdk.AppSettings;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.smp.client.odata.ODataEntity;
 
-public class Content extends BaseEntity {
+public class Content extends ZBaseEntity {
 
     private String Line;
     private String DocID;

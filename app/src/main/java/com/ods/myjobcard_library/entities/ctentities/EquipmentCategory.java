@@ -1,8 +1,8 @@
 package com.ods.myjobcard_library.entities.ctentities;
 
-import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZAppSettings;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.ZCollections;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -15,13 +15,15 @@ import java.util.List;
 /**
  * Created by MY HOME on 9/22/2017.
  */
-public class EquipmentCategory extends BaseEntity {
+public class EquipmentCategory extends ZBaseEntity {
 
     private String EquipCategory;
     private String Language;
     private String CategoryDesc;
+
     public EquipmentCategory() {
     }
+
     public EquipmentCategory(ODataEntity entity) {
         create(entity);
     }

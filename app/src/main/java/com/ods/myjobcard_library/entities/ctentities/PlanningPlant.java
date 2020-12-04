@@ -3,7 +3,7 @@ package com.ods.myjobcard_library.entities.ctentities;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by lenovo on 28-04-2016.
  */
-public class PlanningPlant extends BaseEntity {
+public class PlanningPlant extends ZBaseEntity {
 
     private String Name1;
     private String ValuationArea;
@@ -23,6 +23,7 @@ public class PlanningPlant extends BaseEntity {
     private String Plant;
     private String Name2;
     private String CompanyName;
+
     public PlanningPlant(ODataEntity entity) {
         create(entity);
     }

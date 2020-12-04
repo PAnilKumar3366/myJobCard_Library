@@ -11,13 +11,12 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.Address;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.appsettings.StatusCategory;
-import com.ods.myjobcard_library.entities.ctentities.NotificationTypes;
 import com.ods.myjobcard_library.entities.ctentities.OrderTypeFeature;
 import com.ods.myjobcard_library.entities.ctentities.SpinnerItem;
 import com.ods.myjobcard_library.entities.ctentities.UserTable;
 import com.ods.myjobcard_library.entities.ctentities.WorkOrderStatus;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -33,7 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Notification extends BaseEntity {
+public class Notification extends ZBaseEntity {
 
     //WO child elements
     private static Notification currNotification;

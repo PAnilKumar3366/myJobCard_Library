@@ -3,7 +3,7 @@ package com.ods.myjobcard_library.entities.appsettings;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class TableConfigSet extends BaseEntity {
+public class TableConfigSet extends ZBaseEntity {
 
     private static HashMap<String, TableConfigSet> entityList = new HashMap<String, TableConfigSet>();
     private String EntitySet;

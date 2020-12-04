@@ -1,11 +1,11 @@
 package com.ods.myjobcard_library.entities.attachment;
 
 import com.ods.myjobcard_library.ZAppSettings;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.smp.client.odata.ODataEntity;
 
-public class NotificationContent extends BaseEntity {
+public class NotificationContent extends ZBaseEntity {
 
     private String Line;
     private String DocID;

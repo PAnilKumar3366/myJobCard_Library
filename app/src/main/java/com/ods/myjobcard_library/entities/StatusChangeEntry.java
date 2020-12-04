@@ -1,13 +1,11 @@
 package com.ods.myjobcard_library.entities;
 
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
-
 import java.util.GregorianCalendar;
 
 /**
  * Created by MY HOME on 4/16/2019.
  */
-public class StatusChangeEntry extends BaseEntity {
+public class StatusChangeEntry extends ZBaseEntity {
 
     private String WorkOrderNum;
     private String Operation;

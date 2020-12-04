@@ -1,7 +1,6 @@
 package com.ods.myjobcard_library.entities;
 
 import com.ods.myjobcard_library.ZAppSettings;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
 import java.text.DateFormat;
@@ -11,7 +10,7 @@ import java.util.GregorianCalendar;
 /**
  * Created by lenovo on 27-12-2015.
  */
-public class PRT extends BaseEntity {
+public class PRT extends ZBaseEntity {
 
     private static DateFormat df = new SimpleDateFormat("E, dd MMM yyyy hh:mm:ss Z");
     //header details

@@ -1,7 +1,6 @@
 package com.ods.myjobcard_library.entities;
 
 import com.ods.myjobcard_library.ZCollections;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
 import java.sql.Time;
@@ -10,7 +9,7 @@ import java.util.GregorianCalendar;
 /**
  * Created by MY HOME on 9/26/2017.
  */
-public class InstallEquipment extends BaseEntity {
+public class InstallEquipment extends ZBaseEntity {
 
     private String Equipment;
     private String Item;
@@ -19,6 +18,7 @@ public class InstallEquipment extends BaseEntity {
     private String Position;
     private GregorianCalendar InstallDate;
     private Time InstallTime;
+
     public InstallEquipment() {
         initializingEntityProperties();
     }

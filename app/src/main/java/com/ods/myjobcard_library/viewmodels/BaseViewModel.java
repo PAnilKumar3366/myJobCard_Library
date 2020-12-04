@@ -13,7 +13,7 @@ import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
@@ -86,7 +86,7 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
                 ArrayList<ZODataEntity> entityList = new ArrayList<>();
                 if (response != null && !response.isError()) {
                     isError = false;
-                    List<ODataEntity> entities = BaseEntity.setODataEntityList(response.Content());
+                    List<ODataEntity> entities = ZBaseEntity.setODataEntityList(response.Content());
                     for (ODataEntity entity : entities) {
                         ZODataEntity item = new ZODataEntity(entity);
                         entityList.add(item);

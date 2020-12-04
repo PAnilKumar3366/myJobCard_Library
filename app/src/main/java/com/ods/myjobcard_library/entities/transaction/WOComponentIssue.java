@@ -5,7 +5,7 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.Components;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.smp.client.odata.ODataEntity;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 /**
  * Created by lenovo on 12-09-2016.
  */
-public class WOComponentIssue extends BaseEntity {
+public class WOComponentIssue extends ZBaseEntity {
 
     public WOComponentIssue(ODataEntity entity) {
         initializeEntityProperties();

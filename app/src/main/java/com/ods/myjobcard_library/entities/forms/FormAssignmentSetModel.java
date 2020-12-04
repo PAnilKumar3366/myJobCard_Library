@@ -3,7 +3,7 @@ package com.ods.myjobcard_library.entities.forms;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -17,7 +17,7 @@ import java.util.List;
  * Created by kansal on 10/06/2016.
  * (Ruchi) this model is reading the data from the FormAssignmentSet service.
  */
-public class FormAssignmentSetModel extends BaseEntity {
+public class FormAssignmentSetModel extends ZBaseEntity {
 
     private String FormID;
     private String ControlKey;

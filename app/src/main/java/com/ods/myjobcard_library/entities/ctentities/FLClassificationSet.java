@@ -3,7 +3,7 @@ package com.ods.myjobcard_library.entities.ctentities;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by lenovo on 05-05-2016.
  */
-public class FLClassificationSet extends BaseEntity {
+public class FLClassificationSet extends ZBaseEntity {
 
     private String FunctionalLoc;
     private String Object;

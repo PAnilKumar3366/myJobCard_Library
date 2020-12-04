@@ -12,8 +12,8 @@ public class WorkInfoRespository {
 
     public static WorkInfoRespository respository = null;
     public PeriodicWorkRequest mWorkRequest;
-    private MutableLiveData<WorkInfo> mCurrentWorkInfo;
-    private MutableLiveData<WorkInfo> mBackgroundScheduler;
+    private MutableLiveData<WorkInfo> mCurrentWorkInfo = new MutableLiveData<>();
+    private MutableLiveData<WorkInfo> mBackgroundScheduler = new MutableLiveData<>();
 
     public static WorkInfoRespository getInstance() {
         if (respository == null) {

@@ -1,12 +1,11 @@
 package com.ods.myjobcard_library.entities;
 
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
 /**
  * Created by lenovo on 17-11-2016.
  */
-public class ValidObject extends BaseEntity {
+public class ValidObject extends ZBaseEntity {
 
     private String WoNum;
     private String EnteredBy;

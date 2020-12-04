@@ -188,7 +188,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         }
     }
 
-    public void PushSubscription(String appConn) {
+    public boolean PushSubscription(String appConn) {
         boolean result = false;
         com.ods.myjobcard_library.entities.appsettings.PushSubscription pushSubscription = null;
         ResponseObject responseObject;

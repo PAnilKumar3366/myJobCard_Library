@@ -5,7 +5,6 @@ import android.location.Location;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -16,7 +15,7 @@ import java.sql.Time;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class StatusChangeLog extends BaseEntity {
+public class StatusChangeLog extends ZBaseEntity {
 
     private String Counter;
     private String ObjectNum;
