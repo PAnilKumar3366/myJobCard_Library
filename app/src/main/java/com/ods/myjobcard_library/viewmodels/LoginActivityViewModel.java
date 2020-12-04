@@ -168,17 +168,17 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                         putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE, true);
                     else {
                         putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE, false);
-                        ZAppSettings.isLoggedIn = true;
                         ZAppSettings.userFirstName = UserTable.getUserFirstName();
                         ZAppSettings.userLastName = UserTable.getUserLastName();
                     }
 
                     putSharedPreferences(ZCollections.ARG_IS_LOGGED_IN, true);
 
-                    /*if (response.getStatus().equals(ZConfigManager.Status.Success) && (ZAppSettings.App_FCM_Token == null || ZAppSettings.App_FCM_Token.isEmpty())) {
+                    if (response.getStatus().equals(ZConfigManager.Status.Success) && (ZAppSettings.App_FCM_Token == null || ZAppSettings.App_FCM_Token.isEmpty())) {
                         updateUI("FCM Registration");
-                    }*/
-                    onSuccess();
+                    }
+                    else
+                        onSuccess();
                 }
 
                 @Override
@@ -188,7 +188,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         }
     }
 
-    public boolean PushSubscription(String appConn) {
+    public void PushSubscription(String appConn) {
         boolean result = false;
         com.ods.myjobcard_library.entities.appsettings.PushSubscription pushSubscription = null;
         ResponseObject responseObject;
@@ -206,6 +206,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                 if (!responseObject.isError())
                     result = true;
                 ClientLogManager.writeLogDebug("Subscription saved successfully");
+                updateUI("success");
             }
 
         } catch (Exception ex) {
@@ -213,7 +214,6 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
             DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, ex.getMessage());
             ClientLogManager.writeLogDebug("Subscription pushed to server failed");
         }
-        return result;
     }
 
 }
