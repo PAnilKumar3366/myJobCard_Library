@@ -1,8 +1,8 @@
 package com.ods.myjobcard_library.entities.attachment;
 
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 
-public class Signature extends BaseEntity {
+public class Signature extends ZBaseEntity {
 
     private String DocCount;
     private String DocID;

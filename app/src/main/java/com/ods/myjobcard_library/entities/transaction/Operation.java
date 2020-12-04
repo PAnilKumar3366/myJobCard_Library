@@ -6,17 +6,18 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.ods.myjobcard_library.R;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.PartnerAddress;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.appsettings.StatusCategory;
 import com.ods.myjobcard_library.entities.ctentities.OrderTypeFeature;
 import com.ods.myjobcard_library.entities.ctentities.UserTable;
 import com.ods.myjobcard_library.entities.ctentities.WorkOrderStatus;
 import com.ods.myjobcard_library.entities.supervisor.SupervisorWorkOrder;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -32,11 +33,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import com.ods.myjobcard_library.R;
 
-public class Operation extends BaseEntity implements Serializable {
+public class Operation extends ZBaseEntity implements Serializable {
 
     private static DataHelper dbHelper = null;
     public boolean isOnline;   //Added by Anil

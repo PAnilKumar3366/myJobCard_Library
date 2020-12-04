@@ -9,7 +9,6 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.supervisor.SupervisorWorkOrder;
 import com.ods.myjobcard_library.entities.transaction.Operation;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -19,7 +18,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Components extends BaseEntity {
+public class Components extends ZBaseEntity {
 
     //Compoent child elements
     private DataHelper dataHelper = null;

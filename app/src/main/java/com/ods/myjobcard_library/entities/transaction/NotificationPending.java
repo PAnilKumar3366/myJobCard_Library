@@ -1,13 +1,13 @@
 package com.ods.myjobcard_library.entities.transaction;
 
 import com.ods.myjobcard_library.ZAppSettings;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
 import java.sql.Time;
 import java.util.GregorianCalendar;
 
-public class NotificationPending extends BaseEntity {
+public class NotificationPending extends ZBaseEntity {
 
     private String Notification;
     private String Notifictntype;

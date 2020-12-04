@@ -1,13 +1,13 @@
 package com.ods.myjobcard_library.entities.transaction;
 
 import com.ods.myjobcard_library.ZAppSettings;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
 /**
  * Created by lenovo on 27-12-2015.
  */
-public class NotificationLongText extends BaseEntity {
+public class NotificationLongText extends ZBaseEntity {
 
     //header details
     private String TextName;

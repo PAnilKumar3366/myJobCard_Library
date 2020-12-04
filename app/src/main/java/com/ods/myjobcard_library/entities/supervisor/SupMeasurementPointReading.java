@@ -2,9 +2,9 @@ package com.ods.myjobcard_library.entities.supervisor;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.ctentities.CatalogCode;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
 import com.ods.ods_sdk.entities.ResponseObject;
@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by lenovo on 02=01-2020.
  */
-public class SupMeasurementPointReading extends BaseEntity {
+public class SupMeasurementPointReading extends ZBaseEntity {
 
     private String MeasuringPoint;
     private String WOObjectNum;

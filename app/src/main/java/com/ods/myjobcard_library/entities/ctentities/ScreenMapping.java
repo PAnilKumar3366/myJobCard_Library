@@ -2,14 +2,14 @@ package com.ods.myjobcard_library.entities.ctentities;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.smp.client.odata.ODataEntity;
 
 /**
  * Created by MY HOME on 11/8/2018.
  */
-public class ScreenMapping extends BaseEntity {
+public class ScreenMapping extends ZBaseEntity {
 
     private String ScreenName;
     private String AndroidClass;

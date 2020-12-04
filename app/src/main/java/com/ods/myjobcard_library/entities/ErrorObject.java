@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.entities.appsettings.TableConfigSet;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
@@ -14,9 +13,9 @@ import com.sap.smp.client.odata.ODataEntity;
 /**
  * Created by lenovo on 13-09-2016.
  */
-public class ErrorObject extends BaseEntity {
+public class ErrorObject extends ZBaseEntity {
 
-    public ErrorObject(ODataEntity entity){
+    public ErrorObject(ODataEntity entity) {
         create(entity);
     }
 
@@ -36,18 +35,10 @@ public class ErrorObject extends BaseEntity {
 
     private String AppStoreId;
 
-    public BaseEntity getAffectedEntity() {
-        return affectedEntity;
-    }
+    private ZBaseEntity affectedEntity;
 
-    public void setAffectedEntity(BaseEntity affectedEntity) {
-        this.affectedEntity = affectedEntity;
-    }
-
-    private BaseEntity affectedEntity;
-
-    public static BaseEntity getAffectedEntityObject(ODataEntity errorEntity, AppStoreSet store) {
-        BaseEntity errorEntityObj = null;
+    public static ZBaseEntity getAffectedEntityObject(ODataEntity errorEntity, AppStoreSet store) {
+        ZBaseEntity errorEntityObj = null;
         try {
             String affectedEntityPath = String.valueOf(errorEntity.getNavigationProperty("AffectedEntity").getNavigationContent());
             ResponseObject result = DataHelper.getInstance().getEntities(affectedEntityPath, store);
@@ -55,8 +46,8 @@ public class ErrorObject extends BaseEntity {
                 ODataEntity affectedEntity = (ODataEntity) result.Content();
                 //Class cls = Class.forName(TableConfigSet.getClassName(ZCommon.getEntitySetNameFromPath(affectedEntity.getEditResourcePath())).replace("myjobcard", "mjc"));
                 Class cls = Class.forName(TableConfigSet.getClassName(ZCommon.getEntitySetNameFromPath(affectedEntity.getEditResourcePath())));
-                //errorEntityObj = (BaseEntity) cls.getDeclaredConstructor(ODataEntity.class,ZAppSettings.FetchLevel.class).newInstance(affectedEntity, ZAppSettings.FetchLevel.Single);
-                errorEntityObj = (BaseEntity) cls.getDeclaredConstructor(ODataEntity.class).newInstance(affectedEntity);
+                //errorEntityObj = (ZBaseEntity) cls.getDeclaredConstructor(ODataEntity.class,ZAppSettings.FetchLevel.class).newInstance(affectedEntity, ZAppSettings.FetchLevel.Single);
+                errorEntityObj = (ZBaseEntity) cls.getDeclaredConstructor(ODataEntity.class).newInstance(affectedEntity);
 //                    errorEntityObj = new WorkOrder((ODataEntity)DataHelper.getInstance().getEntities(Collections.WO_COLLECTION, affectedEntity.getEditResourcePath()).Content(), ZAppSettings.FetchLevel.Header);
                     /*((WorkOrder)errorEntityObj).setShortText("updated automatically 32");
                     errorEntityObj.setMode(ZAppSettings.EntityMode.Update);
@@ -66,6 +57,14 @@ public class ErrorObject extends BaseEntity {
             DliteLogger.WriteLog(ErrorObject.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return errorEntityObj;
+    }
+
+    public ZBaseEntity getAffectedEntity() {
+        return affectedEntity;
+    }
+
+    public void setAffectedEntity(ZBaseEntity affectedEntity) {
+        this.affectedEntity = affectedEntity;
     }
 
     public String getAppStoreId() {
@@ -223,7 +222,7 @@ public class ErrorObject extends BaseEntity {
         AppStoreId = appStoreId;
     }
 
-    public void setObjectDetails(BaseEntity object) {
+    public void setObjectDetails(ZBaseEntity object) {
         try {
             setAffectedEntity(object);
             String displayName = TableConfigSet.getDisplayName(object.getEntitySetName());

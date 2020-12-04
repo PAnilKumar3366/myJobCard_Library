@@ -1,7 +1,7 @@
 package com.ods.myjobcard_library.entities.ctentities;
 
 import com.ods.myjobcard_library.ZCollections;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.sap.client.odata.v4.EntityValue;
 
 import java.math.BigDecimal;
@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class BreakdownReport extends BaseEntity {
+public class BreakdownReport extends ZBaseEntity {
 
     private GregorianCalendar Date;
     private String Period;

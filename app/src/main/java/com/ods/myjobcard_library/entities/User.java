@@ -1,10 +1,9 @@
 package com.ods.myjobcard_library.entities;
 
 import com.ods.myjobcard_library.ZCollections;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
-public class User extends BaseEntity {
+public class User extends ZBaseEntity {
 
     private int RecordID;
     private String SystemID;

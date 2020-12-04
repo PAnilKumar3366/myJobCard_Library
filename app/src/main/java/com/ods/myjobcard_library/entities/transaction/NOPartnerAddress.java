@@ -1,10 +1,10 @@
 package com.ods.myjobcard_library.entities.transaction;
 
 import com.ods.myjobcard_library.ZAppSettings;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
-public class NOPartnerAddress extends BaseEntity {
+public class NOPartnerAddress extends ZBaseEntity {
 
     private String ObjectNumber;
     private String PartnerFunction;

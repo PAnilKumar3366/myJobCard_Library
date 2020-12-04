@@ -3,7 +3,6 @@ package com.ods.myjobcard_library.entities;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -20,7 +19,7 @@ import java.util.List;
  * (Ruchi) This model is used to get data from the offline store and to post data as well. It is storing the values related to
  * the filled form.
  */
-public class ResponseMasterModel extends BaseEntity {
+public class ResponseMasterModel extends ZBaseEntity {
 
     private String InstanceID;
     private String FormID;

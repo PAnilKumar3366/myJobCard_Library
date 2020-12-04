@@ -3,8 +3,8 @@ package com.ods.myjobcard_library.entities.attachment;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.appsettings.TableConfigSet;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by MY HOME on 4/18/2019.
  */
-public class WorkOrderAttachment extends BaseEntity {
+public class WorkOrderAttachment extends ZBaseEntity {
 
     private String ClassName;
     private String OperationNum;

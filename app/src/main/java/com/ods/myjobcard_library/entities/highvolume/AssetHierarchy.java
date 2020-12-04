@@ -3,8 +3,8 @@ package com.ods.myjobcard_library.entities.highvolume;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.ctentities.AssetMapping;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Asset Hierarchy Model class which contains data members and data helper member functions.
  */
-public class AssetHierarchy extends BaseEntity {
+public class AssetHierarchy extends ZBaseEntity {
 
     private String ObjectId;
     private String TableId;

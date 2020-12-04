@@ -1,19 +1,18 @@
 package com.ods.myjobcard_library.entities;
 
 import com.ods.myjobcard_library.ZCollections;
-import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
 /**
  * Created by MY HOME on 9/26/2017.
  */
-public class DismantleEquipment extends BaseEntity {
+public class DismantleEquipment extends ZBaseEntity {
 
-    public DismantleEquipment(){
+    public DismantleEquipment() {
         initializingEntityProperties();
     }
 
-    public DismantleEquipment(ODataEntity entity){
+    public DismantleEquipment(ODataEntity entity) {
         initializingEntityProperties();
         create(entity);
     }
