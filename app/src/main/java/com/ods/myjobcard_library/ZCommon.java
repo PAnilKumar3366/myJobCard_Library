@@ -336,7 +336,7 @@ public class ZCommon extends Common {
         return false;
     }
 
-    public static Class getNextClass(String screenName) {
+/*    public static Class getNextClass(String screenName) {
         Class nextClass = null;
         try {
             nextClass = Class.forName(ScreenMapping.getClassName(screenName));
@@ -344,7 +344,7 @@ public class ZCommon extends Common {
             DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return nextClass;
-    }
+    }*/
 
     public static Object getClassInstance(Class nextClass) {
         Object nextObject = null;
