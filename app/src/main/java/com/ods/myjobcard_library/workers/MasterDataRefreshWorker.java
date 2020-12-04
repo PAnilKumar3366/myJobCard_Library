@@ -62,28 +62,20 @@ public class MasterDataRefreshWorker extends Worker {
                 sendNotificationWithChannel("Master Data Refresh Started");
                 DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Info, "MasterDataRefresh is started : " + this.getTags().toString() + " and Id  " + this.getId());
                 ArrayList<AppStoreSet> storesList = AppStoreSet.getStoresForMasterDataTransmit();
-                result = DataHelper.getInstance().PendingRequestExists();
-                if (result != null && !result.isError())
-                    result = DataHelper.getInstance().Flush(storesList);
-               /* if (result == null || result.isError()) {
-                    retryCount++;
-                    retryUID = getId();
-                    return Result.Retry.retry();
-                }*/
+                result = DataHelper.getInstance().PendingRequestExists(storesList);
+
                 if (result != null && !result.isError())
                     result = DataHelper.getInstance().Refresh(storesList);
                 // result = DataHelper.getInstance().ReadErrors(storesList);
-                String errorMessage = "";
-                boolean error = false;
-                for (AppStoreSet store : AppStoreSet.getStoresForMasterDataTransmit()) {
-                    result = DataHelper.getInstance().getErrors();
+                /*for (AppStoreSet store : AppStoreSet.getStoresForMasterDataTransmit()) {
+                    result = DataHelper.getInstance().getErrorLogs();
                     if (result.isError()) {
                         errorMessage = result.getMessage();
                         error = true;
                     }
                 }
                 result.setError(error);
-                result.setMessage(errorMessage);
+                result.setMessage(errorMessage);*/
                 if (result.isError()) {
                     retryCount++;
                     retryUID = getId();

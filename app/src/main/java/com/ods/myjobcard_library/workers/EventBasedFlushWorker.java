@@ -33,7 +33,6 @@ public class EventBasedFlushWorker extends Worker {
     public EventBasedFlushWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         helper = DataHelper.getInstance();
-        setProgressAsync(new Data.Builder().putInt(PROGRESS, 0).build());
     }
 
     @Override
@@ -48,11 +47,16 @@ public class EventBasedFlushWorker extends Worker {
         try {
             if (ZAppSettings.isLoggedIn && !ZAppSettings.IsDemoModeEnabled) {
 
-                if (isScheduleWorkRunning())
+                if (isScheduleWorkRunning()) {
                     WorkManager.getInstance(getApplicationContext()).cancelWorkById(this.getId());
+                    Data errorData = new Data.Builder().
+                            putBoolean("isSchedule", false).
+                            putString("Result", "").build();
+                    return Result.success(errorData);
+                }
                 DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Debug, "Do work Called and tag is : " + this.getTags().toString() + " and Id  " + this.getId());
                 //DataHelper.isBGFlushInProgress = true;
-                result = helper.Flush(AppStoreSet.getStoresForNormalTransmit());
+                result = helper.Flush();
                 if (result != null && !result.isError() && ZConfigManager.EventBased_Sync_Type == 2)
                     result = helper.Refresh(AppStoreSet.getStoresForNormalTransmit());
                 String errorMessage = "";

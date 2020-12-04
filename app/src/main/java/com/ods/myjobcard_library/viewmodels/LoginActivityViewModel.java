@@ -20,11 +20,8 @@ import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.StoreHelpers.StoreStatusAsyncHelper;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
 import com.ods.ods_sdk.entities.ResponseObject;
-import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.ods.ods_sdk.utils.logs.ClientLogManager;
-
-import java.util.ArrayList;
 
 public class LoginActivityViewModel extends BaseViewModel implements RegisterHelper.Callbacks {
 
@@ -168,7 +165,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                         putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE, true);
                     else {
                         putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE, false);
-                        ZAppSettings.isLoggedIn = true;
+                       // ZAppSettings.isLoggedIn = true;
                         ZAppSettings.userFirstName = UserTable.getUserFirstName();
                         ZAppSettings.userLastName = UserTable.getUserLastName();
                     }

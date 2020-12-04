@@ -62,23 +62,15 @@ public class TimeBasedFlushWorker extends Worker {
                     outputBuilder.putString("Result", "Retry").build();
                     return Result.Retry.success(outputBuilder.build());
                 }
-                ResponseObject resultPending = helper.PendingRequestExists();
-                /*if (resultPending.getStatus().equals(ZConfigManager.Status.Success)) {
-                    Data.Builder outPutData = new Data.Builder().putLong("NextRefreshTime", ZConfigManager.BG_SYNC_TIME_INTERVAL).
-                            putBoolean("isSchedule", false)
-                            .putInt("RetryCount", 0)
-                            .putString("Result", "NoPending");
-                    Log.d(TAG, "doWork: Nothing is updated");
-                    return Result.success(outPutData.build());
-                }*/
+                ResponseObject resultPending = helper.PendingRequestExists(AppStoreSet.getStoresForNormalTransmit());
                 Long start_time = System.currentTimeMillis();
-                //DataHelper.isBGFlushInProgress = true;
+
                 Log.d(TAG, "doWork: Periodic Request is started " + this.getId());
                 DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Debug, "Do work Called in Schedule Task Begin time " + ZCommon.getDevicDateTime().getTime().toString() + "tag is : " + this.getTags().toString() + " and Id  " + this.getId());
                 showNotification("Refreshing Data", "Background Refresh Started");
 
                 if (resultPending.getStatus().equals(ZConfigManager.Status.Warning))
-                    result = helper.Flush(AppStoreSet.getStoresForNormalTransmit());
+                    result = helper.Flush();
 
                 if (!result.isError() && ZConfigManager.TimeBased_Sync_Type == 2)
                     result = helper.Refresh(AppStoreSet.getStoresForNormalTransmit());
