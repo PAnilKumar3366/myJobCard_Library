@@ -11,12 +11,14 @@ import androidx.lifecycle.MutableLiveData;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
+import com.ods.myjobcard_library.entities.ctentities.UserTable;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.Collections;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.RegisterHelper;
 import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.StoreHelpers.StoreStatusAsyncHelper;
+import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -140,6 +142,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                         @Override
                         public void onResult(ResponseObject response) {
                             putSharedPreferences(Collections.ARG_IS_LOGGED_IN, true);
+                            ZAppSettings.isLoggedIn = true;
                             onSuccess();
                         }
 
@@ -162,9 +165,14 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                 @Override
                 public void onResult(ResponseObject response) {
                     if(response.getMessage().equalsIgnoreCase("Error opening App Settings store"))
-                        putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE,true);
-                    else
-                        putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE,false);
+                        putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE, true);
+                    else {
+                        putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE, false);
+                        ZAppSettings.isLoggedIn = true;
+                        ZAppSettings.userFirstName = UserTable.getUserFirstName();
+                        ZAppSettings.userLastName = UserTable.getUserLastName();
+                    }
+
                     putSharedPreferences(ZCollections.ARG_IS_LOGGED_IN, true);
 
                     /*if (response.getStatus().equals(ZConfigManager.Status.Success) && (ZAppSettings.App_FCM_Token == null || ZAppSettings.App_FCM_Token.isEmpty())) {
@@ -191,9 +199,9 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
             //flush to SAP for subscription
             if (!responseObject.isError()) {
                 //if (!ConfigManager.ENABLE_BG_SYNC) {
-                ArrayList<AppStoreSet> stores = new ArrayList<>();
-                stores.add(com.ods.ods_sdk.StoreHelpers.TableConfigSet.getStore(ZCollections.PUSH_ENTITY_COLLECTION));
-                responseObject= DataHelper.getInstance().Flush(stores);
+              /*  ArrayList<AppStoreSet> stores = new ArrayList<>();
+                stores.add(com.ods.ods_sdk.StoreHelpers.TableConfigSet.getStore(ZCollections.PUSH_ENTITY_COLLECTION));*/
+                responseObject= DataHelper.getInstance().FlushPushSub_App(TableConfigSet.getStore(ZCollections.PUSH_ENTITY_COLLECTION));
                 //}
                 if (!responseObject.isError())
                     result = true;
