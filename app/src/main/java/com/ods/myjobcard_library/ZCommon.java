@@ -10,6 +10,7 @@ import android.provider.Settings;
 import android.text.TextUtils;
 
 import com.ods.myjobcard_library.entities.appsettings.AppFeature;
+import com.ods.myjobcard_library.entities.ctentities.ScreenMapping;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
@@ -335,7 +336,7 @@ public class ZCommon extends Common {
         return false;
     }
 
- /*   public static Class getNextClass(String screenName) {
+/*    public static Class getNextClass(String screenName) {
         Class nextClass = null;
         try {
             nextClass = Class.forName(ScreenMapping.getClassName(screenName));
@@ -386,7 +387,7 @@ public class ZCommon extends Common {
     public static void showTransmitProgress(final Context context, final TransmitProgressCallback callback,final ArrayList<AppStoreSet> storeList) {
         try {
 
-            if (isNetworkAvailable(context)) {
+            if (chkNetworkAvailable(context))  {
                 if (DataHelper.isFEngFlushInProgress || DataHelper.isTxFlushInProgress) {
                     ResponseObject response = new ResponseObject(ZConfigManager.Status.Warning);
                     response.setMessage("Background sync in progress");
@@ -404,14 +405,20 @@ public class ZCommon extends Common {
                     protected ResponseObject doInBackground(Void... voids) {
                         ResponseObject res = null;
                         try {
-                                res = DataHelper.getInstance().PendingRequestExists();
+                            boolean isTxStore=storeList.get(0).getFlush().equalsIgnoreCase("1");
+                            if (isTxStore) {
+                                res = DataHelper.getInstance().PendingRequestExists(storeList);
                                 if (res != null && res.getStatus() == ConfigManager.Status.Warning) {
                                     publishProgress(context.getString(R.string.msg_uploading));
                                     res = DataHelper.getInstance().changeStoreStatus(StoreSettings.SyncOptions.Flush_Tx_Only);
                                 }
+                            }
+                            else
+                                res=new ResponseObject(ConfigManager.Status.Success, "", null);
+
                             if ((res != null && !res.isError())) {
                                 publishProgress(context.getString(R.string.msg_downloading));
-                                res = DataHelper.getInstance().changeStoreStatus(StoreSettings.SyncOptions.Refresh_All);
+                                res = DataHelper.getInstance().changeStoreStatus(isTxStore?StoreSettings.SyncOptions.Refresh_All_Trans_Stores:StoreSettings.SyncOptions.Refresh_All_Master_Stores);
                                 if (!res.isError()) {
                                     publishProgress(context.getString(R.string.msg_sync_complete));
                                     Thread.sleep(1000);
@@ -419,7 +426,7 @@ public class ZCommon extends Common {
                                     SharedPreferences.Editor editor = preferences.edit();
                                     GregorianCalendar deviceTime = getDeviceDateTime();
                                     if (deviceTime != null) {
-                                        if (storeList.get(0).getFlush().equalsIgnoreCase("1"))
+                                        if (isTxStore)
                                             editor.putLong(ZCollections.ARG_LAST_SYNC_TIME, getDeviceDateTime().getTimeInMillis());
                                         else
                                             editor.putLong(ZCollections.ARG_LAST_MASTER_DATA_SYNC_TIME, getDeviceDateTime().getTimeInMillis());
