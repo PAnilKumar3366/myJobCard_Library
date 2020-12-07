@@ -438,6 +438,7 @@ public class ZCommon extends Common {
                                             editor.putLong(ZCollections.ARG_LAST_MASTER_DATA_SYNC_TIME, getDeviceDateTime().getTimeInMillis());
                                         editor.apply();
                                     }
+                                    DocsUtil.RemoveUnRequiredUploadEntities();
                                     return res;
                                 } else {
                                     publishProgress(context.getString(R.string.msg_something_went_wrong_downloading));
