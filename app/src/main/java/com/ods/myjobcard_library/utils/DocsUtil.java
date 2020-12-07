@@ -35,7 +35,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -664,7 +663,7 @@ public class DocsUtil {
         return b;
     }
 
-    public static ResponseObject RemoveUnRequiredUploadEntities() {
+    public static void RemoveUnRequiredUploadEntities() {
         ResponseObject result = new ResponseObject(ZConfigManager.Status.Error);
         try {
             String entitySetName = ZCollections.WO_ATTACHMENT_CONTENT_UPLOAD_COLLECTION;
@@ -684,7 +683,7 @@ public class DocsUtil {
                     if (!result.isError()) {
                         int attachmentCount = Integer.parseInt(String.valueOf(result.Content()));
                         if (attachmentCount > 0) {
-                            result = DataHelper.getInstance().saveEntity(uploadAttachment, uploadAttachment.getEntitySetName(), uploadAttachment.getEntityType(), uploadAttachment.getEntityResourcePath());
+                            uploadAttachment.SaveToStore(false);
                         }
                     }
                 }
@@ -706,7 +705,7 @@ public class DocsUtil {
                     if (!result.isError()) {
                         int attachmentCount = Integer.parseInt(String.valueOf(result.Content()));
                         if (attachmentCount > 0) {
-                            result = DataHelper.getInstance().saveEntity(uploadAttachment, uploadAttachment.getEntitySetName(), uploadAttachment.getEntityType(), uploadAttachment.getEntityResourcePath());
+                            uploadAttachment.SaveToStore(false);
                         }
                     }
                 }
@@ -721,7 +720,7 @@ public class DocsUtil {
                     if (!result.isError()) {
                         int attachmentCount = Integer.parseInt(String.valueOf(result.Content()));
                         if (attachmentCount > 0) {
-                            result = DataHelper.getInstance().saveEntity(uploadAttachment, uploadAttachment.getEntitySetName(), uploadAttachment.getEntityType(), uploadAttachment.getEntityResourcePath());
+                            uploadAttachment.SaveToStore(false);
                         }
                     }
                 }
@@ -729,6 +728,5 @@ public class DocsUtil {
         } catch (Exception e) {
             DliteLogger.WriteLog(DocsUtil.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
-        return result;
     }
 }
