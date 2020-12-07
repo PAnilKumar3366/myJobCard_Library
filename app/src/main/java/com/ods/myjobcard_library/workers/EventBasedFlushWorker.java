@@ -45,7 +45,7 @@ public class EventBasedFlushWorker extends Worker {
     @Override
     public Result doWork() {
         try {
-            if (ZAppSettings.isLoggedIn && !ZAppSettings.IsDemoModeEnabled) {
+            if (ZAppSettings.isLoggedIn && !ZAppSettings.IS_DEMO_MODE) {
 
                 if (isScheduleWorkRunning()) {
                     WorkManager.getInstance(getApplicationContext()).cancelWorkById(this.getId());
@@ -56,9 +56,9 @@ public class EventBasedFlushWorker extends Worker {
                 }
                 DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Debug, "Do work Called and tag is : " + this.getTags().toString() + " and Id  " + this.getId());
                 //DataHelper.isBGFlushInProgress = true;
-                result = helper.Flush();
+               /* result = helper.Flush();
                 if (result != null && !result.isError() && ZConfigManager.EventBased_Sync_Type == 2)
-                    result = helper.Refresh(AppStoreSet.getStoresForNormalTransmit());
+                    result = helper.Refresh(AppStoreSet.getStoresForNormalTransmit());*/
                 String errorMessage = "";
                 boolean error = false;
                 result = helper.getErrors();

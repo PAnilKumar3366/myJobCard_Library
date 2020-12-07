@@ -66,7 +66,7 @@ public class ZBaseEntity extends BaseEntity implements Parcelable {
         ResponseObject result = super.SaveToStore(autoFlush);
         if (!result.isError()) {
             //Update Backend if Bg Sync is enabled
-            if (autoFlush && ZConfigManager.EventBased_Sync.equalsIgnoreCase("x") && !ZAppSettings.IsDemoModeEnabled) {
+            if (autoFlush && ZConfigManager.EventBased_Sync.equalsIgnoreCase("x") && !ZAppSettings.IS_DEMO_MODE) {
                 ScheduleWork scheduleWork = new ScheduleWork(getEntitySetName());
                 scheduleWork.workSchedule();
             }

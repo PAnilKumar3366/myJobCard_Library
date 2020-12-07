@@ -6,11 +6,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.Settings;
 import android.text.TextUtils;
 
 import com.ods.myjobcard_library.entities.appsettings.AppFeature;
 import com.ods.myjobcard_library.entities.ctentities.ScreenMapping;
+import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
@@ -21,6 +23,10 @@ import com.ods.ods_sdk.utils.Common;
 import com.ods.ods_sdk.utils.ConfigManager;
 import com.ods.ods_sdk.utils.DliteLogger;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -486,7 +492,6 @@ public class ZCommon extends Common {
             DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
     }
-
     public interface TransmitProgressCallback {
         void update(String text);
 
@@ -495,6 +500,117 @@ public class ZCommon extends Common {
         void onSuccess(ResponseObject response);
 
         void noNetworkError();
+    }
+    //Copy raw files to SDCard
+    public static boolean copyRAWtoSDCard(final Context context) throws IOException {
+        boolean result = false;
+        try {
+            int[] fileResIds = new int[]{R.raw.apllicationstore, R.raw.apllicationstore_rq, R.raw.formenginestore, R.raw.formenginestore_rq,
+                    R.raw.highvolumestore, R.raw.highvolumestore_rq, R.raw.lowvolumestore, R.raw.lowvolumestore_rq,
+                    R.raw.qmstore, R.raw.qmstore_rq, R.raw.supervisorstore, R.raw.supervisorstore_rq, R.raw.userstore, R.raw.userstore_rq, R.raw.wmstore, R.raw.wmstore_rq};
+            String logsPath = Environment.getExternalStorageDirectory() + File.separator + ZAppSettings.App_Name + File.separator + "logs";
+            String path = logsPath + File.separator + "stores";
+            String[] fileNames = new String[]{"apllicationstore", "apllicationstore_rq", "formenginestore", "formenginestore_rq"
+                    , "highvolumestore", "highvolumestore_rq", "lowvolumestore", "lowvolumestore_rq"
+                    , "qmstore", "qmstore_rq", "supervisorstore", "supervisorstore_rq", "userstore", "userstore_rq", "wmstore", "wmstore_rq"};
+            InputStream in;
+            FileOutputStream out;
+            byte[] buff;
+            int read;
+            String filePath;
+            File storesDirectory = new File(logsPath, "stores");
+            if (!storesDirectory.exists())
+                storesDirectory.mkdirs();
+            for (int i = 0; i < fileResIds.length; i++) {
+                in = context.getResources().openRawResource(fileResIds[i]);
+                filePath = path + File.separator + fileNames[i] + ".udb";
+                out = new FileOutputStream(filePath);
+                buff = new byte[1024];
+                try {
+                    while ((read = in.read(buff)) > 0) {
+                        out.write(buff, 0, read);
+                    }
+                } finally {
+                    in.close();
+                    out.close();
+                }
+            }
+
+            File storeDirectory = new File(path);
+            File[] fromStoreFiles = storeDirectory.listFiles();
+            File toFile;
+            String fromFileName, toFileName, toFilePath;
+            for (File fromFile : fromStoreFiles) {
+                fromFileName = fromFile.getName();
+                toFileName = fromFileName.replace("_rq", ".rq");
+                toFilePath = path + File.separator + toFileName;
+                toFile = new File(toFilePath);
+                fromFile.renameTo(toFile);
+            }
+            result = true;
+        } catch (Exception e) {
+            WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return result;
+    }
+    //Copy form relevant js and css files to sd card
+    public static boolean copyAssetsToSDCard(final Context ctx) {
+        boolean result = false;
+        try {
+            String appPath = Environment.getExternalStorageDirectory() + File.separator + ZAppSettings.App_Name;
+            String formsPath = appPath + File.separator + "forms";
+            ZAppSettings.HTML_FOMRS_PATH = formsPath;
+            String jsPath = formsPath + File.separator + "js";
+            String cssPath = formsPath + File.separator + "css";
+            String[] filePaths = new String[]{jsPath, cssPath};
+            String[] cssFileNames = new String[]{"formhub.css", "grid.css"};
+            String[] jsFileNames = new String[]{"enketo-bundle.js", "enketo-bundle-original.js", "jquery.min.js"};
+            InputStream in;
+            FileOutputStream out;
+            byte[] buff;
+            int read;
+            String filePath;
+            File storesDirectory = new File(appPath, "forms");
+            if (!storesDirectory.exists())
+                storesDirectory.mkdirs();
+            for (String filePath1 : filePaths) {
+                storesDirectory = new File(filePath1);
+                if (!storesDirectory.exists())
+                    storesDirectory.mkdir();
+            }
+            for (String cssFile : cssFileNames) {
+                in = ctx.getResources().getAssets().open("css/" + cssFile);
+                filePath = cssPath + File.separator + cssFile;
+                out = new FileOutputStream(filePath);
+                buff = new byte[1024];
+                try {
+                    while ((read = in.read(buff)) > 0) {
+                        out.write(buff, 0, read);
+                    }
+                } finally {
+                    in.close();
+                    out.close();
+                }
+            }
+            for (String jsFile : jsFileNames) {
+                in = ctx.getResources().getAssets().open("js/" + jsFile);
+                filePath = jsPath + File.separator + jsFile;
+                out = new FileOutputStream(filePath);
+                buff = new byte[1024];
+                try {
+                    while ((read = in.read(buff)) > 0) {
+                        out.write(buff, 0, read);
+                    }
+                } finally {
+                    in.close();
+                    out.close();
+                }
+            }
+            result = true;
+        } catch (Exception e) {
+            WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return result;
     }
 
 }

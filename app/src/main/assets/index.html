@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <title>Form</title>
+        <link type="text/css" href="./css/formhub.css" media="all" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="/30A0DE74-6D39-ED4B-89C3-BCBA6EA66B4A/main.js" charset="UTF-8"></script><style type="text/css">
+        .form-footer .disabled {
+            display: none;
+        }
+    </style>
+    <script type="text/javascript">
+formSurvey = JSON_DYN_HERE;
+</script>
+</head>
+<body>    
+    <div style='width:100%'>
+        <div class="progress-bar-ind">&nbsp;</div>
+    </div>
+    <div class="main">
+        <article class="paper">
+            <section class="guidance">
+
+            </section>
+            <header class="form-header clearfix">
+                <span class="form-language-selector hide">
+                    <span>Choose Language</span>
+                </span>
+            </header>
+            <section class="form-footer">
+                <a href="#" class="previous-page disabled" style="position:absolute; left: 10px; bottom: 40px;">Back</a>
+                <button id="validate-form" class="btn btn-primary hide" style="width:200px; margin-left: calc(50% - 100px);">Save</button>
+                <button id="draft-form" class="btn btn-primary hide" style="width:200px; margin-left: calc(50% - 100px);">Save as Draft</button>
+                <a href="#" class="btn btn-primary next-page disabled" style="width: 200px; margin-left: calc(50% - 100px)">Next</a>
+
+                <!--<div class="enketo-power" style="margin-bottom: 30px;">&nbsp;
+                </div>-->
+                <div class="form-footer__jump-nav" style="display: flex; flex-direction: row;">
+                    <a href="#" class="btn btn-default disabled first-page" style="flex: 1; border-radius: 0;">Return to Beginning</a>
+                    <a href="#" class="btn btn-default disabled last-page" style="flex: 1; border-radius: 0;">Go to End</a>
+                </div>
+            </section>
+
+        </article>
+    </div>
+    <script type="text/javascript" src="./js/enketo-bundle-original.js"></script>
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+</body>
+
+</html>

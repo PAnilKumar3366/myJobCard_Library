@@ -21,16 +21,21 @@ import androidx.core.content.FileProvider;
 
 import com.ods.myjobcard_library.R;
 import com.ods.myjobcard_library.ZAppSettings;
+import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.attachment.UploadAttachmentContent;
 import com.ods.myjobcard_library.entities.attachment.UploadNotificationAttachmentContent;
+import com.ods.ods_sdk.StoreHelpers.DataHelper;
+import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
+import com.sap.smp.client.odata.ODataEntity;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;

@@ -23,6 +23,7 @@ import com.ods.ods_sdk.utils.DliteLogger;
 import com.ods.ods_sdk.utils.OfflineAsyncHelper;
 import com.sap.smp.client.odata.ODataEntity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,6 +129,20 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
     }
     public void refreshStores(ArrayList<AppStoreSet> storeList) {
         ZCommon.showTransmitProgress(getApplication(), this,storeList);
+    }
+    public void copyRAWtoSDCard(){
+        try {
+            boolean isCopyRawFiles=ZCommon.copyRAWtoSDCard(getApplication());
+           if(!isCopyRawFiles) {
+              // ResponseObject responseObject = new ResponseObject(ConfigManager.Status.Error, "Error in offline data", null);
+               error.setValue("Error in offline data");
+           }
+           /*else
+               ZCommon.copyAssetsToSDCard(getApplication());*/
+
+        } catch (IOException e) {
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
     }
     public final void logout() {
         closeStoresGoToLoginScreen();
