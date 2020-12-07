@@ -21,11 +21,15 @@ import androidx.core.content.FileProvider;
 
 import com.ods.myjobcard_library.R;
 import com.ods.myjobcard_library.ZAppSettings;
+import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.attachment.UploadAttachmentContent;
 import com.ods.myjobcard_library.entities.attachment.UploadNotificationAttachmentContent;
+import com.ods.ods_sdk.StoreHelpers.DataHelper;
+import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
+import com.sap.smp.client.odata.ODataEntity;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -659,4 +663,71 @@ public class DocsUtil {
         return b;
     }
 
+    public static ResponseObject RemoveUnRequiredUploadEntities() {
+        ResponseObject result = new ResponseObject(ZConfigManager.Status.Error);
+        try {
+            String entitySetName = ZCollections.WO_ATTACHMENT_CONTENT_UPLOAD_COLLECTION;
+            String attResPath = entitySetName + "?$filter=BINARY_FLG ne 'N'";
+            result = DataHelper.getInstance().getEntities(entitySetName, attResPath);
+            if (!result.isError()) {
+                List<ODataEntity> uploadedEntities = (List<ODataEntity>) result.Content();
+                UploadAttachmentContent uploadAttachment;
+                for (ODataEntity entity : uploadedEntities) {
+                    uploadAttachment = new UploadAttachmentContent(entity, ZAppSettings.FetchLevel.Header);
+                    uploadAttachment.setBINARY_FLG("N");
+                    uploadAttachment.setMode(ZAppSettings.EntityMode.Update);
+                    entitySetName = ZCollections.WO_ATTACHMENT_COLLECTION;
+                    String resPath = entitySetName + "/$count?$filter=endswith(ObjectKey,'" + uploadAttachment.getWorkOrderNum() + "') eq true and " +
+                            "(tolower(Extension) eq 'url' or tolower(CompID) eq '" + uploadAttachment.getFILE_NAME().toLowerCase() + "') and tolower(PropValue) eq '" + uploadAttachment.getDescription().toLowerCase() + "'";
+                    result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+                    if (!result.isError()) {
+                        int attachmentCount = Integer.parseInt(String.valueOf(result.Content()));
+                        if (attachmentCount > 0) {
+                            result = DataHelper.getInstance().saveEntity(uploadAttachment, uploadAttachment.getEntitySetName(), uploadAttachment.getEntityType(), uploadAttachment.getEntityResourcePath());
+                        }
+                    }
+                }
+            }
+            entitySetName = ZCollections.NO_ATTACHMENT_CONTENT_UPLOAD_COLLECTION;
+            attResPath = entitySetName + "?$filter=BINARY_FLG ne 'N'";
+            result = DataHelper.getInstance().getEntities(entitySetName, attResPath);
+            if (!result.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
+                UploadNotificationAttachmentContent uploadAttachment;
+                for (ODataEntity entity : entities) {
+                    uploadAttachment = new UploadNotificationAttachmentContent(entity, ZAppSettings.FetchLevel.Header);
+                    uploadAttachment.setBINARY_FLG("N");
+                    uploadAttachment.setMode(ZAppSettings.EntityMode.Update);
+                    entitySetName = ZCollections.NO_ATTACHMENT_COLLECTION;
+                    String resPath = entitySetName + "/$count?$filter=endswith(ObjectKey,'" + uploadAttachment.getNotification() + "') eq true and " +
+                            "(tolower(Extension) eq 'url' or tolower(CompID) eq '" + uploadAttachment.getFILE_NAME().toLowerCase() + "') and tolower(PropValue) eq '" + uploadAttachment.getDescription().toLowerCase() + "'";
+                    result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+                    if (!result.isError()) {
+                        int attachmentCount = Integer.parseInt(String.valueOf(result.Content()));
+                        if (attachmentCount > 0) {
+                            result = DataHelper.getInstance().saveEntity(uploadAttachment, uploadAttachment.getEntitySetName(), uploadAttachment.getEntityType(), uploadAttachment.getEntityResourcePath());
+                        }
+                    }
+                }
+                for (ODataEntity entity : entities) {
+                    uploadAttachment = new UploadNotificationAttachmentContent(entity, ZAppSettings.FetchLevel.Header);
+                    uploadAttachment.setBINARY_FLG("N");
+                    uploadAttachment.setMode(ZAppSettings.EntityMode.Update);
+                    entitySetName = ZCollections.WO_NO_ATTACHMENT_COLLECTION;
+                    String resPath = entitySetName + "/$count?$filter=endswith(ObjectKey,'" + uploadAttachment.getNotification() + "') eq true and " +
+                            "(tolower(Extension) eq 'url' or tolower(CompID) eq '" + uploadAttachment.getFILE_NAME().toLowerCase() + "') and tolower(PropValue) eq '" + uploadAttachment.getDescription().toLowerCase() + "'";
+                    result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+                    if (!result.isError()) {
+                        int attachmentCount = Integer.parseInt(String.valueOf(result.Content()));
+                        if (attachmentCount > 0) {
+                            result = DataHelper.getInstance().saveEntity(uploadAttachment, uploadAttachment.getEntitySetName(), uploadAttachment.getEntityType(), uploadAttachment.getEntityResourcePath());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(DocsUtil.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return result;
+    }
 }

@@ -10,11 +10,10 @@ import android.provider.Settings;
 import android.text.TextUtils;
 
 import com.ods.myjobcard_library.entities.appsettings.AppFeature;
-import com.ods.myjobcard_library.entities.ctentities.ScreenMapping;
+import com.ods.myjobcard_library.utils.DocsUtil;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
-import com.ods.ods_sdk.entities.ErrorObject;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
 import com.ods.ods_sdk.utils.Common;
@@ -231,6 +230,7 @@ public class ZCommon extends Common {
         }
         return entitySetName;
     }
+
     public static boolean isLocationEnabled(Context context) {
         int locationMode = 0;
         String locationProviders;
@@ -384,10 +384,10 @@ public class ZCommon extends Common {
         return result;
     }
 
-    public static void showTransmitProgress(final Context context, final TransmitProgressCallback callback,final ArrayList<AppStoreSet> storeList) {
+    public static void showTransmitProgress(final Context context, final TransmitProgressCallback callback, final ArrayList<AppStoreSet> storeList) {
         try {
 
-            if (chkNetworkAvailable(context))  {
+            if (chkNetworkAvailable(context)) {
                 if (DataHelper.isFEngFlushInProgress || DataHelper.isTxFlushInProgress) {
                     ResponseObject response = new ResponseObject(ZConfigManager.Status.Warning);
                     response.setMessage("Background sync in progress");
@@ -405,20 +405,19 @@ public class ZCommon extends Common {
                     protected ResponseObject doInBackground(Void... voids) {
                         ResponseObject res = null;
                         try {
-                            boolean isTxStore=storeList.get(0).getFlush().equalsIgnoreCase("1");
+                            boolean isTxStore = storeList.get(0).getFlush().equalsIgnoreCase("1");
                             if (isTxStore) {
                                 res = DataHelper.getInstance().PendingRequestExists(storeList);
                                 if (res != null && res.getStatus() == ConfigManager.Status.Warning) {
                                     publishProgress(context.getString(R.string.msg_uploading));
                                     res = DataHelper.getInstance().changeStoreStatus(StoreSettings.SyncOptions.Flush_Tx_Only);
                                 }
-                            }
-                            else
-                                res=new ResponseObject(ConfigManager.Status.Success, "", null);
+                            } else
+                                res = new ResponseObject(ConfigManager.Status.Success, "", null);
 
                             if ((res != null && !res.isError())) {
                                 publishProgress(context.getString(R.string.msg_downloading));
-                                res = DataHelper.getInstance().changeStoreStatus(isTxStore?StoreSettings.SyncOptions.Refresh_All_Trans_Stores:StoreSettings.SyncOptions.Refresh_All_Master_Stores);
+                                res = DataHelper.getInstance().changeStoreStatus(isTxStore ? StoreSettings.SyncOptions.Refresh_All_Trans_Stores : StoreSettings.SyncOptions.Refresh_All_Master_Stores);
                                 if (!res.isError()) {
                                     publishProgress(context.getString(R.string.msg_sync_complete));
                                     Thread.sleep(1000);
@@ -432,6 +431,7 @@ public class ZCommon extends Common {
                                             editor.putLong(ZCollections.ARG_LAST_MASTER_DATA_SYNC_TIME, getDeviceDateTime().getTimeInMillis());
                                         editor.apply();
                                     }
+                                    DocsUtil.RemoveUnRequiredUploadEntities();
                                     return res;
                                 } else {
                                     publishProgress(context.getString(R.string.msg_something_went_wrong_downloading));
@@ -465,7 +465,7 @@ public class ZCommon extends Common {
                                 response.setMessage("BE Errors");
                                 callback.errorCallback(response);
                             }
-                            if(storeList.get(0).getRefresh().equalsIgnoreCase("2")){
+                            if (storeList.get(0).getRefresh().equalsIgnoreCase("2")) {
                                 AppStoreSet.getStoreList();
                                 TableConfigSet.getTableDetails();
                                 ConfigManager.setAppConfigurations();

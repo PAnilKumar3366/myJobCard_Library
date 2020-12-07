@@ -57,7 +57,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         this.isFirstDemoLogin = isFirstDemoLogin;
         this.oldUserLogin = oldUserLogin;
         String oldPass = preferences.getString(ZCollections.ARG_USER_PASSWORD, "");
-        RegisterHelper helper = RegisterHelper.getInstance(context, this);
+        helper = RegisterHelper.getInstance(context, this);
         helper.setIsFirstDemoLogin(isFirstDemoLogin);
         helper.initRegistration(userName, oldUser, password, oldPass, isHttps, host, port, appname, oldUserLogin,isDemoMode);
     }
