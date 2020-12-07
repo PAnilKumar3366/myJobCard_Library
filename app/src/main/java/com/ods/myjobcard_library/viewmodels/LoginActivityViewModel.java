@@ -2,6 +2,7 @@ package com.ods.myjobcard_library.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,8 +11,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
+import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ctentities.UserTable;
+import com.ods.myjobcard_library.utils.DocsUtil;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.Collections;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
@@ -24,6 +27,9 @@ import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.ods.ods_sdk.utils.logs.ClientLogManager;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class LoginActivityViewModel extends BaseViewModel implements RegisterHelper.Callbacks {
@@ -134,7 +140,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
     @Override
     public void onRegisterSuccess() {
 
-        if (AppSettings.IS_DEMO_MODE && isFirstDemoLogin)
+       /* if (AppSettings.IS_DEMO_MODE && isFirstDemoLogin)
             new StoreStatusAsyncHelper(StoreSettings.SyncOptions.InitDemoMode, new StoreStatusAsyncHelper.Callbacks() {
                 @Override
                 public void onResult(ResponseObject response) {
@@ -157,35 +163,44 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
 
                 }
             }).execute((Void) null);
-        else {
-            updateUI("We are keeping the things ready. Please Wait...");
-            ZAppSettings.AppStoreName="APLLICATIONSTORE";
-            ZAppSettings.isOpenOnlineAPStore=preferences.getBoolean("IS_ONLINE_APPSTORE",true);
-            new StoreStatusAsyncHelper(StoreSettings.SyncOptions.InitStores, new StoreStatusAsyncHelper.Callbacks() {
-                @Override
-                public void onResult(ResponseObject response) {
-                    if(response.getMessage().equalsIgnoreCase("Error opening App Settings store"))
-                        putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE, true);
-                    else {
-                        putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE, false);
-                        ZAppSettings.userFirstName = UserTable.getUserFirstName();
-                        ZAppSettings.userLastName = UserTable.getUserLastName();
-                    }
-
-                    putSharedPreferences(ZCollections.ARG_IS_LOGGED_IN, true);
-
-                    if (response.getStatus().equals(ZConfigManager.Status.Success) && (ZAppSettings.App_FCM_Token == null || ZAppSettings.App_FCM_Token.isEmpty())) {
-                        updateUI("FCM Registration");
-                    }
-                    else
-                        onSuccess();
-                }
-
-                @Override
-                public void update(String update) {
-                }
-            }).execute((Void) null);
+        else {*/
+        if(AppSettings.IS_DEMO_MODE) {
+            copyRAWtoSDCard();
+            AppSettings.App_IP="mobile-a53d86cd7.hana.ondemand.com";
         }
+        else
+            ZAppSettings.isOpenOnlineAPStore=preferences.getBoolean("IS_ONLINE_APPSTORE",true);
+        updateUI("We are keeping the things ready. Please Wait...");
+        ZAppSettings.AppStoreName="APLLICATIONSTORE";
+        ZCommon.copyAssetsToSDCard(getApplication());
+        new StoreStatusAsyncHelper(StoreSettings.SyncOptions.InitStores, new StoreStatusAsyncHelper.Callbacks() {
+            @Override
+            public void onResult(ResponseObject response) {
+                if(response.getMessage().equalsIgnoreCase("Error opening App Settings store"))
+                    putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE, true);
+                else {
+                    putSharedPreferences(ZCollections.IS_ONLINE_APPSTORE, false);
+                    ZAppSettings.userFirstName = UserTable.getUserFirstName();
+                    ZAppSettings.userLastName = UserTable.getUserLastName();
+                }
+
+                putSharedPreferences(ZCollections.ARG_IS_LOGGED_IN, true);
+
+                if (!AppSettings.IS_DEMO_MODE&&response.getStatus().equals(ZConfigManager.Status.Success) && (ZAppSettings.App_FCM_Token == null || ZAppSettings.App_FCM_Token.isEmpty())) {
+                    updateUI("FCM Registration");
+                }
+                else
+                    onSuccess();
+            }
+
+            @Override
+            public void update(String update) {
+                if(update.equalsIgnoreCase("AppStore Open")){
+                    // copyAssetsToSDCard(getApplication());
+                }
+            }
+        }).execute((Void) null);
+        //}
     }
 
     public void PushSubscription(String appConn) {

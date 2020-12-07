@@ -51,7 +51,7 @@ public class MasterDataRefreshWorker extends Worker {
     @Override
     public Result doWork() {
         try {
-            if (ZAppSettings.isLoggedIn && !ZAppSettings.IsDemoModeEnabled) {
+            if (ZAppSettings.isLoggedIn && !ZAppSettings.IS_DEMO_MODE) {
                 if (retryCount > ZConfigManager.MasterData_BG_Refresh_Retry_Attempts && retryUID.equals(getId())) {
                     DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Info, "Master data refresh retry reaches the maximum attempts");
                     retryCount = 0;

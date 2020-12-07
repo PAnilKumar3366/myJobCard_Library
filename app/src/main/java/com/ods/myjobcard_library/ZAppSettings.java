@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ZAppSettings extends AppSettings {
-    public static String App_Name = "com.ods.myJobCard"; //"com.sap.wmUpd";
+   // public static String App_Name = "com.ods.myJobCard"; //"com.sap.wmUpd";
    // public static String App_ID = "com.ods.myJobCard";//"com.sap.wmNupd"; //"com.sap.wmDlite"; //"com.sap.wmWin";// "com.sap.wmNupd"; //"com.sap.wmUpd";
     /*//added by Shubham
     public static String App_LowVol_CT_Service_Root = "ctRootService";
@@ -29,7 +29,7 @@ public class ZAppSettings extends AppSettings {
     public static boolean isHttps = true;
     public static int App_Name_MinLength = 3;
 
-    public static boolean IsDemoModeEnabled = false;
+   // public static boolean IsDemoModeEnabled = false;
 
     public static String App_FCM_Token;
     public static String App_Connection_ID;
