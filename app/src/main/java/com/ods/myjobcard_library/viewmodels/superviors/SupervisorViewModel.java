@@ -36,7 +36,10 @@ public class SupervisorViewModel extends BaseViewModel {
 
     public void setListOfForms(SupervisorWorkOrder workOrder) {
         try {
-            getOrderType(workOrder, ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE));
+            orderType = workOrder.getOrderType();
+            equipmentCat = "";
+            funcLocCat = "";
+            controlKey = "";
             operationNum = "";
             workOrderNum = workOrder.getWorkOrderNum();
             getFormsList();
@@ -52,37 +55,6 @@ public class SupervisorViewModel extends BaseViewModel {
     public void setCurrWorkOrder() {
         SupervisorWorkOrder workOrder = SupervisorWorkOrder.getCurrentSupervisorWorkOrder();
         currWorkOrder.setValue(workOrder);
-    }
-
-    protected void getOrderType(SupervisorWorkOrder workOrder, String type) {
-        if (type.equals(ZAppSettings.FormAssignmentType.WorkOrderLevel.Value)) {
-            orderType = workOrder.getOrderType();
-            equipmentCat = "";
-            funcLocCat = "";
-            controlKey = "";
-        }/* else if (type.equals(ZAppSettings.FormAssignmentType.OperationLevel.Value)) {
-            controlKey = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? workOrder.getCurrentOperation().getControlKey() : "";
-            orderType = workOrder.getOrderType();
-            equipmentCat = "";
-            funcLocCat = "";
-        } else if (type.equals(ZAppSettings.FormAssignmentType.Equipment.Value)) {
-            funcLocCat = "";
-            if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
-                equipmentCat = workOrder.getEquipCategory();
-            else
-                equipmentCat = workOrder.getCurrentOperation().getEquipCategory().isEmpty() ? workOrder.getEquipCategory() : workOrder.getCurrentOperation().getEquipCategory();
-        } else if (type.equals(ZAppSettings.FormAssignmentType.FuncLoc.Value)) {
-            equipmentCat = "";
-            if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
-                funcLocCat = workOrder.getFuncLocCategory();
-            else
-                funcLocCat = workOrder.getCurrentOperation().getFuncLocCategory().isEmpty() ? workOrder.getFuncLocCategory() : workOrder.getCurrentOperation().getFuncLocCategory();
-        } else if (type.equals(ZAppSettings.FormAssignmentType.None.Value)) {
-            if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
-                orderType = workOrder.getOrderType();
-            else
-                controlKey = workOrder.getCurrentOperation().getControlKey();
-        }*/
     }
 
     private void getFormsList() {
