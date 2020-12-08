@@ -394,7 +394,7 @@ public class ZCommon extends Common {
         try {
 
             if (chkNetworkAvailable(context))  {
-                if (DataHelper.isFEngFlushInProgress || DataHelper.isTxFlushInProgress) {
+                if (ZConfigManager.isBGFlushInProgress) {
                     ResponseObject response = new ResponseObject(ZConfigManager.Status.Warning);
                     response.setMessage("Background sync in progress");
                     callback.errorCallback(response);

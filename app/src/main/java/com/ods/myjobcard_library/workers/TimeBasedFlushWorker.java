@@ -18,7 +18,9 @@ import com.ods.myjobcard_library.R;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
+import com.ods.myjobcard_library.utils.DocsUtil;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
+import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -64,24 +66,33 @@ public class TimeBasedFlushWorker extends Worker {
                 }
                 ResponseObject resultPending = helper.PendingRequestExists(AppStoreSet.getStoresForNormalTransmit());
                 Long start_time = System.currentTimeMillis();
-
+                ZConfigManager.isBGFlushInProgress=true;
                 Log.d(TAG, "doWork: Periodic Request is started " + this.getId());
                 DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Debug, "Do work Called in Schedule Task Begin time " + ZCommon.getDevicDateTime().getTime().toString() + "tag is : " + this.getTags().toString() + " and Id  " + this.getId());
                 showNotification("Refreshing Data", "Background Refresh Started");
 
                 if (resultPending.getStatus().equals(ZConfigManager.Status.Warning))
-                    result = helper.Flush();
+                    result = helper.changeStoreStatus(StoreSettings.SyncOptions.Flush_Tx_Only);
 
                 if (!result.isError() && ZConfigManager.TimeBased_Sync_Type == 2)
-                    result = helper.Refresh(AppStoreSet.getStoresForNormalTransmit());
+                    result = helper.changeStoreStatus(StoreSettings.SyncOptions.Refresh_All_Trans_Stores);
                 //result = helper.ReadErrors(AppStoreSet.getStoresForNormalTransmit());
                 String errorMessage = "";
                 boolean error = false;
-                result = helper.getErrors();
+                for (AppStoreSet store : AppStoreSet.getStoresForNormalTransmit()) {
+                    result = helper.changeStoreStatus(store,StoreSettings.SyncOptions.Read_Tx_Errors);
+                    if (result.isError()) {
+                        errorMessage = result.getMessage();
+                        error = true;
+                    }
+                }
+                result.setError(error);
+                result.setMessage(errorMessage);
+               /* result = helper.getErrors();
                 if (result.isError()) {
                     errorMessage = result.getMessage();
                     error = true;
-                }
+                }*/
 
                 /*for (AppStoreSet store : AppStoreSet.getStoresForNormalTransmit()) {
                     result = helper.ReadErrors(store);
@@ -101,7 +112,7 @@ public class TimeBasedFlushWorker extends Worker {
                     next_time = nextInterValTime - next_time;
                 else
                     next_time = 2L;
-                //DataHelper.isBGFlushInProgress = false;
+                ZConfigManager.isBGFlushInProgress = false;
                 Calendar instance = Calendar.getInstance();
                 instance.add(Calendar.MINUTE, next_time.intValue());
                 Data.Builder outPutData = new Data.Builder().putLong("NextRefreshTime", next_time).
@@ -113,6 +124,7 @@ public class TimeBasedFlushWorker extends Worker {
                     showNotification("Refresh Data", "Background Refresh Failed");
                     return Result.failure(outPutData.putString("ErrorMsg", result.getMessage()).putString("Result", "Fail").build());
                 } else if (result.getStatus().equals(ZConfigManager.Status.Success)) {
+                    DocsUtil.RemoveUnRequiredUploadEntities();
                     showNotification("Refresh Data", "Background Refresh Completed");
                     DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Debug, "Do work Called in Schedule Task is Completed. tag is : " + this.getTags().toString() + " and Id  " + this.getId());
                     return Result.Success.success(outPutData.putString("Result", "Success").build());

@@ -25,6 +25,7 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
+import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -65,7 +66,7 @@ public class MasterDataRefreshWorker extends Worker {
                 result = DataHelper.getInstance().PendingRequestExists(storesList);
 
                 if (result != null && !result.isError())
-                    result = DataHelper.getInstance().Refresh(storesList);
+                    result = DataHelper.getInstance().changeStoreStatus(StoreSettings.SyncOptions.Refresh_All_Master_Stores);
                 // result = DataHelper.getInstance().ReadErrors(storesList);
                 /*for (AppStoreSet store : AppStoreSet.getStoresForMasterDataTransmit()) {
                     result = DataHelper.getInstance().getErrorLogs();

@@ -12,7 +12,9 @@ import androidx.work.WorkerParameters;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZConfigManager;
+import com.ods.myjobcard_library.utils.DocsUtil;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
+import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -55,29 +57,27 @@ public class EventBasedFlushWorker extends Worker {
                     return Result.success(errorData);
                 }
                 DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Debug, "Do work Called and tag is : " + this.getTags().toString() + " and Id  " + this.getId());
-                //DataHelper.isBGFlushInProgress = true;
+                ZConfigManager.isBGFlushInProgress = true;
                /* result = helper.Flush();
                 if (result != null && !result.isError() && ZConfigManager.EventBased_Sync_Type == 2)
                     result = helper.Refresh(AppStoreSet.getStoresForNormalTransmit());*/
                 String errorMessage = "";
                 boolean error = false;
-                result = helper.getErrors();
+                /*result = helper.getErrors();
                 if (result.isError()) {
                     errorMessage = result.getMessage();
                     error = true;
-                }
-                /*for (AppStoreSet store : AppStoreSet.getStoresForNormalTransmit()) {
-                    result = helper.ReadErrors(store);
+                }*/
+                for (AppStoreSet store : AppStoreSet.getStoresForNormalTransmit()) {
+                    result = helper.changeStoreStatus(store, StoreSettings.SyncOptions.Read_Tx_Errors);
                     if (result.isError()) {
                         errorMessage = result.getMessage();
                         error = true;
                     }
-                }*/
+                }
                 result.setError(error);
                 result.setMessage(errorMessage);
                 //result = helper.ReadErrors(AppStoreSet.getStoresForNormalTransmit());
-
-                //DataHelper.isBGFlushInProgress = false;
                 if (result.isError()) {
                     Data errorData = new Data.Builder().
                             putBoolean("isSchedule", false).

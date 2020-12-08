@@ -187,6 +187,7 @@ public class ZConfigManager extends ConfigManager {
     public static int TimeBased_Sync_Type = 2;
     public static String DOWNLOAD_CREATEDBY_NOTIF = "X";
     public static String DOWNLOAD_CREATEDBY_WO = "X";
+    public static boolean isBGFlushInProgress = false;
 
     public static GregorianCalendar getDefaultCalendarVal() {
         try {
