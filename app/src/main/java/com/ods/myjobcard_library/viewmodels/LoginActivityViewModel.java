@@ -127,7 +127,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
             ZAppSettings.isLoggedIn = true;
             ZAppSettings.isOpenOnlineAPStore=preferences.getBoolean(ZCollections.IS_ONLINE_APPSTORE,true);
         }
-        ZConfigManager.setAppConfigurations();
+        //ZConfigManager.setAppConfigurations();
         updateUI("success");
     }
 
@@ -183,7 +183,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                     ZAppSettings.userFirstName = UserTable.getUserFirstName();
                     ZAppSettings.userLastName = UserTable.getUserLastName();
                 }
-
+                ZConfigManager.setAppConfigurations();
                 putSharedPreferences(ZCollections.ARG_IS_LOGGED_IN, true);
 
                 if (!AppSettings.IS_DEMO_MODE&&response.getStatus().equals(ZConfigManager.Status.Success) && (ZAppSettings.App_FCM_Token == null || ZAppSettings.App_FCM_Token.isEmpty())) {
