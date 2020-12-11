@@ -46,7 +46,8 @@ public class NotifLongText extends ZBaseEntity {
             }
             this.TextLine = deviceTime + " " + textLine;*/
             //this.TextLine = textLine;
-            setTextString(textLine);
+            //setTextString(textLine);
+            setTextLine(textLine);
         } catch (Exception e) {
             DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
         }
@@ -127,8 +128,8 @@ public class NotifLongText extends ZBaseEntity {
                     try {
                         if (entity != null) {
                             if (entity.getProperties() != null && entity.getProperties().size() > 0) {
-                                if (entity.getProperties().containsKey("TextString")) {
-                                    String strLine = entity.getProperties().get("TextString").getValue().toString();
+                                if (entity.getProperties().containsKey("TextLine")) {
+                                    String strLine = entity.getProperties().get("TextLine").getValue().toString();
                                     noLongTexts.add(strLine);
                                 }
                             }
