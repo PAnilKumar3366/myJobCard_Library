@@ -1,63 +1,4 @@
-function setformAttachments(array){
-    console.log("in JS: 1")
-    var attachments = JSON.parse(JSON.stringify(array));
 
-    var asyncLoopForm = function(o){
-    var k=-1,
-        length = o.length;
-    var loopform = function(){
-        k++;
-        if(k==length){o.callbackform(); return;}
-        o.functionToLoopForm(loopform, k);
-    }
-    loopform();//init
-    }
-    asyncLoopForm({
-        length : attachments.length,//data.results.length,
-        functionToLoopForm : function(loopform, k){
-        $( ".with-media" ).each( function( index, element ){
-                    console.log(element.childNodes)
-                     var imagetype='';
-            for(var i=0;i<element.childNodes.length;i++)
-            {
-                var de=element.childNodes[i];
-                    console.log(de);
-                if(element.childNodes[i].accept==undefined)
-                {
-
-                }
-                else
-                {
-                    if(element.childNodes[i].accept.slice(0, -2)=="image" && element.childNodes[i+1].childNodes[3].outerHTML.includes(attachments[k].FileName))
-                    {
-                        imagetype='image';
-
-                        element.childNodes[i+1].lastChild.outerHTML='<div class="file-preview"><img src="data:image/png;base64,'+attachments[k].ImageData+'"</img>'
-                    }
-                    else if(element.childNodes[i].accept.slice(0, -2)=="audio"  && element.childNodes[i+1].childNodes[3].outerHTML.includes(attachments[k].FileName))
-                    {
-                        element.childNodes[i+1].lastChild.outerHTML='<div class="file-preview"><audio src="data:audio/ogg;base64,'+attachments[k].ImageData+'"</audio>'
-                    }
-                    else if(element.childNodes[i].accept.slice(0, -2)=="video" && element.childNodes[i+1].childNodes[3].outerHTML.includes(attachments[k].FileName))
-                    {
-                        element.childNodes[i+1].lastChild.outerHTML='<div class="file-preview"><video controls type="video/mp4"  src="data:video/mp4;base64,'+attachments[k].ImageData+'"</video>'
-                    }
-
-                    console.log(de.lastChild);
-
-                }
-            }
-        })
-        setTimeout(function(){
-            console.log('Iteration ' + k + ' <br>');
-            loopform();
-        },2000);
-    },
-    callbackform : function(){
-       console.log('All done!');
-    }
-});
-}
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 /**
  * This file is just meant to facilitate enketo-core development as a standalone library.
@@ -151,6 +92,94 @@ function populateScanResultEnketo(scanContent){
     	    $("input[data-type-xml='barcode']").val(scanContent);
         }
 
+$( '#load-attachments' ).on( 'click', function() {
+    setformAttachments();
+} );
+
+function setformAttachments(){
+
+    var attachments = Interface.getAttachments();
+    attachments = JSON.parse(attachments);
+
+    var asyncLoopForm = function(o){
+    var k=-1,
+        length = o.length;
+    var loopform = function(){
+        k++;
+        if(k==length){o.callbackform(); return;}
+        o.functionToLoopForm(loopform, k);
+    }
+    loopform();//init
+    }
+    asyncLoopForm({
+        length : attachments.length,//data.results.length,
+        functionToLoopForm : function(loopform, k){
+        $( ".with-media" ).each( function( index, element ){
+                     var imagetype='';
+            for(var i=0;i<element.childNodes.length;i++)
+            {
+                var de=element.childNodes[i];
+
+                if(element.childNodes[i].accept==undefined)
+                {
+
+                }
+                else
+                {
+                    if(de.accept.slice(0, -2)=="image" && de.outerHTML.includes(attachments[k].FileName))
+                    {
+                        imagetype='image';
+                        element.childNodes[i+1].lastChild.outerHTML='<div class="file-preview"><img src="data:image/png;base64,'+attachments[k].ImageData+'"</img></div>';
+                        var ofileFeedback = element.childNodes[i + 1].getElementsByClassName("file-feedback");
+                        if($(ofileFeedback[0]).hasClass('error'))
+                        {
+                            ofileFeedback[0].hidden = true;
+                        }
+                    }
+                    else if(element.childNodes[i].accept.slice(0, -2)=="audio"  && element.childNodes[i].outerHTML.includes(attachments[k].FileName))
+                    {
+                        element.childNodes[i+1].lastChild.outerHTML='<div class="file-preview"><audio src="data:audio/ogg;base64,'+attachments[k].ImageData+'"</audio></div>'
+                    }
+                    else if(element.childNodes[i].accept.slice(0, -2)=="video" && element.childNodes[i].outerHTML.includes(attachments[k].FileName))
+                    {
+                        element.childNodes[i+1].lastChild.outerHTML='<div class="file-preview"><video controls type="video/mp4"  src="data:video/mp4;base64,'+attachments[k].ImageData+'"</video></div>'
+                    }
+
+                }
+            }
+        })
+        //canvas or signature rendering
+        $(".or-appearance-signature").each(function (index, element) {
+                        var imagetype = '';
+                        for (var i = 0; i < element.childNodes.length; i++) {
+                            var de = element.childNodes[i];
+                            if (element.childNodes[i].accept == undefined) {
+
+                            } else {
+                        if (element.childNodes[i].accept.slice(0, -2) == "image" && element.childNodes[i].outerHTML.includes(attachments[k].FileName)) {//&& element.childNodes[i].outerHTML.includes(filename)
+                        var oCanvasbody = element.childNodes[i + 1].getElementsByClassName("draw-widget__body");
+                        var oCanvasFooter = element.childNodes[i + 1].getElementsByClassName("draw-widget__footer");
+                        var sDiv = '<div class="file-preview"><img src="data:image/png;base64,' + attachments[k].ImageData + '"</img></div>';
+                        oCanvasbody[0].innerHTML=sDiv;
+                        oCanvasFooter[0].childNodes[2].hidden=true;
+                        //var feedback = oCanvasFooter[0].getElementsByClassName("draw-widget__feedback");
+                        //feedback[0].hide();
+                                                        //oCanvasbody[element.childNodes.length-1].lastChild.outerHTML=sDiv
+                                                        //$(".draw-widget__footer").append(sDiv);
+                        }
+                        }
+                        }
+                        })
+
+        setTimeout(function(){
+            loopform();
+        },400);
+    },
+    callbackform : function(){
+       console.log('All done!');
+    }
+});
+}
 
 // initialize the form
 function initializeForm() {
@@ -37322,6 +37351,8 @@ fileManager.getCurrentFiles = function() {
         var newFilename;
         var file = null;
         var canvas = null;
+        var questionName = this.getAttribute('name');
+        questionName = questionName.substring(questionName.lastIndexOf("/")+1);
         if ( this.type === 'file' ) {
             file = this.files[ 0 ]; // Why doesn't this fail for empty file inputs?
         } else if ( this.value ) {
@@ -37349,7 +37380,7 @@ fileManager.getCurrentFiles = function() {
             var reader = new FileReader();
             reader.onload = function(){
                   var fileContent = reader.result;
-                  Interface.getAttachment(newFilename,fileContent,file.size,file.type);
+                  Interface.getAttachment(newFilename,fileContent,questionName,file.type);
                 //  console.log('mycontent:', fileContent);
             };
             reader.readAsDataURL(file);
@@ -39378,19 +39409,19 @@ function stripQuotes( str ) {
 
 
 function getFilename( file, postfix ) {
-var date = new Date().getTime().toString()
+/*var date = new Date().getTime().toString()
 var result = file.name.split(".");
 var finalname ;
   var results = result[0].includes('signature')
   if (results ==  true){
-  finalname = "signature_" + getDateString() + "." + result[1];
+  finalname = "signature_" + date + "." + result[1];
   }else{
   finalname = result[0] + "_" + getDateString() + "." + result[1];
   }
 //var finalname = result[0] + getDateString() + "." + result[1];
-return finalname;
+return finalname;*/
 
-    /*var filenameParts;
+    var filenameParts;
     if ( typeof file === 'object' && file !== null && file.name ) {
         postfix = postfix || '';
         filenameParts = file.name.split( '.' );
@@ -39401,7 +39432,7 @@ return finalname;
         }
         return filenameParts.join( '.' );
     }
-    return '';*/
+    return '';
 }
 
 /**

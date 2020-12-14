@@ -86,6 +86,11 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
     }
 
     @Override
+    public void setSAML2UserName(String username) {
+
+    }
+
+    @Override
     public void updateUI(String update) {
         this.update.setValue(update);
         Log.d("LoginVM: ", update);
