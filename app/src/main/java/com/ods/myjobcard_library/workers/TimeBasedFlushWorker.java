@@ -36,6 +36,8 @@ public class TimeBasedFlushWorker extends Worker {
     Context context;
     ResponseObject result = new ResponseObject(ZConfigManager.Status.Success);
     private DataHelper helper;
+    String errorMessage = "";
+    boolean error = false;
 
     public TimeBasedFlushWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -64,30 +66,22 @@ public class TimeBasedFlushWorker extends Worker {
                     outputBuilder.putString("Result", "Retry").build();
                     return Result.Retry.success(outputBuilder.build());
                 }
+
                 ResponseObject resultPending = helper.PendingRequestExists(AppStoreSet.getStoresForNormalTransmit());
                 Long start_time = System.currentTimeMillis();
-                ZConfigManager.isBGFlushInProgress=true;
+                ZConfigManager.isBGFlushInProgress = true;
                 Log.d(TAG, "doWork: Periodic Request is started " + this.getId());
                 DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Debug, "Do work Called in Schedule Task Begin time " + ZCommon.getDevicDateTime().getTime().toString() + "tag is : " + this.getTags().toString() + " and Id  " + this.getId());
                 showNotification("Refreshing Data", "Background Refresh Started");
 
                 if (resultPending.getStatus().equals(ZConfigManager.Status.Warning))
-                    result = helper.changeStoreStatus(StoreSettings.SyncOptions.Flush_Tx_Only);
-
-                if (!result.isError() && ZConfigManager.TimeBased_Sync_Type == 2)
+                    result = helper.Flush();
+                result = ReadingErrors();
+                if (!result.isError() && ZConfigManager.TimeBased_Sync_Type == 2) {
                     result = helper.changeStoreStatus(StoreSettings.SyncOptions.Refresh_All_Trans_Stores);
-                //result = helper.ReadErrors(AppStoreSet.getStoresForNormalTransmit());
-                String errorMessage = "";
-                boolean error = false;
-                for (AppStoreSet store : AppStoreSet.getStoresForNormalTransmit()) {
-                    result = helper.changeStoreStatus(store,StoreSettings.SyncOptions.Read_Tx_Errors);
-                    if (result.isError()) {
-                        errorMessage = result.getMessage();
-                        error = true;
-                    }
+                    result = ReadingErrors();
                 }
-                result.setError(error);
-                result.setMessage(errorMessage);
+                //result = helper.ReadErrors(AppStoreSet.getStoresForNormalTransmit());
                /* result = helper.getErrors();
                 if (result.isError()) {
                     errorMessage = result.getMessage();
@@ -101,8 +95,6 @@ public class TimeBasedFlushWorker extends Worker {
                         error = true;
                     }
                 }*/
-                result.setError(error);
-                result.setMessage(errorMessage);
 
                 Long finish_time = System.currentTimeMillis();
                 Long next_time = finish_time - start_time;
@@ -142,6 +134,19 @@ public class TimeBasedFlushWorker extends Worker {
 
         return Result.failure(new Data.Builder().putString("result", "Failed").build());
 
+    }
+
+    private ResponseObject ReadingErrors() {
+        for (AppStoreSet store : AppStoreSet.getStoresForNormalTransmit()) {
+            result = helper.changeStoreStatus(store, StoreSettings.SyncOptions.Read_Tx_Errors);
+            if (result.isError()) {
+                errorMessage = result.getMessage();
+                error = true;
+            }
+        }
+        result.setError(error);
+        result.setMessage(errorMessage);
+        return result;
     }
 
     public boolean isTRWorkerRunning() {

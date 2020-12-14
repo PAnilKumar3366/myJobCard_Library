@@ -84,7 +84,6 @@ public class ScheduleWork {
             inputData.putInt("RetryCount", 0);
             OneTimeWorkRequest uniqueRequest = new OneTimeWorkRequest.Builder(TimeBasedFlushWorker.class)
                     .setConstraints(getNetWorkConstraint())
-                    .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.MINUTES)
                     .addTag(ZConfigManager.PERIODIC_REQUEST)
                     .setInputData(inputData.build())
                     .build();

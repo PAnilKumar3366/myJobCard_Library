@@ -1,10 +1,10 @@
 package com.ods.myjobcard_library.entities;
 
-import com.google.gson.Gson;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.entities.appsettings.TableConfigSet;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
+import com.ods.ods_sdk.entities.ErrorObject;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -13,11 +13,8 @@ import com.sap.smp.client.odata.ODataEntity;
 /**
  * Created by lenovo on 13-09-2016.
  */
-public class ErrorObject extends ZBaseEntity {
+public class ZErrorObject extends ErrorObject {
 
-    public ErrorObject(ODataEntity entity) {
-        create(entity);
-    }
 
     private String Domain;
     private int HTTPStatusCode;
@@ -25,7 +22,7 @@ public class ErrorObject extends ZBaseEntity {
     private String Message;
     private String RequestBody;
     private String RequestMethod;
-    private Long RequestID;
+    //private Long RequestID;
     private String InnerError;
     private String ObjectName;
     private String ObjectId;
@@ -36,6 +33,10 @@ public class ErrorObject extends ZBaseEntity {
     private String AppStoreId;
 
     private ZBaseEntity affectedEntity;
+
+    public ZErrorObject(ODataEntity entity) {
+        super(entity);
+    }
 
     public static ZBaseEntity getAffectedEntityObject(ODataEntity errorEntity, AppStoreSet store) {
         ZBaseEntity errorEntityObj = null;
@@ -54,7 +55,7 @@ public class ErrorObject extends ZBaseEntity {
                     result = errorEntityObj.SaveToStore();*/
             }
         } catch (Exception e) {
-            DliteLogger.WriteLog(ErrorObject.class, ZAppSettings.LogLevel.Error, e.getMessage());
+            DliteLogger.WriteLog(ZErrorObject.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return errorEntityObj;
     }
@@ -97,11 +98,11 @@ public class ErrorObject extends ZBaseEntity {
         RequestURL = requestURL;
     }
 
-    public ErrorMessage getMessage() {
+    /*public ErrorMessage getMessage() {
         ErrorMessage error = null;
         try {
-            ErrorObject errorObject = new Gson().fromJson(Message, ErrorObject.class);
-            error = errorObject.error;
+            ZErrorObject ZErrorObject = new Gson().fromJson(Message, ZErrorObject.class);
+            error = ZErrorObject.error;
         }
         catch (Exception e){
             //DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
@@ -111,7 +112,7 @@ public class ErrorObject extends ZBaseEntity {
             error.setMessage(msg);
         }
         return error;
-    }
+    }*/
 
     public void setMessage(String message) {
         Message = message;
@@ -133,13 +134,13 @@ public class ErrorObject extends ZBaseEntity {
         RequestMethod = requestMethod;
     }
 
-    public Long getRequestID() {
+    /*public Long getRequestID() {
         return RequestID;
-    }
+    }*/
 
-    public void setRequestID(Long requestID) {
+    /*public void setRequestID(Long requestID) {
         RequestID = requestID;
-    }
+    }*/
 
     public String getInnerError() {
         return InnerError;
@@ -149,9 +150,9 @@ public class ErrorObject extends ZBaseEntity {
         InnerError = innerError;
     }
 
-    public ErrorMessage getError() {
+    /*public ErrorMessage getError() {
         return error;
-    }
+    }*/
 
     public void setError(ErrorMessage error) {
         this.error = error;
@@ -234,7 +235,7 @@ public class ErrorObject extends ZBaseEntity {
             String keyValue = String.valueOf(method.invoke(object));
             this.setObjectId(keyValue);*/
         } catch (Exception e) {
-            DliteLogger.WriteLog(ErrorObject.class, ZAppSettings.LogLevel.Error,e.getMessage());
+            DliteLogger.WriteLog(ZErrorObject.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
     }
 

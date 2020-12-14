@@ -12,7 +12,6 @@ import androidx.work.WorkerParameters;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZConfigManager;
-import com.ods.myjobcard_library.utils.DocsUtil;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
@@ -30,7 +29,8 @@ public class EventBasedFlushWorker extends Worker {
     private boolean isErrorFlush;
     private String ErrorMsg = "Error";
     private ResponseObject result = null;
-
+    String errorMessage = "";
+    boolean error = false;
 
     public EventBasedFlushWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -58,26 +58,22 @@ public class EventBasedFlushWorker extends Worker {
                 }
                 DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Debug, "Do work Called and tag is : " + this.getTags().toString() + " and Id  " + this.getId());
                 ZConfigManager.isBGFlushInProgress = true;
-               /* result = helper.Flush();
-                if (result != null && !result.isError() && ZConfigManager.EventBased_Sync_Type == 2)
-                    result = helper.Refresh(AppStoreSet.getStoresForNormalTransmit());*/
-                String errorMessage = "";
-                boolean error = false;
-                /*result = helper.getErrors();
-                if (result.isError()) {
-                    errorMessage = result.getMessage();
-                    error = true;
-                }*/
-                for (AppStoreSet store : AppStoreSet.getStoresForNormalTransmit()) {
-                    result = helper.changeStoreStatus(store, StoreSettings.SyncOptions.Read_Tx_Errors);
+                result = helper.Flush();
+                result = ReadingErrors();
+                if (result != null && !result.isError() && ZConfigManager.EventBased_Sync_Type == 2) {
+                    result = helper.changeStoreStatus(StoreSettings.SyncOptions.Refresh_All_Trans_Stores);
+                    result = ReadingErrors();
+                }
+
+                /*for (AppStoreSet store : AppStoreSet.getStoresForNormalTransmit()) {
+                    result = helper.changeStoreStatus(store,StoreSettings.SyncOptions.Read_Tx_Errors);
                     if (result.isError()) {
                         errorMessage = result.getMessage();
                         error = true;
                     }
                 }
                 result.setError(error);
-                result.setMessage(errorMessage);
-                //result = helper.ReadErrors(AppStoreSet.getStoresForNormalTransmit());
+                result.setMessage(errorMessage);*/
                 if (result.isError()) {
                     Data errorData = new Data.Builder().
                             putBoolean("isSchedule", false).
@@ -95,6 +91,19 @@ public class EventBasedFlushWorker extends Worker {
             return Result.failure(new Data.Builder().putString("ErrorMsg", e.getMessage()).build());
         }
         return Result.failure(new Data.Builder().putString("ErrorMsg", "Failed").build());
+    }
+
+    private ResponseObject ReadingErrors() {
+        for (AppStoreSet store : AppStoreSet.getStoresForNormalTransmit()) {
+            result = helper.changeStoreStatus(store, StoreSettings.SyncOptions.Read_Tx_Errors);
+            if (result.isError()) {
+                errorMessage = result.getMessage();
+                error = true;
+            }
+        }
+        result.setError(error);
+        result.setMessage(errorMessage);
+        return result;
     }
 
     public boolean isScheduleWorkRunning() {

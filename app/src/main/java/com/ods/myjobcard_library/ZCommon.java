@@ -12,8 +12,6 @@ import android.text.TextUtils;
 
 import com.ods.myjobcard_library.entities.appsettings.AppFeature;
 import com.ods.myjobcard_library.utils.DocsUtil;
-import com.ods.myjobcard_library.entities.ctentities.ScreenMapping;
-import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
@@ -422,9 +420,11 @@ public class ZCommon extends Common {
                             else
                                 res=new ResponseObject(ConfigManager.Status.Success, "", null);
 
+                            res = DataHelper.getInstance().getErrorLogs(storeList);
                             if ((res != null && !res.isError())) {
                                 publishProgress(context.getString(R.string.msg_downloading));
-                                res = DataHelper.getInstance().changeStoreStatus(isTxStore?StoreSettings.SyncOptions.Refresh_All_Trans_Stores:StoreSettings.SyncOptions.Refresh_All_Master_Stores);
+                                res = DataHelper.getInstance().changeStoreStatus(isTxStore ? StoreSettings.SyncOptions.Refresh_All_Trans_Stores : StoreSettings.SyncOptions.Refresh_All_Master_Stores);
+                                res = DataHelper.getInstance().getErrorLogs(storeList);
                                 if (!res.isError()) {
                                     publishProgress(context.getString(R.string.msg_sync_complete));
                                     Thread.sleep(1000);
@@ -469,7 +469,7 @@ public class ZCommon extends Common {
                             boolean isError = false;
                             if (response.isError()) {
                                 isError = true;
-                                response.setMessage("BE Errors");
+                                response.setMessage("BEErrors");
                                 callback.errorCallback(response);
                             }
                             if(storeList.get(0).getRefresh().equalsIgnoreCase("2")){
