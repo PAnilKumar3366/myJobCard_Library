@@ -50,7 +50,7 @@ public class TimeBasedFlushWorker extends Worker {
     public Result doWork() {
         try {
             if (ZAppSettings.isLoggedIn && !ZAppSettings.IS_DEMO_MODE) {
-                if (isTRWorkerRunning()) {
+                if (ZConfigManager.isBGFlushInProgress || isTRWorkerRunning()) {
                     Data inputData = getInputData();
                     int retryCount = inputData.getInt("RetryCount", 0);
                     Data.Builder outputBuilder = new Data.Builder();

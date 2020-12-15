@@ -87,7 +87,8 @@ public class MasterDataRefreshWorker extends Worker {
                     DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Info, "Master data refresh is completed " + getId());
                     sendNotificationWithChannel("Master Data Refresh Completed");
                     scheduleNextRequest();
-                    return Result.Success.success();
+                    return Result.Success.success(new Data.Builder().putString("Result_M", "Success").build());
+
                 }
             }
 

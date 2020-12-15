@@ -48,8 +48,7 @@ public class EventBasedFlushWorker extends Worker {
     public Result doWork() {
         try {
             if (ZAppSettings.isLoggedIn && !ZAppSettings.IS_DEMO_MODE) {
-
-                if (isScheduleWorkRunning()) {
+                if (ZConfigManager.isBGFlushInProgress || isScheduleWorkRunning()) {
                     WorkManager.getInstance(getApplicationContext()).cancelWorkById(this.getId());
                     Data errorData = new Data.Builder().
                             putBoolean("isSchedule", false).
@@ -74,6 +73,7 @@ public class EventBasedFlushWorker extends Worker {
                 }
                 result.setError(error);
                 result.setMessage(errorMessage);*/
+                ZConfigManager.isBGFlushInProgress = false;
                 if (result.isError()) {
                     Data errorData = new Data.Builder().
                             putBoolean("isSchedule", false).
