@@ -235,6 +235,7 @@ public class ZCommon extends Common {
         }
         return entitySetName;
     }
+
     public static boolean isLocationEnabled(Context context) {
         int locationMode = 0;
         String locationProviders;
@@ -388,10 +389,10 @@ public class ZCommon extends Common {
         return result;
     }
 
-    public static void showTransmitProgress(final Context context, final TransmitProgressCallback callback,final ArrayList<AppStoreSet> storeList) {
+    public static void showTransmitProgress(final Context context, final TransmitProgressCallback callback, final ArrayList<AppStoreSet> storeList) {
         try {
 
-            if (chkNetworkAvailable(context))  {
+            if (chkNetworkAvailable(context)) {
                 if (ZConfigManager.isBGFlushInProgress) {
                     ResponseObject response = new ResponseObject(ZConfigManager.Status.Warning);
                     response.setMessage("Background sync in progress");
@@ -409,16 +410,15 @@ public class ZCommon extends Common {
                     protected ResponseObject doInBackground(Void... voids) {
                         ResponseObject res = null;
                         try {
-                            boolean isTxStore=storeList.get(0).getFlush().equalsIgnoreCase("1");
+                            boolean isTxStore = storeList.get(0).getFlush().equalsIgnoreCase("1");
                             if (isTxStore) {
                                 res = DataHelper.getInstance().PendingRequestExists(storeList);
                                 if (res != null && res.getStatus() == ConfigManager.Status.Warning) {
                                     publishProgress(context.getString(R.string.msg_uploading));
                                     res = DataHelper.getInstance().changeStoreStatus(StoreSettings.SyncOptions.Flush_Tx_Only);
                                 }
-                            }
-                            else
-                                res=new ResponseObject(ConfigManager.Status.Success, "", null);
+                            } else
+                                res = new ResponseObject(ConfigManager.Status.Success, "", null);
 
                             res = DataHelper.getInstance().getErrorLogs(storeList);
                             if ((res != null && !res.isError())) {
@@ -439,17 +439,15 @@ public class ZCommon extends Common {
                                         editor.apply();
                                     }
                                     DocsUtil.RemoveUnRequiredUploadEntities();
-                                    return res;
                                 } else {
                                     publishProgress(context.getString(R.string.msg_something_went_wrong_downloading));
                                     Thread.sleep(1000);
-                                    return res;
                                 }
                             } else {
                                 publishProgress(context.getString(R.string.msg_something_went_wrong_uploading));
                                 Thread.sleep(1000);
-                                return res;
                             }
+                            return res;
                         } catch (Exception e) {
                             DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
                             return new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null);
@@ -472,7 +470,7 @@ public class ZCommon extends Common {
                                 response.setMessage("BEErrors");
                                 callback.errorCallback(response);
                             }
-                            if(storeList.get(0).getRefresh().equalsIgnoreCase("2")){
+                            if (storeList.get(0).getRefresh().equalsIgnoreCase("2")) {
                                 AppStoreSet.getStoreList();
                                 TableConfigSet.getTableDetails();
                                 ConfigManager.setAppConfigurations();
@@ -493,15 +491,7 @@ public class ZCommon extends Common {
             DliteLogger.WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
     }
-    public interface TransmitProgressCallback {
-        void update(String text);
 
-        void errorCallback(ResponseObject response);
-
-        void onSuccess(ResponseObject response);
-
-        void noNetworkError();
-    }
     //Copy raw files to SDCard
     public static boolean copyRAWtoSDCard(final Context context) throws IOException {
         boolean result = false;
@@ -554,6 +544,7 @@ public class ZCommon extends Common {
         }
         return result;
     }
+
     //Copy form relevant js and css files to sd card
     public static boolean copyAssetsToSDCard(final Context ctx) {
         boolean result = false;
@@ -612,6 +603,16 @@ public class ZCommon extends Common {
             WriteLog(Common.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return result;
+    }
+
+    public interface TransmitProgressCallback {
+        void update(String text);
+
+        void errorCallback(ResponseObject response);
+
+        void onSuccess(ResponseObject response);
+
+        void noNetworkError();
     }
 
 }

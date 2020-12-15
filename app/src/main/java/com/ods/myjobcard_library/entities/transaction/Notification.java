@@ -506,6 +506,14 @@ public class Notification extends ZBaseEntity {
         return spinnerTypes;
     }
 
+    @Override
+    public boolean isLocal() {
+        if (this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
+            return true;
+        else
+            return super.isLocal();
+    }
+
     public String getNotification() {
         return Notification;
     }
@@ -1200,9 +1208,7 @@ public class Notification extends ZBaseEntity {
     }
 
     public boolean isActive() {
-        boolean active = false;
-        active = getStatusDetail().isInProcess();
-        return active;
+        return getStatusDetail().isInProcess();
     }
 
 
@@ -1415,6 +1421,7 @@ public class Notification extends ZBaseEntity {
         }
         return result;
     }
+
     private void deriveNotificationStatus() {
         try {
             StatusCategory statusDetail = StatusCategory.getStatusDetails(getMobileStatus(), getNotificationType(), ZConfigManager.Fetch_Object_Type.Notification);
