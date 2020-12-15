@@ -797,6 +797,14 @@ public class WorkOrder extends ZBaseEntity {
         return spinnerTechnicians;
     }
 
+    @Override
+    public boolean isLocal() {
+        if (this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
+            return true;
+        else
+           return super.isLocal();
+    }
+
     public String getSuperiorOrder() {
         return SuperiorOrder;
     }
@@ -1409,26 +1417,6 @@ public class WorkOrder extends ZBaseEntity {
     public void setTransferFlag(String transferFlag) {
         TransferFlag = transferFlag;
     }
-    //End of Setters and Getters Method
-
-    //private GregorianCalendar StartDate;
-    //private String Pmacttype;
-    //private boolean isDeleted;
-    //private boolean isIssued;
-    //private String inspectorName;
-    //private boolean longTextExists;
-
-
-    /*
-        public GregorianCalendar getStartDate() {
-            return StartDate;
-        }
-
-        public void setStartDate(java.util.GregorianCalendar startDate) {
-            this.StartDate = (GregorianCalendar) GregorianCalendar.getInstance();
-            this.StartDate = startDate;
-        }
-    */
 
     public String getTransferReason() {
         return TransferReason;
@@ -1457,16 +1445,6 @@ public class WorkOrder extends ZBaseEntity {
     public String getBusAreaText() {
         return BusAreaText;
     }
-
-    /*public void AddOperation(Operation opr) {
-        if(operations == null)
-            operations = new ArrayList<>();
-        operations.add(opr);
-    }*/
-
-    /*public ArrayList<Operation> getOperations() {
-        return operations;
-    }*/
 
     public void setBusAreaText(String busAreaText) {
         BusAreaText = busAreaText;
@@ -1499,58 +1477,6 @@ public class WorkOrder extends ZBaseEntity {
     public String getCreateNotifFlag() {
         return CreateNotifFlag;
     }
-
-    /*private ResponseObject OperationEntities(boolean onlyHeader) {
-
-        ArrayList<OprEntity> OprEntities = null;
-        OprEntity oprEntity = null;
-        ResponseObject respObject = null;
-        ArrayList<Operation> operations = null;
-        ArrayList<PRT> prts = null;
-        ArrayList<ODataEntity> prtEntities = null;
-        ResponseObject result = null;
-        try {
-            OprEntities = new ArrayList<OprEntity>();
-            operations = getOperations();
-            for(Operation opr : operations) {
-                //Get operation Entity Object
-                //respObject = opr.toEntity();
-                if (!respObject.isError()) {
-                    oprEntity = new OprEntity((ODataEntity) respObject.Content());
-
-                //get PRT's for the given Entity
-                if (!onlyHeader) {
-                    prtEntities = new ArrayList<ODataEntity>();
-                    prts = opr.getPRTs();
-                    for (PRT prt : prts) {
-                        try {
-                            //respObject = prt.toEntity();
-                            if (!respObject.isError()) {
-                                prtEntities.add((ODataEntity) respObject.Content());
-                            }
-                        } catch (Exception e) {
-                            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getLocalizedMessage());
-                        }
-                    }
-                    if (prtEntities != null && prtEntities.size() > 0) {
-                        oprEntity.setEntityPRTs(prtEntities);
-                    }
-                }
-            }
-            if(oprEntity !=null)
-            {
-                    OprEntities.add(oprEntity);
-            }
-            }
-
-            result = new ResponseObject(ZConfigManager.Status.Success,"",OprEntities);
-
-        } catch (Exception e) {
-            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getLocalizedMessage());
-            result = new ResponseObject(ZConfigManager.Status.Error,e.getMessage(),null);
-        }
-        return result;
-    }*/
 
     public void setCreateNotifFlag(String createNotifFlag) {
         CreateNotifFlag = createNotifFlag;
@@ -2006,8 +1932,6 @@ public class WorkOrder extends ZBaseEntity {
         try {
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
                 active = getStatusDetail().isInProcess();
-                if (this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
-                    active = true;
             } else {
                 active = getCurrentOperation() != null && getCurrentOperation().getStatusDetail().isInProcess();
             }

@@ -616,6 +616,14 @@ public class Operation extends ZBaseEntity implements Serializable {
         return plannedWork;
     }
 
+    @Override
+    public boolean isLocal() {
+        if (this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
+            return true;
+        else
+            return super.isLocal();
+    }
+
     private void initializeEntityProperties() {
         this.setEntitySetName(ZCollections.OPR_COLLECTION);
         this.setEntityType(ZCollections.OPR_ENTITY_TYPE1);
@@ -1294,15 +1302,12 @@ public class Operation extends ZBaseEntity implements Serializable {
     }
 
     public boolean isActive() {
-        boolean active = false;
-        ZAppSettings.MobileStatus status;
         try {
-            active = getStatusDetail().isInProcess();
+            return getStatusDetail().isInProcess();
         } catch (Exception e) {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
-            active = false;
+            return false;
         }
-        return active;
     }
 
     public ResponseObject markComplete(@Nullable BigDecimal actWork, boolean autoFlush, boolean sendConfirmation, boolean isCompleted) {
