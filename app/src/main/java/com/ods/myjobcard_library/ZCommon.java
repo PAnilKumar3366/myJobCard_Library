@@ -392,7 +392,7 @@ public class ZCommon extends Common {
     public static void showTransmitProgress(final Context context, final TransmitProgressCallback callback, final ArrayList<AppStoreSet> storeList) {
         try {
 
-            if (chkNetworkAvailable(context)) {
+            if (isNetworkAvailable(context)) {
                 if (ZConfigManager.isBGFlushInProgress) {
                     ResponseObject response = new ResponseObject(ZConfigManager.Status.Warning);
                     response.setMessage("Background sync in progress");
@@ -420,7 +420,7 @@ public class ZCommon extends Common {
                             } else
                                 res = new ResponseObject(ConfigManager.Status.Success, "", null);
 
-                            res = DataHelper.getInstance().getErrorLogs(storeList);
+                            //res = DataHelper.getInstance().getErrorLogs(storeList);
                             if ((res != null && !res.isError())) {
                                 publishProgress(context.getString(R.string.msg_downloading));
                                 res = DataHelper.getInstance().changeStoreStatus(isTxStore ? StoreSettings.SyncOptions.Refresh_All_Trans_Stores : StoreSettings.SyncOptions.Refresh_All_Master_Stores);
