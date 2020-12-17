@@ -5,6 +5,7 @@ import android.app.Application;
 import android.graphics.Color;
 import android.os.AsyncTask;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
@@ -27,7 +28,6 @@ import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.client.odata.v4.EntityValue;
 import com.sap.client.odata.v4.EntityValueList;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -78,7 +78,7 @@ public class NewDashboardViewModel extends BaseViewModel {
         return queriedWorkOrders;
     }
 
-    public void setQueriedOrders(@NotNull String filterQuery) {
+    public void setQueriedOrders(@NonNull String filterQuery) {
         fetchWorkOrders(filterQuery);
     }
 
@@ -86,7 +86,7 @@ public class NewDashboardViewModel extends BaseViewModel {
         return queriedNotifications;
     }
 
-    public void setQueriedNotifications(@NotNull String filterQuery) {
+    public void setQueriedNotifications(@NonNull String filterQuery) {
         fetchNotifications(filterQuery);
     }
 
