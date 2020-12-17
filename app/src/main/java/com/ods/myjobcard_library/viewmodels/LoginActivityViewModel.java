@@ -25,7 +25,6 @@ import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
 import com.ods.ods_sdk.utils.DliteLogger;
-import com.ods.ods_sdk.utils.logs.ClientLogManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -213,7 +212,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         com.ods.myjobcard_library.entities.appsettings.PushSubscription pushSubscription = null;
         ResponseObject responseObject;
         try {
-            ClientLogManager.writeLogDebug("Start push subscription to server");
+            //ClientLogManager.writeLogDebug("Start push subscription to server");
             pushSubscription=new com.ods.myjobcard_library.entities.appsettings.PushSubscription(ZAppSettings.strUser,appConn,ZCollections.APP_STORE_COLLECTION);
             responseObject = pushSubscription.SaveToStore(true);
             //flush to SAP for subscription
@@ -225,14 +224,14 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                 //}
                 if (!responseObject.isError())
                     result = true;
-                ClientLogManager.writeLogDebug("Subscription saved successfully");
+                //ClientLogManager.writeLogDebug("Subscription saved successfully");
                 updateUI("success");
             }
 
         } catch (Exception ex) {
             result = false;
             DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, ex.getMessage());
-            ClientLogManager.writeLogDebug("Subscription pushed to server failed");
+            //ClientLogManager.writeLogDebug("Subscription pushed to server failed");
         }
     }
 

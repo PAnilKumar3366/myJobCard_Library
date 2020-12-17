@@ -6,7 +6,6 @@ import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
-import com.ods.ods_sdk.utils.logs.ClientLogManager;
 import com.sap.smp.client.odata.ODataEntity;
 
 import java.util.ArrayList;
@@ -46,7 +45,7 @@ public class EquipmentCategory extends ZBaseEntity {
             }
         } catch (Exception e) {
             DliteLogger.WriteLog(EquipmentCategory.class, ZAppSettings.LogLevel.Error, e.getMessage());
-            ClientLogManager.writeLogError("Error occurred while reading Equipment Categories from offline store.", e);
+            //ClientLogManager.writeLogError("Error occurred while reading Equipment Categories from offline store.", e);
         }
         return categories;
     }
