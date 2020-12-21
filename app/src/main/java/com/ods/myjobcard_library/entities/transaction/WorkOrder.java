@@ -2032,72 +2032,72 @@ public class WorkOrder extends ZBaseEntity {
         return intCounter;
     }
 
-    public ResponseObject getCompletionPreCheckList() {
+    public ResponseObject getCompletionPreCheckList(Context context) {
         ResponseObject result;
         ArrayList<String> errorMessages = new ArrayList<>();
         try {
             ArrayList<OrderTypeFeature> featureList = OrderTypeFeature.getMandatoryFeaturesByObjectType(this.getOrderType());
             for (OrderTypeFeature orderTypeFeature : featureList) {
                 //Operations
-                if (ZConfigManager.OPERATION_COMPLETION_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.OPERATION.getFeatureValue())) {
+                if (ZConfigManager.OPERATION_COMPLETION_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.OPERATION.getFeatureValue())) {
                     int incompleteOperations = getTotalNumInCompleteOperations();
                     int totalOperations = getTotalNumOperations();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
                         if (incompleteOperations > 0)
-                            errorMessages.add(Resources.getSystem().getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
+                            errorMessages.add(context.getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
                     } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalOperations == incompleteOperations)
-                            errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneOperationRequiredToComplete));
+                            errorMessages.add(context.getString(R.string.msgAtLeastOneOperationRequiredToComplete));
                     } else {
                         if (incompleteOperations > 0)
-                            errorMessages.add(Resources.getSystem().getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
+                            errorMessages.add(context.getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
                     }
                 }
                 //Components
-                if (ZConfigManager.COMPONENT_ISSUE_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.COMPONENT.getFeatureValue())) {
+                if (ZConfigManager.COMPONENT_ISSUE_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.COMPONENT.getFeatureValue())) {
                     int remainingComponents = getTotalNumUnIssuedComponents() + (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? 0 : getTotalNumPartialIssuedComponents());
                     int totalComponents = getTotalNumComponents();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
                         if (remainingComponents > 0)
-                            errorMessages.add(Resources.getSystem().getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
+                            errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
                     } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalComponents == remainingComponents) {
-                            errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
+                            errorMessages.add(context.getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
                         }
                     } else {
                         if (remainingComponents > 0)
-                            errorMessages.add(Resources.getSystem().getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
+                            errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
                     }
                 }
                 //Attachments
-                if (ZConfigManager.ATTACHMENT_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.ATTACHMENT.getFeatureValue())) {
+                if (ZConfigManager.ATTACHMENT_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.ATTACHMENT.getFeatureValue())) {
                     if (getTotalNumUserUploadedAttachments() <= 0)
-                        errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneAttachmentRequired));
+                        errorMessages.add(context.getString(R.string.msgAtLeastOneAttachmentRequired));
                 }
                 //Forms
-                if (ZConfigManager.MANDATORY_FORMS_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.FORMS.getFeatureValue())) {
+                if (ZConfigManager.MANDATORY_FORMS_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.FORMS.getFeatureValue())) {
                     if (getTotalNumUnSubmittedMandatoryForms() > 0)
-                        errorMessages.add(Resources.getSystem().getString(R.string.msgAllMandatoryFormsAreRequired));
+                        errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
                 }
                 //Record Points
-                if (ZConfigManager.MPOINT_READING_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.RECORDPOINTS.getFeatureValue())) {
+                if (ZConfigManager.MPOINT_READING_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.RECORDPOINTS.getFeatureValue())) {
                     int totalPoints = getTotalNumMeasurementPoints();
                     int totalReadingTaken = getTotalNumReadingTaken();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
                         if (totalPoints > 0 && totalPoints != totalReadingTaken)
-                            errorMessages.add(Resources.getSystem().getString(R.string.msgAllReadingPointsAreMandatory));
+                            errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
                     } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalPoints > 0 && totalReadingTaken <= 0)
-                            errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneReadingPointRequired));
+                            errorMessages.add(context.getString(R.string.msgAtLeastOneReadingPointRequired));
                     } else {
                         if (totalPoints > 0 && totalPoints != totalReadingTaken)
-                            errorMessages.add(Resources.getSystem().getString(R.string.msgAllReadingPointsAreMandatory));
+                            errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
                     }
                 }
                 //Inspection Lot
                 if (orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.INSPECTIONLOT.getFeatureValue())) {
                     if (!inspectionLotUDAvailable())
-                        errorMessages.add(Resources.getSystem().getString(R.string.msgInspectionLotDecisionPending, getInspectionLot()));
+                        errorMessages.add(context.getString(R.string.msgInspectionLotDecisionPending, getInspectionLot()));
                 }
 
                 //Notifications
