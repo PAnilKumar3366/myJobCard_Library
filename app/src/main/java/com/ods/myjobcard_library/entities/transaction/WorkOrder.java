@@ -1,6 +1,6 @@
 package com.ods.myjobcard_library.entities.transaction;
 
-import android.content.Context;
+import android.content.res.Resources;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
@@ -2031,7 +2031,7 @@ public class WorkOrder extends ZBaseEntity {
         return intCounter;
     }
 
-    public ResponseObject getCompletionPreCheckList(Context context) {
+    public ResponseObject getCompletionPreCheckList() {
         ResponseObject result;
         ArrayList<String> errorMessages = new ArrayList<>();
         try {
@@ -2042,11 +2042,12 @@ public class WorkOrder extends ZBaseEntity {
                     int incompleteOperations = getTotalNumInCompleteOperations();
                     int totalOperations = getTotalNumOperations();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
-                        if (incompleteOperations > 0)
-                            errorMessages.add(context.getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
+                        if (incompleteOperations > 0) {
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
+                        }
                     } else {
                         if (totalOperations == incompleteOperations)
-                            errorMessages.add(context.getString(R.string.msgAtLeastOneOperationRequiredToComplete));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneOperationRequiredToComplete));
                     }
                 }
                 //Components
@@ -2055,22 +2056,22 @@ public class WorkOrder extends ZBaseEntity {
                     int totalComponents = getTotalNumComponents();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
                         if (remainingComponents > 0)
-                            errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
                     } else {
                         if (totalComponents == remainingComponents) {
-                            errorMessages.add(context.getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
                         }
                     }
                 }
                 //Attachments
                 if (ZConfigManager.ATTACHMENT_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.ATTACHMENT.getFeatureValue())) {
                     if (getTotalNumUserUploadedAttachments() <= 0)
-                        errorMessages.add(context.getString(R.string.msgAtLeastOneAttachmentRequired));
+                        errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneAttachmentRequired));
                 }
                 //Forms
                 if (ZConfigManager.MANDATORY_FORMS_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.FORMS.getFeatureValue())) {
                     if (getTotalNumUnSubmittedMandatoryForms() > 0)
-                        errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
+                        errorMessages.add(Resources.getSystem().getString(R.string.msgAllMandatoryFormsAreRequired));
                 }
                 //Record Points
                 if (ZConfigManager.MPOINT_READING_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.RECORDPOINTS.getFeatureValue())) {
@@ -2078,16 +2079,16 @@ public class WorkOrder extends ZBaseEntity {
                     int totalReadingTaken = getTotalNumReadingTaken();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
                         if (totalPoints != totalReadingTaken)
-                            errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgAllReadingPointsAreMandatory));
                     } else {
                         if (totalPoints > 0 && totalReadingTaken <= 0)
-                            errorMessages.add(context.getString(R.string.msgAtLeastOneReadingPointRequired));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneReadingPointRequired));
                     }
                 }
                 //Inspection Lot
                 if (orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.INSPECTIONLOT.getFeatureValue())) {
                     if (!inspectionLotUDAvailable())
-                        errorMessages.add(context.getString(R.string.msgInspectionLotDecisionPending, getInspectionLot()));
+                        errorMessages.add(Resources.getSystem().getString(R.string.msgInspectionLotDecisionPending, getInspectionLot()));
                 }
             }
 
