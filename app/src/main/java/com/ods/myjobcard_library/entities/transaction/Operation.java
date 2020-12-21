@@ -619,7 +619,10 @@ public class Operation extends ZBaseEntity implements Serializable {
 
     @Override
     public boolean isLocal() {
-        return super.isLocal();
+        boolean local = super.isLocal();
+        if (!local) {
+            return this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser);
+        } else return true;
     }
 
     private void initializeEntityProperties() {
@@ -1301,10 +1304,7 @@ public class Operation extends ZBaseEntity implements Serializable {
 
     public boolean isActive() {
         try {
-            if (isLocal() && this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
-                return true;
-            else
-                return getStatusDetail().isInProcess();
+            return getStatusDetail().isInProcess();
         } catch (Exception e) {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
             return false;
@@ -1710,10 +1710,13 @@ public class Operation extends ZBaseEntity implements Serializable {
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
                         if (remainingComponents > 0)
                             errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
-                    } else {
+                    } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalComponents == remainingComponents) {
                             errorMessages.add(context.getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
                         }
+                    } else {
+                        if (remainingComponents > 0)
+                            errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
                     }
                 }
                 //Attachments
@@ -1731,11 +1734,14 @@ public class Operation extends ZBaseEntity implements Serializable {
                     int totalPoints = WorkOrder.getCurrWo().getTotalNumMeasurementPoints();
                     int totalReadingTaken = WorkOrder.getCurrWo().getTotalNumReadingTaken();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
-                        if (totalPoints != totalReadingTaken)
+                        if (totalPoints > 0 && totalPoints != totalReadingTaken)
                             errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
-                    } else {
+                    } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalPoints > 0 && totalReadingTaken <= 0)
                             errorMessages.add(context.getString(R.string.msgAtLeastOneReadingPointRequired));
+                    } else {
+                        if (totalPoints > 0 && totalPoints != totalReadingTaken)
+                            errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
                     }
                 }
                 //Inspection Lot
@@ -1757,61 +1763,6 @@ public class Operation extends ZBaseEntity implements Serializable {
             result = new ResponseObject(ZConfigManager.Status.Error, "Error", e.getMessage());
         }
         return result;
-    }
-
-    public ResponseObject CompletionPreChecks() {
-        ResponseObject responseObject = null;
-        Boolean result = false;
-        ArrayList<String> strErrorMessages;
-        String strErrorMessage;
-        try {
-            strErrorMessages = new ArrayList<>();
-            ArrayList<String> strList = OrderTypeFeature.getOrderTypeFeatures(WorkOrder.getCurrWo().getCurrentOperation().getOrderType());
-            //check all components are issued
-            if (ZConfigManager.COMPONENT_ISSUE_REQUIRED && strList.contains(ZAppSettings.Features.COMPONENT.getFeatureValue())) {
-                int totalNumUnIssuedComponents = getTotalNumUnIssuedComponents() + (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? 0 : getTotalNumPartialIssuedComponents());
-                if (totalNumUnIssuedComponents > 0) {
-                    strErrorMessage = "It is mandatory to issue all the components. Currently un-issued components are: " + totalNumUnIssuedComponents;
-                    strErrorMessages.add(strErrorMessage);
-                }
-            }
-            //check if any mandatory form is not submitted even once
-            if (WorkOrder.getCurrWo().getTotalNumUnSubmittedMandatoryForms() > 0 && ZConfigManager.MANDATORY_FORMS_REQUIRED) {
-                strErrorMessage = "It is mandatory to submit all the required / mandatory forms for this Job.";
-                strErrorMessages.add(strErrorMessage);
-            }
-            //check the operation inspection is done
-            if (strList.contains(ZAppSettings.Features.INSPECTIONLOT.getFeatureValue()) && getSystemStatus().toLowerCase().contains(ZConfigManager.OPR_INSP_ENABLE_STATUS.toLowerCase())
-                    && getSystemStatus().toLowerCase().contains(ZConfigManager.OPR_INSP_RESULT_RECORDED_STATUS.toLowerCase())) {
-                strErrorMessage = "User decision is pending for inspection lot Operation ";//+ getInspectionLot();
-                strErrorMessages.add(strErrorMessage);
-            }
-            /*//check atleast one attachment is uploaded
-            if( getTotalNumUserUploadedAttachments() == 0 && ZConfigManager.ATTACHMENT_REQUIRED)
-            {
-                strErrorMessage = "It is mandatory to upload at least one attachment as part of Job execution";
-                strErrorMessages.put(ZAppSettings.TabList.Attachments,strErrorMessage);
-            }
-
-
-
-            //check if any reading taken or not
-            if( getTotalNumMeasurementPoints() > 0 && getTotalNumReadingTaken() == 0 && ZConfigManager.MPOINT_READING_REQUIRED)
-            {
-                strErrorMessage = "It is mandatory to record the reading for this Job.";
-                strErrorMessages.put(ZAppSettings.TabList.MeasurementPoints,strErrorMessage);
-            }*/
-
-            if (strErrorMessages.size() > 0) {
-                responseObject = new ResponseObject(ZConfigManager.Status.Error, "Error", strErrorMessages);
-            } else {
-                responseObject = new ResponseObject(ZConfigManager.Status.Success, "Success", null);
-            }
-        } catch (Exception e) {
-            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
-            responseObject = new ResponseObject(ZConfigManager.Status.Error, "Error", e.getMessage());
-        }
-        return responseObject;
     }
 
     public int getTotalNumUnIssuedComponents() {

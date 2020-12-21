@@ -508,7 +508,10 @@ public class Notification extends ZBaseEntity {
 
     @Override
     public boolean isLocal() {
-        return super.isLocal();
+        boolean local = super.isLocal();
+        if (!local) {
+            return this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser);
+        } else return true;
     }
 
     public String getNotification() {
@@ -1205,10 +1208,7 @@ public class Notification extends ZBaseEntity {
     }
 
     public boolean isActive() {
-        if (isLocal() && this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
-            return true;
-        else
-            return getStatusDetail().isInProcess();
+        return getStatusDetail().isInProcess();
     }
 
 

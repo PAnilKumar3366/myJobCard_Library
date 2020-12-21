@@ -798,11 +798,6 @@ public class WorkOrder extends ZBaseEntity {
         return spinnerTechnicians;
     }
 
-    @Override
-    public boolean isLocal() {
-        return super.isLocal();
-    }
-
     public String getSuperiorOrder() {
         return SuperiorOrder;
     }
@@ -1933,13 +1928,18 @@ public class WorkOrder extends ZBaseEntity {
             } else {
                 active = getCurrentOperation() != null && getCurrentOperation().getStatusDetail().isInProcess();
             }
-            if (isLocal() && this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
-                active = true;
         } catch (Exception e) {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
-
         return active;
+    }
+
+    @Override
+    public boolean isLocal() {
+        boolean local = super.isLocal();
+        if (!local) {
+            return this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser);
+        } else return true;
     }
 
     //
@@ -2044,9 +2044,12 @@ public class WorkOrder extends ZBaseEntity {
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
                         if (incompleteOperations > 0)
                             errorMessages.add(context.getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
-                    } else {
+                    } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalOperations == incompleteOperations)
                             errorMessages.add(context.getString(R.string.msgAtLeastOneOperationRequiredToComplete));
+                    } else {
+                        if (incompleteOperations > 0)
+                            errorMessages.add(context.getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
                     }
                 }
                 //Components
@@ -2056,10 +2059,13 @@ public class WorkOrder extends ZBaseEntity {
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
                         if (remainingComponents > 0)
                             errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
-                    } else {
+                    } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalComponents == remainingComponents) {
                             errorMessages.add(context.getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
                         }
+                    } else {
+                        if (remainingComponents > 0)
+                            errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
                     }
                 }
                 //Attachments
@@ -2077,17 +2083,35 @@ public class WorkOrder extends ZBaseEntity {
                     int totalPoints = getTotalNumMeasurementPoints();
                     int totalReadingTaken = getTotalNumReadingTaken();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
-                        if (totalPoints != totalReadingTaken)
+                        if (totalPoints > 0 && totalPoints != totalReadingTaken)
                             errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
-                    } else {
+                    } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalPoints > 0 && totalReadingTaken <= 0)
                             errorMessages.add(context.getString(R.string.msgAtLeastOneReadingPointRequired));
+                    } else {
+                        if (totalPoints > 0 && totalPoints != totalReadingTaken)
+                            errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
                     }
                 }
                 //Inspection Lot
                 if (orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.INSPECTIONLOT.getFeatureValue())) {
                     if (!inspectionLotUDAvailable())
                         errorMessages.add(context.getString(R.string.msgInspectionLotDecisionPending, getInspectionLot()));
+                }
+
+                //Notifications
+                if (orderTypeFeature.getFeature().contains(ZAppSettings.Features.NOTIFICATION.getFeatureValue())) {
+                    Notification woNotification = null;
+                    ResponseObject response = Notification.getNotifications(ZAppSettings.FetchLevel.Single, ZAppSettings.Hierarchy.HeaderOnly, getNotificationNum(), "", true);
+                    if (response != null && !response.isError()) {
+                        woNotification = ((ArrayList<Notification>) response.Content()).get(0);
+                        if (woNotification != null) {
+                            ArrayList<String> notiPreCheckMsgs = woNotification.getPreCompletionMessages(true);
+                            if (notiPreCheckMsgs.size() > 0) {
+                                errorMessages.addAll(notiPreCheckMsgs);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -2101,91 +2125,6 @@ public class WorkOrder extends ZBaseEntity {
             result = new ResponseObject(ZConfigManager.Status.Error, "Error", e.getMessage());
         }
         return result;
-    }
-
-    public ResponseObject CompletionPreChecks() {
-        ResponseObject responseObject = null;
-        Boolean result = false;
-        ArrayList<String> strErrorMessages;
-        String strErrorMessage;
-        try {
-            strErrorMessages = new ArrayList<>();
-            ArrayList<String> strList = OrderTypeFeature.getOrderTypeFeatures(getOrderType());
-
-            //Check all operations are marked as complete
-            if (ZConfigManager.OPERATION_COMPLETION_REQUIRED && strList.contains(ZAppSettings.Features.OPERATION.getFeatureValue())) {
-                int totalInCompletedOperations = getTotalNumInCompleteOperations();
-                //Check all operations are marked as complete
-                if (totalInCompletedOperations > 0) {
-                    strErrorMessage = "It is mandatory to complete all the pending operation. Current number of Incomplete operations are: " + totalInCompletedOperations;
-                    strErrorMessages.add(strErrorMessage);
-                }
-            }
-
-            //check all components are issued
-            if (ZConfigManager.COMPONENT_ISSUE_REQUIRED && strList.contains(ZAppSettings.Features.COMPONENT.getFeatureValue())) {
-
-                int totalNumUnIssuedComponents = getTotalNumUnIssuedComponents() + (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? 0 : getTotalNumPartialIssuedComponents());
-                if (totalNumUnIssuedComponents > 0) {
-                    strErrorMessage = "It is mandatory to issue all the components. Currently un-issued components are: " + totalNumUnIssuedComponents;
-                    strErrorMessages.add(strErrorMessage);
-                }
-            }
-
-            //check atleast one attachment is uploaded
-            if (ZConfigManager.ATTACHMENT_REQUIRED && getTotalNumUserUploadedAttachments() == 0 && strList.contains(ZAppSettings.Features.ATTACHMENT.getFeatureValue())) {
-
-                strErrorMessage = "It is mandatory to upload at least one attachment as part of Job execution";
-                strErrorMessages.add(strErrorMessage);
-            }
-
-            //check if any mandatory form is not submitted even once
-            if (ZConfigManager.MANDATORY_FORMS_REQUIRED && getTotalNumUnSubmittedMandatoryForms() > 0) {
-                strErrorMessage = "It is mandatory to submit all the required / mandatory forms for this Job.";
-                strErrorMessages.add(strErrorMessage);
-            }
-
-            //check if any reading taken or not
-            if (ZConfigManager.MPOINT_READING_REQUIRED && strList.contains(ZAppSettings.Features.RECORDPOINTS.getFeatureValue())) {
-                int totalPoints = getTotalNumMeasurementPoints();
-                int totalReadingTaken = getTotalNumReadingTaken();
-                if (totalPoints > 0 && totalReadingTaken < totalPoints) {
-                    strErrorMessage = "It is mandatory to record all the readings for this Job.";
-                    strErrorMessages.add(strErrorMessage);
-                }
-            }
-
-            //Inspection Lot check
-            if (strList.contains(ZAppSettings.Features.INSPECTIONLOT.getFeatureValue()) && !inspectionLotUDAvailable()) {
-                strErrorMessage = "User decision is pending for inspection lot " + getInspectionLot();
-                strErrorMessages.add(strErrorMessage);
-            }
-
-            //Notification check
-            if (strList.contains(ZAppSettings.Features.NOTIFICATION.getFeatureValue())) {
-                Notification woNotification = null;
-                ResponseObject response = Notification.getNotifications(ZAppSettings.FetchLevel.Single, ZAppSettings.Hierarchy.HeaderOnly, getNotificationNum(), "", true);
-                if (response != null && !response.isError()) {
-                    woNotification = ((ArrayList<Notification>) response.Content()).get(0);
-                    if (woNotification != null) {
-                        ArrayList<String> notiPreCheckMsgs = woNotification.getPreCompletionMessages(true);
-                        if (notiPreCheckMsgs.size() > 0) {
-                            strErrorMessages.addAll(notiPreCheckMsgs);
-                        }
-                    }
-                }
-            }
-
-            if (strErrorMessages.size() > 0) {
-                responseObject = new ResponseObject(ZConfigManager.Status.Error, "Error", strErrorMessages);
-            } else {
-                responseObject = new ResponseObject(ZConfigManager.Status.Success, "Success", null);
-            }
-        } catch (Exception e) {
-            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
-            responseObject = new ResponseObject(ZConfigManager.Status.Error, "Error", e.getMessage());
-        }
-        return responseObject;
     }
 
     public int getTotalNumOperations() {
