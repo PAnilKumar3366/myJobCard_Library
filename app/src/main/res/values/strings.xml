@@ -20,4 +20,15 @@
     <string name="alertDownloadFailedErrorMsg">Something went wrong while downloading attachment. Error code: %1$s</string>
     <string name="msgNoFileFound">File not found on device!</string>
     <string name="msgNoApplicationFound">No supported application found to open this file!</string>
+
+    <!--Pre checks-->
+    <string name="msgTotalOperationRequiredToComplete">It is mandatory to complete all the pending operation. Current number of Incomplete operations are: %1$d</string>
+    <string name="msgAtLeastOneOperationRequiredToComplete">It is mandatory to complete at least one pending operation.</string>
+    <string name="msgTotalComponentsRequiredToIssued">It is mandatory to issue all the components. Currently un-issued components are: %1$d</string>
+    <string name="msgAtLeastOneComponentRequiredToIssued">It is mandatory to issue at least one of the components %1$s.</string>
+    <string name="msgAtLeastOneAttachmentRequired">It is mandatory to upload at least one attachment.</string>
+    <string name="msgAllMandatoryFormsAreRequired">It is mandatory to submit all the required / mandatory forms for this Job.</string>
+    <string name="msgAllReadingPointsAreMandatory">It is mandatory to record all the readings for this Job.</string>
+    <string name="msgAtLeastOneReadingPointRequired">It is mandatory to record at least one reading for this Job.</string>
+    <string name="msgInspectionLotDecisionPending">User decision is pending for inspection lot %1$s.</string>
 </resources>

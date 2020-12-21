@@ -14,8 +14,13 @@ import java.util.List;
 
 public class OrderTypeFeature extends ZBaseEntity {
 
+    public static final String LEVEL_PARTIAL = "1";
+    public static final String LEVEL_ALL = "2";
     private String OrderType;
     private String Feature;
+    private String RoleID;
+    private String Object;
+    private String MandatoryLevel;
 
     public OrderTypeFeature() {
     }
@@ -25,16 +30,11 @@ public class OrderTypeFeature extends ZBaseEntity {
     }
 
     public static ArrayList<String> getOrderTypeFeatures(String orderType) {
-
         ArrayList<String> orderTypeFeatures = new ArrayList<>();
         ResponseObject result = new ResponseObject(ZConfigManager.Status.Error);
-
         try {
-
             String resourcePath = ZCollections.LT_ORDERTYPEFEATURESET + "?$filter=(OrderType eq '" + orderType + "')";
-
             result = DataHelper.getInstance().getEntities(ZCollections.LT_ORDERTYPEFEATURESET, resourcePath);
-
             if (!result.isError()) {
                 List<ODataEntity> entities = (List<ODataEntity>) result.Content();
                 for (ODataEntity entity : entities) {
@@ -42,7 +42,6 @@ public class OrderTypeFeature extends ZBaseEntity {
                     orderTypeFeatures.add(new OrderTypeFeature(entity).getFeature());
                 }
             }
-
         } catch (Exception e) {
             result.setMessage(e.getMessage());
             DliteLogger.WriteLog(OrderTypeFeature.class, ZAppSettings.LogLevel.Error, e.getMessage());
@@ -50,14 +49,24 @@ public class OrderTypeFeature extends ZBaseEntity {
         return orderTypeFeatures;
     }
 
-    public static ArrayList<String> getFeaturess() {
-        ArrayList<String> aa = null;
+    public static ArrayList<OrderTypeFeature> getMandatoryFeaturesByObjectType(String orderType) {
+        ArrayList<OrderTypeFeature> arrayList = new ArrayList<>();
+        ResponseObject result = null;
         try {
-            aa = new ArrayList<>();
+            String entitySetName = ZCollections.LT_ORDERTYPEFEATURESET;
+            String resPath = entitySetName + "?$filter=(OrderType eq '" + orderType + "')";
+            result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
+                for (ODataEntity entity : entities) {
+                    OrderTypeFeature orderTypeFeature = new OrderTypeFeature(entity);
+                    arrayList.add(orderTypeFeature);
+                }
+            }
         } catch (Exception e) {
             DliteLogger.WriteLog(OrderTypeFeature.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
-        return aa;
+        return arrayList;
     }
 
     public String getOrderType() {
@@ -68,34 +77,29 @@ public class OrderTypeFeature extends ZBaseEntity {
         OrderType = orderType;
     }
 
+    public String getRoleID() {
+        return RoleID;
+    }
 
+    public void setRoleID(String roleID) {
+        RoleID = roleID;
+    }
 
-    /*public static ArrayList<OrderTypeFeature> getOrderTypeFeatures(String orderType){
+    public String getObject() {
+        return Object;
+    }
 
-        ArrayList<OrderTypeFeature> orderTypeFeatures = new ArrayList<>();
-        ResponseObject result = new ResponseObject(ZConfigManager.Status.Error);
+    public void setObject(String object) {
+        Object = object;
+    }
 
-        try {
+    public String getMandatoryLevel() {
+        return MandatoryLevel;
+    }
 
-            String resourcePath = Collections.LT_ORDERTYPEFEATURESET+"?$filter=(OrderType eq '"+ orderType +"')";
-
-            result = DataHelper.getInstance().getEntities(resourcePath, StoreSettings.Stores.MdLV);
-
-            if(!result.isError()){
-                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
-                for (ODataEntity entity : entities){
-                    orderTypeFeatures.add(new OrderTypeFeature(entity));
-                }
-            }
-
-        }catch (Exception e){
-
-            result.setMessage(e.getMessage());
-            DliteLogger.WriteLog(OrderTypeFeature.class, ZAppSettings.LogLevel.Error, e.getMessage());
-
-        }
-            return orderTypeFeatures;
-        }*/
+    public void setMandatoryLevel(String mandatoryLevel) {
+        MandatoryLevel = mandatoryLevel;
+    }
 
     public String getFeature() {
         return Feature;

@@ -1,5 +1,6 @@
 package com.ods.myjobcard_library.entities.transaction;
 
+import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
 
@@ -618,10 +619,7 @@ public class Operation extends ZBaseEntity implements Serializable {
 
     @Override
     public boolean isLocal() {
-        if (this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
-            return true;
-        else
-            return super.isLocal();
+        return super.isLocal();
     }
 
     private void initializeEntityProperties() {
@@ -1303,7 +1301,10 @@ public class Operation extends ZBaseEntity implements Serializable {
 
     public boolean isActive() {
         try {
-            return getStatusDetail().isInProcess();
+            if (isLocal() && this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
+                return true;
+            else
+                return getStatusDetail().isInProcess();
         } catch (Exception e) {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
             return false;
@@ -1696,6 +1697,68 @@ public class Operation extends ZBaseEntity implements Serializable {
         return this.getWorkOrderNum().replace(ZConfigManager.WONUM_VALUE_PREFIX, ZConfigManager.LOCAL_IDENTIFIER);
     }
 
+    public ResponseObject getCompletionPreCheckList(Context context) {
+        ResponseObject result;
+        ArrayList<String> errorMessages = new ArrayList<>();
+        try {
+            ArrayList<OrderTypeFeature> featureList = OrderTypeFeature.getMandatoryFeaturesByObjectType(WorkOrder.getCurrWo().getCurrentOperation().getOrderType());
+            for (OrderTypeFeature orderTypeFeature : featureList) {
+                //Components
+                if (ZConfigManager.COMPONENT_ISSUE_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.COMPONENT.getFeatureValue())) {
+                    int remainingComponents = getTotalNumUnIssuedComponents() + (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? 0 : getTotalNumPartialIssuedComponents());
+                    int totalComponents = getTotalComponents();
+                    if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
+                        if (remainingComponents > 0)
+                            errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
+                    } else {
+                        if (totalComponents == remainingComponents) {
+                            errorMessages.add(context.getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
+                        }
+                    }
+                }
+                //Attachments
+                if (ZConfigManager.ATTACHMENT_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.ATTACHMENT.getFeatureValue())) {
+                    if (WorkOrder.getCurrWo().getTotalNumUserUploadedAttachments() <= 0)
+                        errorMessages.add(context.getString(R.string.msgAtLeastOneAttachmentRequired));
+                }
+                //Forms
+                if (ZConfigManager.MANDATORY_FORMS_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.FORMS.getFeatureValue())) {
+                    if (WorkOrder.getCurrWo().getTotalNumUnSubmittedMandatoryForms() > 0)
+                        errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
+                }
+                //Record Points
+                if (ZConfigManager.MPOINT_READING_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.RECORDPOINTS.getFeatureValue())) {
+                    int totalPoints = WorkOrder.getCurrWo().getTotalNumMeasurementPoints();
+                    int totalReadingTaken = WorkOrder.getCurrWo().getTotalNumReadingTaken();
+                    if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
+                        if (totalPoints != totalReadingTaken)
+                            errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
+                    } else {
+                        if (totalPoints > 0 && totalReadingTaken <= 0)
+                            errorMessages.add(context.getString(R.string.msgAtLeastOneReadingPointRequired));
+                    }
+                }
+                //Inspection Lot
+                if (orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.INSPECTIONLOT.getFeatureValue())) {
+                    if (getSystemStatus().toLowerCase().contains(ZConfigManager.OPR_INSP_ENABLE_STATUS.toLowerCase())
+                            && getSystemStatus().toLowerCase().contains(ZConfigManager.OPR_INSP_RESULT_RECORDED_STATUS.toLowerCase())) {
+                        errorMessages.add(context.getString(R.string.msgInspectionLotDecisionPending, ""));
+                    }
+                }
+            }
+
+            if (errorMessages.size() > 0) {
+                result = new ResponseObject(ZConfigManager.Status.Error, "Error", errorMessages);
+            } else {
+                result = new ResponseObject(ZConfigManager.Status.Success, "Success", null);
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+            result = new ResponseObject(ZConfigManager.Status.Error, "Error", e.getMessage());
+        }
+        return result;
+    }
+
     public ResponseObject CompletionPreChecks() {
         ResponseObject responseObject = null;
         Boolean result = false;
@@ -1767,6 +1830,22 @@ public class Operation extends ZBaseEntity implements Serializable {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return intComponentsCount;
+    }
+
+    public int getTotalComponents() {
+        int numTotalComponents = 0;
+        try {
+            String entitySetName = ZCollections.COMPONENT_COLLECTION;
+            String resPath = entitySetName + "/$count?$filter=(WorkOrderNum eq '" + getWorkOrderNum() + "' and OperAct eq '" + getOperationNum() + "' and Deleted ne true)";
+            ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                Object rawData = result.Content();
+                numTotalComponents = Integer.parseInt(rawData.toString());
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return numTotalComponents;
     }
 
     public int getTotalNumPartialIssuedComponents() {

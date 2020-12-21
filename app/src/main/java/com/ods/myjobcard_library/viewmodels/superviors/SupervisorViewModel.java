@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZAppSettings;
-import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ResponseMasterModel;
 import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
 import com.ods.myjobcard_library.entities.forms.FormListObject;
@@ -66,7 +65,7 @@ public class SupervisorViewModel extends BaseViewModel {
             String instanceId = null;
             String isDraft = "";
             ArrayList<ResponseMasterModel> listOfFilledForms = ResponseMasterModel.getFilledFormsForSupervisorView(workOrderNum);
-            if (listOfFilledForms != null) {
+            if (listOfFilledForms != null && listOfFilledForms.size() > 0) {
                 for (ResponseMasterModel response : listOfFilledForms) {
                     if (!(formAssignmentSetModel.getMultipleSub().equals("X"))) {
                         instanceId = response.getInstanceID();

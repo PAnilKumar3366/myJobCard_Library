@@ -508,10 +508,7 @@ public class Notification extends ZBaseEntity {
 
     @Override
     public boolean isLocal() {
-        if (this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
-            return true;
-        else
-            return super.isLocal();
+        return super.isLocal();
     }
 
     public String getNotification() {
@@ -1208,7 +1205,10 @@ public class Notification extends ZBaseEntity {
     }
 
     public boolean isActive() {
-        return getStatusDetail().isInProcess();
+        if (isLocal() && this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
+            return true;
+        else
+            return getStatusDetail().isInProcess();
     }
 
 
@@ -1476,15 +1476,17 @@ public class Notification extends ZBaseEntity {
 
     public ArrayList<String> getPreCompletionMessages(boolean isWONotification) {
         ArrayList<String> errorMessages = new ArrayList<>();
-        ArrayList<String> strList = OrderTypeFeature.getOrderTypeFeatures(getNotificationType());
-        if (strList.contains(ZAppSettings.Features.ITEM.getFeatureValue()) && getTotalNumItems(isWONotification) == 0) {
-            errorMessages.add("Please provide object / part and damage details by adding Item to the notification");
-        }
-        if (strList.contains(ZAppSettings.Features.ITEMCAUSE.getFeatureValue()) && getTotalNumItemCauses(isWONotification) == 0) {
-            errorMessages.add("Please provide cause details for the notification");
-        }
-        if (getBreakdown().equalsIgnoreCase("x") && (getMalfunctEnd() == null || getMalfunctEndTime() == null)) {
-            errorMessages.add("Please provide the malfunction end date time as the breakdown is notified for the notification");
+        ArrayList<OrderTypeFeature> featureList = OrderTypeFeature.getMandatoryFeaturesByObjectType(getNotificationType());
+        for (OrderTypeFeature orderTypeFeature : featureList) {
+            if (orderTypeFeature.getFeature().contains(ZAppSettings.Features.ITEM.getFeatureValue()) && getTotalNumItems(isWONotification) == 0) {
+                errorMessages.add("Please provide object / part and damage details by adding Item to the notification");
+            }
+            if (orderTypeFeature.getFeature().contains(ZAppSettings.Features.ITEMCAUSE.getFeatureValue()) && getTotalNumItemCauses(isWONotification) == 0) {
+                errorMessages.add("Please provide cause details for the notification");
+            }
+            if (getBreakdown().equalsIgnoreCase("x") && (getMalfunctEnd() == null || getMalfunctEndTime() == null)) {
+                errorMessages.add("Please provide the malfunction end date time as the breakdown is notified for the notification");
+            }
         }
         return errorMessages;
     }

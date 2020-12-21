@@ -1,5 +1,6 @@
 package com.ods.myjobcard_library.entities.transaction;
 
+import android.content.Context;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
@@ -799,10 +800,7 @@ public class WorkOrder extends ZBaseEntity {
 
     @Override
     public boolean isLocal() {
-        if (this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
-            return true;
-        else
-           return super.isLocal();
+        return super.isLocal();
     }
 
     public String getSuperiorOrder() {
@@ -1935,6 +1933,8 @@ public class WorkOrder extends ZBaseEntity {
             } else {
                 active = getCurrentOperation() != null && getCurrentOperation().getStatusDetail().isInProcess();
             }
+            if (isLocal() && this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
+                active = true;
         } catch (Exception e) {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
@@ -2031,6 +2031,78 @@ public class WorkOrder extends ZBaseEntity {
         return intCounter;
     }
 
+    public ResponseObject getCompletionPreCheckList(Context context) {
+        ResponseObject result;
+        ArrayList<String> errorMessages = new ArrayList<>();
+        try {
+            ArrayList<OrderTypeFeature> featureList = OrderTypeFeature.getMandatoryFeaturesByObjectType(this.getOrderType());
+            for (OrderTypeFeature orderTypeFeature : featureList) {
+                //Operations
+                if (ZConfigManager.OPERATION_COMPLETION_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.OPERATION.getFeatureValue())) {
+                    int incompleteOperations = getTotalNumInCompleteOperations();
+                    int totalOperations = getTotalNumOperations();
+                    if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
+                        if (incompleteOperations > 0)
+                            errorMessages.add(context.getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
+                    } else {
+                        if (totalOperations == incompleteOperations)
+                            errorMessages.add(context.getString(R.string.msgAtLeastOneOperationRequiredToComplete));
+                    }
+                }
+                //Components
+                if (ZConfigManager.COMPONENT_ISSUE_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.COMPONENT.getFeatureValue())) {
+                    int remainingComponents = getTotalNumUnIssuedComponents() + (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? 0 : getTotalNumPartialIssuedComponents());
+                    int totalComponents = getTotalNumComponents();
+                    if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
+                        if (remainingComponents > 0)
+                            errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
+                    } else {
+                        if (totalComponents == remainingComponents) {
+                            errorMessages.add(context.getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
+                        }
+                    }
+                }
+                //Attachments
+                if (ZConfigManager.ATTACHMENT_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.ATTACHMENT.getFeatureValue())) {
+                    if (getTotalNumUserUploadedAttachments() <= 0)
+                        errorMessages.add(context.getString(R.string.msgAtLeastOneAttachmentRequired));
+                }
+                //Forms
+                if (ZConfigManager.MANDATORY_FORMS_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.FORMS.getFeatureValue())) {
+                    if (getTotalNumUnSubmittedMandatoryForms() > 0)
+                        errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
+                }
+                //Record Points
+                if (ZConfigManager.MPOINT_READING_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.RECORDPOINTS.getFeatureValue())) {
+                    int totalPoints = getTotalNumMeasurementPoints();
+                    int totalReadingTaken = getTotalNumReadingTaken();
+                    if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
+                        if (totalPoints != totalReadingTaken)
+                            errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
+                    } else {
+                        if (totalPoints > 0 && totalReadingTaken <= 0)
+                            errorMessages.add(context.getString(R.string.msgAtLeastOneReadingPointRequired));
+                    }
+                }
+                //Inspection Lot
+                if (orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.INSPECTIONLOT.getFeatureValue())) {
+                    if (!inspectionLotUDAvailable())
+                        errorMessages.add(context.getString(R.string.msgInspectionLotDecisionPending, getInspectionLot()));
+                }
+            }
+
+            if (errorMessages.size() > 0) {
+                result = new ResponseObject(ZConfigManager.Status.Error, "Error", errorMessages);
+            } else {
+                result = new ResponseObject(ZConfigManager.Status.Success, "Success", null);
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+            result = new ResponseObject(ZConfigManager.Status.Error, "Error", e.getMessage());
+        }
+        return result;
+    }
+
     public ResponseObject CompletionPreChecks() {
         ResponseObject responseObject = null;
         Boolean result = false;
@@ -2038,14 +2110,9 @@ public class WorkOrder extends ZBaseEntity {
         String strErrorMessage;
         try {
             strErrorMessages = new ArrayList<>();
-
-
             ArrayList<String> strList = OrderTypeFeature.getOrderTypeFeatures(getOrderType());
 
-
             //Check all operations are marked as complete
-            //if (ZConfigManager.OPERATION_COMPLETION_REQUIRED && getFeatures().contains(ZAppSettings.Features.OPERATION)) {
-
             if (ZConfigManager.OPERATION_COMPLETION_REQUIRED && strList.contains(ZAppSettings.Features.OPERATION.getFeatureValue())) {
                 int totalInCompletedOperations = getTotalNumInCompleteOperations();
                 //Check all operations are marked as complete
@@ -2056,8 +2123,6 @@ public class WorkOrder extends ZBaseEntity {
             }
 
             //check all components are issued
-            //if (ZConfigManager.COMPONENT_ISSUE_REQUIRED && getFeatures().contains(ZAppSettings.Features.COMPONENT)) {
-
             if (ZConfigManager.COMPONENT_ISSUE_REQUIRED && strList.contains(ZAppSettings.Features.COMPONENT.getFeatureValue())) {
 
                 int totalNumUnIssuedComponents = getTotalNumUnIssuedComponents() + (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? 0 : getTotalNumPartialIssuedComponents());
@@ -2068,13 +2133,6 @@ public class WorkOrder extends ZBaseEntity {
             }
 
             //check atleast one attachment is uploaded
-            /*if (!getWOBusinessProcess().isInspectionType() && ZConfigManager.ATTACHMENT_REQUIRED && getTotalNumUserUploadedAttachments() == 0) {
-                strErrorMessage = "It is mandatory to upload at least one attachment as part of Job execution";
-                strErrorMessages.put(ZAppSettings.TabList.Attachments, strErrorMessage);
-            }*/
-
-            //if (!getWOBusinessProcess().isInspectionType() && ZConfigManager.ATTACHMENT_REQUIRED && getTotalNumUserUploadedAttachments() == 0 && getFeatures().contains(ZAppSettings.Features.ATTACHMENT)) {
-
             if (ZConfigManager.ATTACHMENT_REQUIRED && getTotalNumUserUploadedAttachments() == 0 && strList.contains(ZAppSettings.Features.ATTACHMENT.getFeatureValue())) {
 
                 strErrorMessage = "It is mandatory to upload at least one attachment as part of Job execution";
@@ -2088,27 +2146,22 @@ public class WorkOrder extends ZBaseEntity {
             }
 
             //check if any reading taken or not
-            //if (ZConfigManager.MPOINT_READING_REQUIRED && getFeatures().contains(ZAppSettings.Features.RECORDPOINTS)){
-
             if (ZConfigManager.MPOINT_READING_REQUIRED && strList.contains(ZAppSettings.Features.RECORDPOINTS.getFeatureValue())) {
-
                 int totalPoints = getTotalNumMeasurementPoints();
                 int totalReadingTaken = getTotalNumReadingTaken();
-                /*if (!getWOBusinessProcess().isInspectionType() && totalPoints > 0 && totalReadingTaken == 0) {
-                    strErrorMessage = "It is mandatory to record the reading for this Job.";
-                    strErrorMessages.put(ZAppSettings.TabList.MeasurementPoints, strErrorMessage);
-                }else*/
                 if (totalPoints > 0 && totalReadingTaken < totalPoints) {
                     strErrorMessage = "It is mandatory to record all the readings for this Job.";
                     strErrorMessages.add(strErrorMessage);
                 }
             }
 
+            //Inspection Lot check
             if (strList.contains(ZAppSettings.Features.INSPECTIONLOT.getFeatureValue()) && !inspectionLotUDAvailable()) {
                 strErrorMessage = "User decision is pending for inspection lot " + getInspectionLot();
                 strErrorMessages.add(strErrorMessage);
             }
 
+            //Notification check
             if (strList.contains(ZAppSettings.Features.NOTIFICATION.getFeatureValue())) {
                 Notification woNotification = null;
                 ResponseObject response = Notification.getNotifications(ZAppSettings.FetchLevel.Single, ZAppSettings.Hierarchy.HeaderOnly, getNotificationNum(), "", true);
