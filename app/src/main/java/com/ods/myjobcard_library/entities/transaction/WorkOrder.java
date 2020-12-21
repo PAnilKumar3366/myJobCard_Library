@@ -1,6 +1,7 @@
 package com.ods.myjobcard_library.entities.transaction;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
@@ -796,6 +797,11 @@ public class WorkOrder extends ZBaseEntity {
             }
         }
         return spinnerTechnicians;
+    }
+
+    @Override
+    public boolean isLocal() {
+        return super.isLocal();
     }
 
     public String getSuperiorOrder() {
@@ -1928,18 +1934,13 @@ public class WorkOrder extends ZBaseEntity {
             } else {
                 active = getCurrentOperation() != null && getCurrentOperation().getStatusDetail().isInProcess();
             }
+            if (isLocal() && this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser))
+                active = true;
         } catch (Exception e) {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
-        return active;
-    }
 
-    @Override
-    public boolean isLocal() {
-        boolean local = super.isLocal();
-        if (!local) {
-            return this.getEnteredBy() != null && this.getEnteredBy().equalsIgnoreCase(ZAppSettings.strUser);
-        } else return true;
+        return active;
     }
 
     //
@@ -2031,7 +2032,7 @@ public class WorkOrder extends ZBaseEntity {
         return intCounter;
     }
 
-    public ResponseObject getCompletionPreCheckList(Context context) {
+    public ResponseObject getCompletionPreCheckList() {
         ResponseObject result;
         ArrayList<String> errorMessages = new ArrayList<>();
         try {
@@ -2043,13 +2044,13 @@ public class WorkOrder extends ZBaseEntity {
                     int totalOperations = getTotalNumOperations();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
                         if (incompleteOperations > 0)
-                            errorMessages.add(context.getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
                     } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalOperations == incompleteOperations)
-                            errorMessages.add(context.getString(R.string.msgAtLeastOneOperationRequiredToComplete));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneOperationRequiredToComplete));
                     } else {
                         if (incompleteOperations > 0)
-                            errorMessages.add(context.getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
                     }
                 }
                 //Components
@@ -2058,25 +2059,25 @@ public class WorkOrder extends ZBaseEntity {
                     int totalComponents = getTotalNumComponents();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
                         if (remainingComponents > 0)
-                            errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
                     } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalComponents == remainingComponents) {
-                            errorMessages.add(context.getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
                         }
                     } else {
                         if (remainingComponents > 0)
-                            errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
                     }
                 }
                 //Attachments
                 if (ZConfigManager.ATTACHMENT_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.ATTACHMENT.getFeatureValue())) {
                     if (getTotalNumUserUploadedAttachments() <= 0)
-                        errorMessages.add(context.getString(R.string.msgAtLeastOneAttachmentRequired));
+                        errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneAttachmentRequired));
                 }
                 //Forms
                 if (ZConfigManager.MANDATORY_FORMS_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.FORMS.getFeatureValue())) {
                     if (getTotalNumUnSubmittedMandatoryForms() > 0)
-                        errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
+                        errorMessages.add(Resources.getSystem().getString(R.string.msgAllMandatoryFormsAreRequired));
                 }
                 //Record Points
                 if (ZConfigManager.MPOINT_READING_REQUIRED || orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.RECORDPOINTS.getFeatureValue())) {
@@ -2084,19 +2085,19 @@ public class WorkOrder extends ZBaseEntity {
                     int totalReadingTaken = getTotalNumReadingTaken();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
                         if (totalPoints > 0 && totalPoints != totalReadingTaken)
-                            errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgAllReadingPointsAreMandatory));
                     } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalPoints > 0 && totalReadingTaken <= 0)
-                            errorMessages.add(context.getString(R.string.msgAtLeastOneReadingPointRequired));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgAtLeastOneReadingPointRequired));
                     } else {
                         if (totalPoints > 0 && totalPoints != totalReadingTaken)
-                            errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
+                            errorMessages.add(Resources.getSystem().getString(R.string.msgAllReadingPointsAreMandatory));
                     }
                 }
                 //Inspection Lot
                 if (orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.INSPECTIONLOT.getFeatureValue())) {
                     if (!inspectionLotUDAvailable())
-                        errorMessages.add(context.getString(R.string.msgInspectionLotDecisionPending, getInspectionLot()));
+                        errorMessages.add(Resources.getSystem().getString(R.string.msgInspectionLotDecisionPending, getInspectionLot()));
                 }
 
                 //Notifications
