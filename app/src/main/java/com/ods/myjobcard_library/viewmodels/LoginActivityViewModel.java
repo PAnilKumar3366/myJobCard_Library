@@ -2,6 +2,7 @@ package com.ods.myjobcard_library.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
@@ -24,12 +25,15 @@ import com.ods.ods_sdk.StoreHelpers.StoreStatusAsyncHelper;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
+import com.ods.ods_sdk.utils.ConfigManager;
 import com.ods.ods_sdk.utils.DliteLogger;
+import com.sap.smp.client.odata.ODataEntity;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class LoginActivityViewModel extends BaseViewModel implements RegisterHelper.Callbacks {
 
@@ -67,7 +71,14 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         helper.initRegistration(userName, oldUser, password, oldPass, isHttps, host, port, appname, oldUserLogin,isDemoMode);
     }
     public void fireBaseTokenConfiguration(String appConnID,String tokenID){
-        helper.fireBaseTokenConfiguration(appConnID,tokenID);
+       // helper.fireBaseTokenConfiguration(appConnID,tokenID);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                helper.fireBaseTokenConfiguration(appConnID,tokenID);
+                return null;
+            }
+        }.execute();
     }
 
     public LiveData<String> getError() {
@@ -138,7 +149,8 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
     @Override
     public void onDeregisterSuccess(){
         preferences.edit().remove(Collections.ARG_USER_ID).remove(Collections.ARG_USER_PASSWORD).
-                remove(Collections.ARG_APP_CONNECTION_ID).remove(Collections.ARG_FCM_TOKEN).apply();
+                remove(Collections.ARG_APP_CONNECTION_ID).remove(Collections.ARG_FCM_TOKEN).remove(ZCollections.IS_ONLINE_APPSTORE).apply();
+        DataHelper.getInstance().changeStoreStatus(StoreSettings.SyncOptions.DeletePushSubScription);
     }
 
     @Override

@@ -115,6 +115,13 @@ public class Operation extends ZBaseEntity implements Serializable {
     private String NormalDurationUnit;
     private String Vendor;
 
+
+    //Added new fields for getting tasktype operation's forms data
+    private String TaskListType;
+    private String Group;
+    private String GroupCounter;
+    private String InternalCounter;
+
     public Operation(EntityValue oprEntity) {
         create(oprEntity);
         initializeEntityProperties();
@@ -1242,6 +1249,38 @@ public class Operation extends ZBaseEntity implements Serializable {
 
     public boolean isInitialized() {
         return (!TextUtils.isEmpty(this.WorkOrderNum) && !TextUtils.isEmpty(this.OperationNum));
+    }
+
+    public String getTaskListType() {
+        return TaskListType;
+    }
+
+    public void setTaskListType(String taskListType) {
+        TaskListType = taskListType;
+    }
+
+    public String getGroup() {
+        return Group;
+    }
+
+    public void setGroup(String group) {
+        Group = group;
+    }
+
+    public String getGroupCounter() {
+        return GroupCounter;
+    }
+
+    public void setGroupCounter(String groupCounter) {
+        GroupCounter = groupCounter;
+    }
+
+    public String getInternalCounter() {
+        return InternalCounter;
+    }
+
+    public void setInternalCounter(String internalCounter) {
+        InternalCounter = internalCounter;
     }
 
     /*public static ResponseObject getWorkOrderOperations(String orderByCriteria) {

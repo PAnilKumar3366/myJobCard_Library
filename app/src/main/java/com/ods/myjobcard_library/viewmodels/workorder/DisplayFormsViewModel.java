@@ -26,7 +26,7 @@ public class DisplayFormsViewModel extends ViewModel {
     private final MutableLiveData<ArrayList<FormListObject>> formFilledItems = new MutableLiveData<ArrayList<FormListObject>>();
     private final MutableLiveData<ArrayList<FormListObject>> generalFormItems = new MutableLiveData<ArrayList<FormListObject>>();
 
-    String orderType, wo_Number, opr_Num, equipmentCat, funcLocCat, controlKey;
+    String orderType, wo_Number, opr_Num, equipmentCat, funcLocCat, controlKey,taskListType,group,groupCounter,internalCounter;
     List<FormListObject> responseMasterModel = new ArrayList<>();
     FormSetModel formSetModel;
     private ArrayList<FormAssignmentSetModel> list = new ArrayList<>();
@@ -48,7 +48,10 @@ public class DisplayFormsViewModel extends ViewModel {
     }
 
     public void setOrderType(WorkOrder workOrder, String typeValue) {
-
+        taskListType="";
+        group="";
+        groupCounter="";
+        internalCounter="";
         if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
             getOrderType(workOrder, typeValue);
             opr_Num = workOrder.getCurrentOperation().getOperationNum();
@@ -87,7 +90,13 @@ public class DisplayFormsViewModel extends ViewModel {
                 funcLocCat = workOrder.getFuncLocCategory();
             else
                 funcLocCat = workOrder.getCurrentOperation().getFuncLocCategory().isEmpty() ? workOrder.getFuncLocCategory() : workOrder.getCurrentOperation().getFuncLocCategory();
-        } else if (type.equals(ZAppSettings.FormAssignmentType.None.Value)) {
+        } else if (type.equals(ZAppSettings.FormAssignmentType.TaskListType.Value)){
+            taskListType=workOrder.getCurrentOperation().getTaskListType();
+            group=workOrder.getCurrentOperation().getGroup();
+            groupCounter=workOrder.getCurrentOperation().getGroupCounter();
+            internalCounter=workOrder.getCurrentOperation().getInternalCounter();
+        }
+        else if (type.equals(ZAppSettings.FormAssignmentType.None.Value)) {
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
                 orderType = workOrder.getOrderType();
             else
@@ -96,7 +105,7 @@ public class DisplayFormsViewModel extends ViewModel {
     }
 
     private void getFormItemsList() {
-        list = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat);
+        list = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat,taskListType,group,groupCounter,internalCounter);
 
         Iterator<FormAssignmentSetModel> it1 = list.iterator();
 
