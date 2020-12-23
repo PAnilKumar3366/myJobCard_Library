@@ -104,7 +104,7 @@ public class ZConfigManager extends ConfigManager {
     public static int MAX_RECORDS_LOAD_COUNT = 100;
     public static String USER_ROLE_SUPERVISOR = "SUPERVISOR";
     public static String USER_ROLE_TECHNICIAN = "TECHNICIAN";
-    public static String USER_LANDING_SCREEN_CLASSNAME = "DashboardScreen";//"com.ods.myjobcard.UI.assetTree.TreeListActivity";//
+    public static String USER_LANDING_SCREEN_CLASSNAME = "dashboardscreen";//"com.ods.myjobcard.UI.assetTree.TreeListActivity";//
     public static String ESRI_ASSET_MAP = "ESRI";
     public static String LATLONGO_ASSET_MAP = "LatLonGo";
     public static String DEFAULT_ASSET_MAP = ESRI_ASSET_MAP;

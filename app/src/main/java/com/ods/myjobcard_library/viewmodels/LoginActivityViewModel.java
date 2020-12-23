@@ -66,6 +66,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         this.isFirstDemoLogin = isFirstDemoLogin;
         this.oldUserLogin = oldUserLogin;
         String oldPass = preferences.getString(ZCollections.ARG_USER_PASSWORD, "");
+        ZAppSettings.AppStoreName="APLLICATIONSTORE";
         helper = RegisterHelper.getInstance(context, this);
         helper.setIsFirstDemoLogin(isFirstDemoLogin);
         helper.initRegistration(userName, oldUser, password, oldPass, isHttps, host, port, appname, oldUserLogin,isDemoMode);
@@ -187,7 +188,6 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         else
             ZAppSettings.isOpenOnlineAPStore=preferences.getBoolean("IS_ONLINE_APPSTORE",true);
         updateUI("We are keeping the things ready. Please Wait...");
-        ZAppSettings.AppStoreName="APLLICATIONSTORE";
         ZCommon.copyAssetsToSDCard(getApplication());
         new StoreStatusAsyncHelper(StoreSettings.SyncOptions.InitStores, new StoreStatusAsyncHelper.Callbacks() {
             @Override
