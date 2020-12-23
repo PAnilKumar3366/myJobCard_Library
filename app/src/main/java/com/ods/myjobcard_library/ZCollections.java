@@ -65,7 +65,7 @@ public class ZCollections extends Collections {
 	public static final String PLANT_SECTION_COLLECTION = "        ";
 	public static final String STORAGE_LOCATION_COLLECTION = "LTStorageLocationSet";
 	public static final String USER_TABLE_COLLECTION = "AppUserTableSet";
-	public static final String CATALOG_PROFILE_COLLECTION = "LTCatalogProfileSet";
+	public static final String CATALOG_PSROFILE_COLLECTION = "LTCatalogProfileSet";
 	public static final String CATALOG_CODE_COLLECTION = "LTCatalogCodeSet";
 
 	public static final String MATERIAL_STORAGE_COLLECTION = "HTMaterialStorageLocationSet";
@@ -404,15 +404,17 @@ public class ZCollections extends Collections {
 	public final static int CREATE_NEW_JOB_FROM_FORM = 999;
 
 	//OnlineSearch
-	public static boolean isUnAssigned=false;
+	public static boolean isUnAssigned = false;
 	public static HashMap<String, String> REFRESH_SERVICES = new HashMap<String, String>();
 	public static UUID OneTimeRequestId;
-	public static String getEditResourcePath(String collection, String key){
-		return new String(collection + "('"+ key + "')");
+	public static final String GenericNetworkError = "Unknown Network Error";
+
+	public static String getEditResourcePath(String collection, String key) {
+		return new String(collection + "('" + key + "')");
 
 	}
 
-	public static ArrayList<String> getCTSearchOptions(){
+	public static ArrayList<String> getCTSearchOptions() {
 		ArrayList<String> options = new ArrayList<String>();
 		options.add(SEARCH_OPTION_ID);
 		options.add(SEARCH_OPTION_DESCRIPTION);

@@ -2,7 +2,7 @@ package com.ods.myjobcard_library.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Environment;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -14,7 +14,6 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ctentities.UserTable;
-import com.ods.myjobcard_library.utils.DocsUtil;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.Collections;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
@@ -23,13 +22,7 @@ import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.StoreHelpers.StoreStatusAsyncHelper;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
 import com.ods.ods_sdk.entities.ResponseObject;
-import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
 import com.ods.ods_sdk.utils.DliteLogger;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
 
 public class LoginActivityViewModel extends BaseViewModel implements RegisterHelper.Callbacks {
 
@@ -66,8 +59,15 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         helper.setIsFirstDemoLogin(isFirstDemoLogin);
         helper.initRegistration(userName, oldUser, password, oldPass, isHttps, host, port, appname, oldUserLogin,isDemoMode);
     }
-    public void fireBaseTokenConfiguration(String appConnID,String tokenID){
-        helper.fireBaseTokenConfiguration(appConnID,tokenID);
+    public void fireBaseTokenConfiguration(String appConnID,String tokenID) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                helper.fireBaseTokenConfiguration(appConnID, tokenID);
+                return null;
+            }
+        }.execute();
+
     }
 
     public LiveData<String> getError() {
