@@ -36,6 +36,11 @@ public class ResponseMasterModel extends ZBaseEntity {
     private String FunctionLocation;
     private String NonObjType;
 
+    private String TaskListType;
+    private String Group;
+    private String GroupCounter;
+    private String InternalCounter;
+
     public ResponseMasterModel(ODataEntity entity) {
         initializeEntityProperties();
         create(entity);
@@ -317,6 +322,38 @@ public class ResponseMasterModel extends ZBaseEntity {
 
         String dateString = df.format(dt.getTime()).toString();
         return ("FE" + dateString);
+    }
+
+    public String getTaskListType() {
+        return TaskListType;
+    }
+
+    public void setTaskListType(String taskListType) {
+        TaskListType = taskListType;
+    }
+
+    public String getGroup() {
+        return Group;
+    }
+
+    public void setGroup(String group) {
+        Group = group;
+    }
+
+    public String getGroupCounter() {
+        return GroupCounter;
+    }
+
+    public void setGroupCounter(String groupCounter) {
+        GroupCounter = groupCounter;
+    }
+
+    public String getInternalCounter() {
+        return InternalCounter;
+    }
+
+    public void setInternalCounter(String internalCounter) {
+        InternalCounter = internalCounter;
     }
 
     @Override

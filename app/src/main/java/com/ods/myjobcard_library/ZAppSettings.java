@@ -69,6 +69,7 @@ public class ZAppSettings extends AppSettings {
         OperationLevel("2"),
         Equipment("3"),
         FuncLoc("4"),
+        TaskListType("5"),
         None("");
 
         public final String Value;

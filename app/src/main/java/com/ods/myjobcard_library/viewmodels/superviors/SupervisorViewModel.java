@@ -20,7 +20,7 @@ public class SupervisorViewModel extends BaseViewModel {
 
     private ArrayList<FormAssignmentSetModel> formAssignmentList = new ArrayList<>();
     private ArrayList<FormSetModel> formSetList = new ArrayList<>();
-    private String orderType, workOrderNum, operationNum, equipmentCat, funcLocCat, controlKey;
+    private String orderType, workOrderNum, operationNum, equipmentCat, funcLocCat, controlKey,taskListType,group,groupCounter,internalCounter;
     private MutableLiveData<ArrayList<FormListObject>> listOfForms = new MutableLiveData<>();
     private MutableLiveData<SupervisorWorkOrder> currWorkOrder = new MutableLiveData<>();
 
@@ -58,7 +58,7 @@ public class SupervisorViewModel extends BaseViewModel {
 
     private void getFormsList() {
         ArrayList<FormListObject> arrayList = new ArrayList<>();
-        formAssignmentList = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat);
+        formAssignmentList = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat,taskListType,group,groupCounter,internalCounter);
 
         for (FormAssignmentSetModel formAssignmentSetModel : formAssignmentList) {
             int filledForms = 0;

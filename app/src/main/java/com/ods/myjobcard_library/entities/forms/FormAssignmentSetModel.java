@@ -38,11 +38,16 @@ public class FormAssignmentSetModel extends ZBaseEntity {
     private String FuncLocCategory;
     private String Stylesheet;
 
+    private String TaskListType;
+    private String Group;
+    private String GroupCounter;
+    private String InternalCounter;
+
     public FormAssignmentSetModel(ODataEntity entity) {
         create(entity);
     }
 
-    public static ArrayList<FormAssignmentSetModel> getFormAssignmentData(String orderType, String controlKey, String equipmentCat, String funcLocCat) {
+    public static ArrayList<FormAssignmentSetModel> getFormAssignmentData(String orderType, String controlKey, String equipmentCat, String funcLocCat,String taskListType,String group,String groupCounter,String internalCounter) {
         ArrayList<FormAssignmentSetModel> assignedForms = new ArrayList<>();
         try {
             String strResPath;
@@ -53,9 +58,10 @@ public class FormAssignmentSetModel extends ZBaseEntity {
                 strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter=FuncLocCategory eq '" + funcLocCat + "'&$orderby=FlowSequence asc,Mandatory desc";
             else if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED || !ZConfigManager.WO_OP_OBJS_DISPLAY.equalsIgnoreCase("x"))
                 strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (ControlKey eq '' and OrderType eq '" + orderType + "')&$orderby=FlowSequence asc,Mandatory desc";
+            else if(!taskListType.isEmpty())
+                strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (ControlKey eq '" + controlKey + "' and OrderType eq '" + orderType + "' and TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "')&$orderby=FlowSequence asc,Mandatory desc";
             else
                 strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (ControlKey eq '" + controlKey + "' and OrderType eq '" + orderType + "')&$orderby=FlowSequence asc,Mandatory desc";
-
 
             ResponseObject result = getObjectsFromEntity(entitySetName, strResPath);
             if (!result.isError())
@@ -299,5 +305,37 @@ public class FormAssignmentSetModel extends ZBaseEntity {
 
     public boolean isGeneralForm() {
         return getCategory() != null && getCategory().equalsIgnoreCase("NonObject");
+    }
+
+    public String getTaskListType() {
+        return TaskListType;
+    }
+
+    public void setTaskListType(String taskListType) {
+        TaskListType = taskListType;
+    }
+
+    public String getGroup() {
+        return Group;
+    }
+
+    public void setGroup(String group) {
+        Group = group;
+    }
+
+    public String getGroupCounter() {
+        return GroupCounter;
+    }
+
+    public void setGroupCounter(String groupCounter) {
+        GroupCounter = groupCounter;
+    }
+
+    public String getInternalCounter() {
+        return InternalCounter;
+    }
+
+    public void setInternalCounter(String internalCounter) {
+        InternalCounter = internalCounter;
     }
 }
