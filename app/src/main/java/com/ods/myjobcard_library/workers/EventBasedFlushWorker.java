@@ -11,6 +11,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.ods.myjobcard_library.ZAppSettings;
+import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.StoreSettings;
@@ -28,8 +29,8 @@ public class EventBasedFlushWorker extends Worker {
     private DataHelper helper;
     private boolean isErrorFlush;
     private String ErrorMsg = "Error";
-    private ResponseObject result = null;
-    String errorMessage = "";
+    String errorMessage = "", networkError = "";
+    private ResponseObject result = null, resultFlush, resultFlushErrors, resultRefresh, resultRefreshError;
     boolean error = false;
 
     public EventBasedFlushWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -57,10 +58,10 @@ public class EventBasedFlushWorker extends Worker {
                 }
                 DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Debug, "Do work Called and tag is : " + this.getTags().toString() + " and Id  " + this.getId());
                 ZConfigManager.isBGFlushInProgress = true;
-                result = helper.Flush();
+                resultFlush = helper.Flush();
                 result = ReadingErrors();
                 if (result != null && !result.isError() && ZConfigManager.EventBased_Sync_Type == 2) {
-                    result = helper.changeStoreStatus(StoreSettings.SyncOptions.Refresh_All_Trans_Stores);
+                    resultRefresh = helper.changeStoreStatus(StoreSettings.SyncOptions.Refresh_All_Trans_Stores);
                     result = ReadingErrors();
                 }
 
@@ -74,6 +75,12 @@ public class EventBasedFlushWorker extends Worker {
                 result.setError(error);
                 result.setMessage(errorMessage);*/
                 ZConfigManager.isBGFlushInProgress = false;
+                if (resultFlush != null && resultFlush.isNetworkError() || resultRefresh != null && resultRefresh.isNetworkError()) {
+                    Data errorData = new Data.Builder().
+                            putBoolean("isSchedule", false).
+                            putString("ErrorMsg", ZCollections.GenericNetworkError).build();
+                    return Result.failure(errorData);
+                }
                 if (result.isError()) {
                     Data errorData = new Data.Builder().
                             putBoolean("isSchedule", false).

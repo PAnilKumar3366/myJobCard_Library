@@ -1,7 +1,6 @@
 package com.ods.myjobcard_library.entities.transaction;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
@@ -271,11 +270,11 @@ public class WorkOrder extends ZBaseEntity {
             filterQueryURI = filterStart + filterQuery + filterClose;*/
             switch (woFetchLevel) {
                 case ListMap:
-                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible" + strOrderByURI;
+                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible,SuperiorOrder" + strOrderByURI;
                     fetchAddress = true;
                     break;
                 case List:
-                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,PersonResponsible" + strOrderByURI;
+                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,PersonResponsible,SuperiorOrder" + strOrderByURI;
                     fetchAddress = true;
                     break;
                 case ListSpinner:
@@ -385,10 +384,10 @@ public class WorkOrder extends ZBaseEntity {
             switch (fetchLevel) {
                 case List:
                 case ListWithStatusAllowed:
-                    resPath += "$select=WorkOrderNum,SysStatus,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,PersonResponsible" + "&" + orderByUrl;
+                    resPath += "$select=WorkOrderNum,SysStatus,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,PersonResponsible,SuperiorOrder" + "&" + orderByUrl;
                     break;
                 case ListMap:
-                    resPath += "$select=WorkOrderNum,SysStatus,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible" + "&" + orderByUrl;
+                    resPath += "$select=WorkOrderNum,SysStatus,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible,SuperiorOrder" + "&" + orderByUrl;
                     fetchAddress = true;
                     break;
             }

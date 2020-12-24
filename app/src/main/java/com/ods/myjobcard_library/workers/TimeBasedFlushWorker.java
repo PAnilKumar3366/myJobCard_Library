@@ -16,6 +16,7 @@ import androidx.work.WorkerParameters;
 
 import com.ods.myjobcard_library.R;
 import com.ods.myjobcard_library.ZAppSettings;
+import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.utils.DocsUtil;
@@ -38,6 +39,7 @@ public class TimeBasedFlushWorker extends Worker {
     private DataHelper helper;
     String errorMessage = "";
     boolean error = false;
+    private ResponseObject resultFlush, resultFlushErrors, resultRefresh, resultRefreshError;
 
     public TimeBasedFlushWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -75,12 +77,13 @@ public class TimeBasedFlushWorker extends Worker {
                 showNotification("Refreshing Data", "Background Refresh Started");
 
                 if (resultPending.getStatus().equals(ZConfigManager.Status.Warning))
-                    result = helper.Flush();
+                    resultFlush = helper.Flush();
                 result = ReadingErrors();
                 if (!result.isError() && ZConfigManager.TimeBased_Sync_Type == 2) {
-                    result = helper.changeStoreStatus(StoreSettings.SyncOptions.Refresh_All_Trans_Stores);
+                    resultRefresh = helper.changeStoreStatus(StoreSettings.SyncOptions.Refresh_All_Trans_Stores);
                     result = ReadingErrors();
                 }
+
                 //result = helper.ReadErrors(AppStoreSet.getStoresForNormalTransmit());
                /* result = helper.getErrors();
                 if (result.isError()) {
@@ -112,6 +115,13 @@ public class TimeBasedFlushWorker extends Worker {
                         .putInt("RetryCount", 0);
                 DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Info, "Next Background Refresh" + instance.getTime().toString());
                 Log.d(TAG, "doWork: " + "Next Background Refresh" + instance.getTime().toString());
+                if (resultFlush != null && resultFlush.isNetworkError() || resultRefresh != null && resultRefresh.isNetworkError()) {
+                    showNotification("Refresh Data", "Background Refresh Failed");
+                    Data errorData = new Data.Builder().
+                            putBoolean("isSchedule", false).
+                            putString("ErrorMsg", ZCollections.GenericNetworkError).build();
+                    return Result.failure(errorData);
+                }
                 if (result.isError()) {
                     showNotification("Refresh Data", "Background Refresh Failed");
                     return Result.failure(outPutData.putString("ErrorMsg", result.getMessage()).putString("Result", "Fail").build());
