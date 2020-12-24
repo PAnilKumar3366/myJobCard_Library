@@ -21,6 +21,7 @@ public class StatusChangeLog extends ZBaseEntity {
     private String ObjectNum;
     private String Operation;
     private String StatusCode;
+    private String PostedBy;
     private GregorianCalendar StatusChangedTime;
     private boolean IsConsidered;
     private String StatusCategory;
@@ -69,6 +70,7 @@ public class StatusChangeLog extends ZBaseEntity {
             statusChangeLog.setStatusChangedTime(changedTime);
             statusChangeLog.setStatusTime(new Time(changedTime.getTimeInMillis()));
             statusChangeLog.setStatusCode(status.getStatusCode());
+            statusChangeLog.setPostedBy(ZAppSettings.strUser);
             if (location != null) {
                 statusChangeLog.setLatitude(BigDecimal.valueOf(location.getLatitude()));
                 statusChangeLog.setLongitude(BigDecimal.valueOf(location.getLongitude()));
@@ -78,6 +80,14 @@ public class StatusChangeLog extends ZBaseEntity {
         } catch (Exception e) {
             DliteLogger.WriteLog(StatusChangeLog.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
+    }
+
+    public String getPostedBy() {
+        return PostedBy;
+    }
+
+    public void setPostedBy(String postedBy) {
+        PostedBy = postedBy;
     }
 
     private void initializeEntityProperties() {
