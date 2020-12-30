@@ -70,7 +70,7 @@ public class StatusChangeLog extends ZBaseEntity {
             statusChangeLog.setStatusChangedTime(changedTime);
             statusChangeLog.setStatusTime(new Time(changedTime.getTimeInMillis()));
             statusChangeLog.setStatusCode(status.getStatusCode());
-            statusChangeLog.setPostedBy(ZAppSettings.strUser);
+            statusChangeLog.setPostedBy(ZAppSettings.strUser.toUpperCase());
             if (location != null) {
                 statusChangeLog.setLatitude(BigDecimal.valueOf(location.getLatitude()));
                 statusChangeLog.setLongitude(BigDecimal.valueOf(location.getLongitude()));

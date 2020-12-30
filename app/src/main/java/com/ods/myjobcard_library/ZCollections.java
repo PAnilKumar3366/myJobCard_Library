@@ -65,7 +65,7 @@ public class ZCollections extends Collections {
 	public static final String PLANT_SECTION_COLLECTION = "        ";
 	public static final String STORAGE_LOCATION_COLLECTION = "LTStorageLocationSet";
 	public static final String USER_TABLE_COLLECTION = "AppUserTableSet";
-	public static final String CATALOG_PSROFILE_COLLECTION = "LTCatalogProfileSet";
+	public static final String CATALOG_PROFILE_COLLECTION = "LTCatalogProfileSet";
 	public static final String CATALOG_CODE_COLLECTION = "LTCatalogCodeSet";
 
 	public static final String MATERIAL_STORAGE_COLLECTION = "HTMaterialStorageLocationSet";

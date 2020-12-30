@@ -93,6 +93,11 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
     }
 
     @Override
+    public void onUserChangeDeletePushSubscription() {
+        DataHelper.getInstance().changeStoreStatus(StoreSettings.SyncOptions.DeletePushSubScription);
+    }
+
+    @Override
     public void updateUI(String update) {
         this.update.setValue(update);
         Log.d("LoginVM: ", update);
@@ -142,7 +147,6 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
     public void onDeregisterSuccess(){
         preferences.edit().remove(Collections.ARG_USER_ID).remove(Collections.ARG_USER_PASSWORD).
                 remove(Collections.ARG_APP_CONNECTION_ID).remove(Collections.ARG_FCM_TOKEN).remove(ZCollections.IS_ONLINE_APPSTORE).apply();
-        DataHelper.getInstance().changeStoreStatus(StoreSettings.SyncOptions.DeletePushSubScription);
     }
 
     @Override
