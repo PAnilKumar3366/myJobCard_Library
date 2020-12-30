@@ -188,6 +188,7 @@ public class ZConfigManager extends ConfigManager {
     public static String DOWNLOAD_CREATEDBY_NOTIF = "X";
     public static String DOWNLOAD_CREATEDBY_WO = "X";
     public static boolean isBGFlushInProgress = false;
+    public static boolean ENABLE_PUSH_SUBCRIPTION=false;
 
     public static GregorianCalendar getDefaultCalendarVal() {
         try {
