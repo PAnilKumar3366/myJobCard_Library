@@ -1501,8 +1501,8 @@ public class Operation extends ZBaseEntity implements Serializable {
         try {
             result = UpdateStatus(status, Notes, StatusReason, false, deviceLocation);
             if (result != null && !result.isError()) {
-                if ((status.postTimeEnabled() || status.showTimeSheetScreen()) && ZConfigManager.POST_CONFIRMATIONS) {
-                    result.setError(!PostConfirmation(status, oprStartTime, oprFinishTime, actualWork, autoFlush, true));
+                if ((status.postConfirmationEnabled()) || ZConfigManager.POST_CONFIRMATIONS) {
+                    result.setError(!PostConfirmation(status, oprStartTime, oprFinishTime, actualWork, autoFlush, status.preCompletionCheckEnabled()));
                     /*if (result != null && !result.isError()) {
                         int hours = actualWork.intValue();
                         int minutes = (int) ((actualWork.floatValue() - hours) * 100);
