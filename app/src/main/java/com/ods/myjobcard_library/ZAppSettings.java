@@ -26,7 +26,7 @@ public class ZAppSettings extends AppSettings {
     public static String userFirstName;
     public static String userLastName;
     //public static boolean isLoggedIn = false;
-    public static boolean isHttps = true;
+   // public static boolean isHttps = true;
     public static int App_Name_MinLength = 3;
 
    // public static boolean IsDemoModeEnabled = false;

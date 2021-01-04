@@ -4,13 +4,18 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.ods.myjobcard_library.ZAppSettings;
+import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.workers.ScheduleWork;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.utils.ConfigManager;
 import com.ods.ods_sdk.utils.DliteLogger;
+import com.sap.smp.client.odata.ODataEntity;
+import com.sap.smp.client.odata.impl.ODataDurationDefaultImpl;
+import com.sap.smp.client.odata.impl.ODataPropertyDefaultImpl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -20,11 +25,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import static com.ods.ods_sdk.utils.DliteLogger.WriteLog;
 
@@ -59,6 +66,83 @@ public class ZBaseEntity extends BaseEntity implements Parcelable {
         this.items = new ArrayList<BaseEntity>();
         in.readList(this.items, ZBaseEntity.class.getClassLoader());
         NCopy = in.readInt();
+    }
+
+    @Override
+    public ResponseObject toEntity(ODataEntity entity) {
+        ResponseObject result;
+        Class<?> cls;
+        ArrayList<Field> declaredFields = new ArrayList<>();
+        Method method;
+        try {
+            cls = this.getClass();
+
+            declaredFields.addAll(Arrays.asList(cls.getDeclaredFields()));
+            declaredFields.addAll(Arrays.asList(cls.getSuperclass().getDeclaredFields()));
+
+
+            for (Field field : declaredFields) {
+                //field.setAccessible(true);
+                //classFields.add(field.getName());
+
+                if (!field.getType().getSimpleName().equalsIgnoreCase("Creator") && !field.getType().getSimpleName().equalsIgnoreCase("DateFormat") && !field.getType().getSimpleName().equalsIgnoreCase("AppSettings.EntityMode")) {
+                    try {
+                        method = cls.getMethod("get" + field.getName());
+
+                        Object obj = method.invoke(this);
+                        if (obj == null)
+                            continue;
+
+                        if (field.getType() != Time.class) {
+
+                            if (field.getType() == GregorianCalendar.class) {
+                                GregorianCalendar dt = (GregorianCalendar) obj;
+                                if (dt.getTimeInMillis() == ConfigManager.getDefaultCalendarVal().getTimeInMillis())
+                                    continue;
+
+                                if(!entity.getEntityType().equalsIgnoreCase(ZCollections.USER_TIMESHEET_ENTITY_TYPE)
+                                        && !entity.getEntityType().equalsIgnoreCase(ZCollections.WO_CONFIRMATION_ENTITY_TYPE)) {
+                                    dt.setTimeZone(TimeZone.getTimeZone("GMT"));
+                                    dt.get(Calendar.HOUR_OF_DAY);
+                                }
+                                entity.getProperties().put(field.getName(),
+                                        new ODataPropertyDefaultImpl(field.getName(),
+                                                dt));
+                                continue;
+                            }
+                            entity.getProperties().put(field.getName(),
+                                    new ODataPropertyDefaultImpl(field.getName(),
+                                            obj));
+                        } else {
+                            Time timeValue;
+                            timeValue = (Time) obj;
+                            GregorianCalendar dtCal;
+                            dtCal = (GregorianCalendar) GregorianCalendar.getInstance();
+                            dtCal.setTimeInMillis(timeValue.getTime());
+                            com.sap.smp.client.odata.ODataDuration oDataDuration = new ODataDurationDefaultImpl();
+                            oDataDuration.setDays(0);
+                            oDataDuration.setHours(dtCal.get(Calendar.HOUR_OF_DAY));
+                            oDataDuration.setMinutes(dtCal.get(Calendar.MINUTE));
+                            oDataDuration.setSeconds(new BigDecimal(dtCal.get(Calendar.SECOND)));
+                            entity.getProperties().put(field.getName(),
+                                    new ODataPropertyDefaultImpl(field.getName(),
+                                            oDataDuration));
+
+                        }
+
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        WriteLog(getClass(), AppSettings.LogLevel.Error, e.getLocalizedMessage());
+                    }
+
+                }
+            }
+            result = new ResponseObject(ConfigManager.Status.Success, "", entity);
+        } catch (Exception e) {
+            WriteLog(getClass(), AppSettings.LogLevel.Error, e.getLocalizedMessage());
+            result = new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null);
+        }
+        return result;
     }
 
     @Override

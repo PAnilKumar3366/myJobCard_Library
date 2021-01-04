@@ -287,6 +287,11 @@ public class StatusCategory extends ZBaseEntity {
     }
 
     //helper methods
+
+    public boolean postConfirmationEnabled(){
+        return PostConfirmations != null && PostConfirmations.equalsIgnoreCase("x");
+    }
+
     public boolean isStatusVisible() {
         return StatusVisible != null && StatusVisible.equalsIgnoreCase("x");
     }
