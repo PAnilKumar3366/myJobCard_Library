@@ -413,11 +413,21 @@ public class Notification extends ZBaseEntity {
     public static ArrayList<SpinnerItem> getSpinnerWorkCenters() {
         ArrayList<SpinnerItem> spinnerWorkCenters = new ArrayList<>();
         ArrayList<String> workCenters = getAllDistinctWorkCenters();
-        for (String workCenter : workCenters) {
-            if (!workCenter.isEmpty())
-                spinnerWorkCenters.add(new SpinnerItem(workCenter, workCenter));
+        ArrayList<SpinnerItem> spinnerItems = new ArrayList<>();
+        try {
+            ResponseObject result = com.ods.myjobcard_library.entities.ctentities.WorkCenter.getWorkCenters();
+            if (result != null && !result.isError())
+                spinnerWorkCenters = (ArrayList<SpinnerItem>) result.Content();
+            for (String workCenter : workCenters) {
+                for (SpinnerItem item : spinnerWorkCenters) {
+                    if (item.getObjectID().equalsIgnoreCase(workCenter))
+                        spinnerItems.add(item);
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(com.ods.myjobcard_library.entities.transaction.Notification.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
-        return spinnerWorkCenters;
+        return spinnerItems;
     }
 
     /**

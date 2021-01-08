@@ -410,6 +410,7 @@ public class ZCommon extends Common {
                     protected ResponseObject doInBackground(Void... voids) {
                         ResponseObject res = null;
                         try {
+                            ZConfigManager.isBGFlushInProgress = true;
                             boolean isTxStore = storeList.get(0).getFlush().equalsIgnoreCase("1");
                             if (isTxStore) {
                                 res = DataHelper.getInstance().PendingRequestExists(storeList);
@@ -421,9 +422,11 @@ public class ZCommon extends Common {
                                 res = new ResponseObject(ConfigManager.Status.Success, "", null);
 
                             //res = DataHelper.getInstance().getErrorLogs(storeList);
-                            if ((res != null && !res.isError())) {
+                            if ((res != null && !res.isError()) && !res.isNetworkError()) {
                                 publishProgress(context.getString(R.string.msg_downloading));
                                 res = DataHelper.getInstance().changeStoreStatus(isTxStore ? StoreSettings.SyncOptions.Refresh_All_Trans_Stores : StoreSettings.SyncOptions.Refresh_All_Master_Stores);
+                                if (res.isNetworkError())
+                                    return res;
                                 res = DataHelper.getInstance().getErrorLogs(storeList);
                                 if (!res.isError()) {
                                     publishProgress(context.getString(R.string.msg_sync_complete));
@@ -465,6 +468,7 @@ public class ZCommon extends Common {
                         super.onPostExecute(response);
                         try {
                             boolean isError = false;
+                            ZConfigManager.isBGFlushInProgress = false;
                             if (response.isError()) {
                                 isError = true;
                                 response.setMessage("BEErrors");
