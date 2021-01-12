@@ -314,6 +314,7 @@ public class ZCollections extends Collections {
 	public static final String ARG_APP_NAME = "APP_NAME";
 	public static final String ARG_FCM_TOKEN = "APP_FCM_TOKEN";
 	public static final String ARG_IS_HTTPS = "IS_HTTPS";
+	public static final String ARG_IS_DEMO_MODE = "IS_DEMO_MODE";
 	public static final String ARG_USER_ID = "USER_ID";
 	public static final String ARG_USER_PASSWORD = "Encrypted_Password";
 	public static final String ARG_IS_HISTORY = "IsHistory";
