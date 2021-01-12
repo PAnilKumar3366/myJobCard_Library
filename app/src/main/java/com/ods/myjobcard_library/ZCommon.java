@@ -477,7 +477,7 @@ public class ZCommon extends Common {
                             if (storeList.get(0).getRefresh().equalsIgnoreCase("2")) {
                                 AppStoreSet.getStoreList();
                                 TableConfigSet.getTableDetails();
-                                ConfigManager.setAppConfigurations();
+                                ZConfigManager.setAppConfigurations();
                                 AppFeature.setUserRoleFeatures();
                             }
 
