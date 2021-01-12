@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">myJobCard_Library</string>
+    <string name="noAlert"></string>
+    <string name="enrouteAlert">Sie fahren zum Arbeitsort. Wollen Sie fortfahren?</string>
+    <string name="arrivedAlert">Sind Sie am Arbeitsplatz angekommen?</string>
+    <string name="acceptAlert">Sie nehmen diesen Job an. Wollen Sie fortfahren?</string>
+    <string name="startAlert">Sie starten diesen Job. Wollen Sie fortfahren?</string>
+    <string name="notificationAcceptAlert">Sie akzeptieren diese Benachrichtigung. Wollen Sie fortfahren?</string>
+    <string name="notificationRejectAlert">Sie lehnen diese Benachrichtigung ab. Wollen Sie fortfahren?</string>
+    <string name="notificationStartAlert">Sie starten diese Benachrichtigung. Wollen Sie fortfahren?</string>
+    <string name="notificationCompleteAlert">Sie vervollständigen diese Benachrichtigung. Wollen Sie fortfahren?</string>
+    <string name="alertUploadFileSizeAboveLimit">Die Dateigröße sollte nicht mehr als %1$s MB betragen</string>
+    <string name="alertDownloadSizeZeroErrorMsg">Beim Herunterladen des Anhangs ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut herunterzuladen!</string>
+    <string name="alertDownloadFailedErrorMsg">Beim Herunterladen des Anhangs ist ein Fehler aufgetreten. Fehlercode: %1$s</string>
+    <string name="msgNoFileFound">Datei auf Gerät nicht gefunden!</string>
+    <string name="msgNoApplicationFound">Keine unterstützte Anwendung zum Öffnen dieser Datei gefunden!</string>
+    <string name="msgTotalOperationRequiredToComplete">Es ist obligatorisch, alle ausstehenden Vorgänge abzuschließen. Die aktuelle Anzahl unvollständiger Operationen beträgt: %1$d</string>
+    <string name="msgAtLeastOneOperationRequiredToComplete">Es ist obligatorisch, mindestens eine ausstehende Operation abzuschließen.</string>
+    <string name="msgTotalComponentsRequiredToIssued">Es ist obligatorisch, alle Komponenten auszugeben. Derzeit nicht ausgegebene Komponenten sind: %1$d</string>
+    <string name="msgAtLeastOneComponentRequiredToIssued">Es ist obligatorisch, mindestens eine der Komponenten %1$s auszugeben.</string>
+    <string name="msgAtLeastOneAttachmentRequired">Es ist obligatorisch, mindestens einen Anhang hochzuladen.</string>
+    <string name="msgAllMandatoryFormsAreRequired">Es ist obligatorisch, alle erforderlichen / obligatorischen Formulare für diesen Job einzureichen.</string>
+    <string name="msgAllReadingPointsAreMandatory">Es ist obligatorisch, alle Messwerte für diesen Job aufzuzeichnen.</string>
+    <string name="msgAtLeastOneReadingPointRequired">Es ist obligatorisch, mindestens eine Lesung für diesen Job aufzuzeichnen.</string>
+    <string name="msgInspectionLotDecisionPending">Die Entscheidung des Benutzers für das Inspektionslos %1$s steht noch aus.</string>
+</resources>
