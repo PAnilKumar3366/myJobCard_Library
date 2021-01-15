@@ -56,12 +56,13 @@ public class FormAssignmentSetModel extends ZBaseEntity {
                 strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter=EquipCategory eq '" + equipmentCat + "'&$orderby=FlowSequence asc,Mandatory desc";
             else if (!funcLocCat.isEmpty())
                 strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter=FuncLocCategory eq '" + funcLocCat + "'&$orderby=FlowSequence asc,Mandatory desc";
-            else if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED || !ZConfigManager.WO_OP_OBJS_DISPLAY.equalsIgnoreCase("x"))
+            /*else if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED || !ZConfigManager.WO_OP_OBJS_DISPLAY.equalsIgnoreCase("x")) {
                 strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (ControlKey eq '' and OrderType eq '" + orderType + "')&$orderby=FlowSequence asc,Mandatory desc";
+            }*/
             else if(!taskListType.isEmpty())
                 strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (ControlKey eq '" + controlKey + "' and OrderType eq '" + orderType + "' and TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "')&$orderby=FlowSequence asc,Mandatory desc";
             else
-                strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (ControlKey eq '" + controlKey + "' and OrderType eq '" + orderType + "')&$orderby=FlowSequence asc,Mandatory desc";
+                strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (ControlKey eq '' and OrderType eq '" + orderType + "' and TaskListType eq '' and Group eq '' and GroupCounter eq '' and InternalCounter eq '')&$orderby=FlowSequence asc,Mandatory desc";
 
             ResponseObject result = getObjectsFromEntity(entitySetName, strResPath);
             if (!result.isError())

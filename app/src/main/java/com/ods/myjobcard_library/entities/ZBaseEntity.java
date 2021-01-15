@@ -148,12 +148,17 @@ public class ZBaseEntity extends BaseEntity implements Parcelable {
     @Override
     public ResponseObject SaveToStore(boolean autoFlush) {
         ResponseObject result = super.SaveToStore(autoFlush);
-        if (!result.isError()) {
-            //Update Backend if Bg Sync is enabled
-            if (autoFlush && ZConfigManager.EventBased_Sync.equalsIgnoreCase("x") && !ZAppSettings.IS_DEMO_MODE) {
-                ScheduleWork scheduleWork = new ScheduleWork(getEntitySetName());
-                scheduleWork.workSchedule();
+        try {
+            if (!result.isError()) {
+                //Update Backend if Bg Sync is enabled
+                if (autoFlush && ZConfigManager.EventBased_Sync.equalsIgnoreCase("x") && !ZAppSettings.IS_DEMO_MODE) {
+                    ScheduleWork scheduleWork = new ScheduleWork(getEntitySetName());
+                    scheduleWork.workSchedule();
+                }
             }
+        } catch (Exception e) {
+            WriteLog(getClass(), AppSettings.LogLevel.Error, e.getLocalizedMessage());
+            result = new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null);
         }
         return result;
     }
