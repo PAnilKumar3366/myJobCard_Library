@@ -40,6 +40,7 @@ public class StatusCategory extends ZBaseEntity {
     private boolean AllowWoCreate;
     //newly added fields
     private String RoleId;
+    private String Msgkey;
     private String EnteredBy;
 
     public StatusCategory(ODataEntity entity) {
@@ -109,6 +110,14 @@ public class StatusCategory extends ZBaseEntity {
             DliteLogger.WriteLog(StatusCategory.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return statusCategories;
+    }
+
+    public String getMsgkey() {
+        return Msgkey;
+    }
+
+    public void setMsgkey(String msgkey) {
+        Msgkey = msgkey;
     }
 
     private void initializingEntityProperties() {
@@ -288,7 +297,7 @@ public class StatusCategory extends ZBaseEntity {
 
     //helper methods
 
-    public boolean postConfirmationEnabled(){
+    public boolean postConfirmationEnabled() {
         return PostConfirmations != null && PostConfirmations.equalsIgnoreCase("x");
     }
 

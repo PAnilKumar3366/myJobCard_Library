@@ -29,6 +29,11 @@ public class FormSetModel extends ZBaseEntity {
     private String CreatedBy;
     private GregorianCalendar ModifiedOn;
     private String ModifiedBy;
+    private String CodeGroup;
+    private String Stylesheet;
+    private String FormModel;
+    private String Theme;
+    private String FormHTML;
 
     public FormSetModel(ODataEntity entity) {
         create(entity);
@@ -78,6 +83,50 @@ public class FormSetModel extends ZBaseEntity {
             result = new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
         }
         return result;
+    }
+
+    public boolean isActive() {
+        return Active;
+    }
+
+    public String getCodeGroup() {
+        return CodeGroup;
+    }
+
+    public void setCodeGroup(String codeGroup) {
+        CodeGroup = codeGroup;
+    }
+
+    public String getStylesheet() {
+        return Stylesheet;
+    }
+
+    public void setStylesheet(String stylesheet) {
+        Stylesheet = stylesheet;
+    }
+
+    public String getFormModel() {
+        return FormModel;
+    }
+
+    public void setFormModel(String formModel) {
+        FormModel = formModel;
+    }
+
+    public String getTheme() {
+        return Theme;
+    }
+
+    public void setTheme(String theme) {
+        Theme = theme;
+    }
+
+    public String getFormHTML() {
+        return FormHTML;
+    }
+
+    public void setFormHTML(String formHTML) {
+        FormHTML = formHTML;
     }
 
     public String getFormID() {

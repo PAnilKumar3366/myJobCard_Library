@@ -262,6 +262,9 @@ public class MeasurementPointReading extends ZBaseEntity {
             if (WorkOrder.getCurrWo() != null) {
 
                 String woObjNum = WorkOrder.getCurrWo().getObjectNumber();
+                if (WorkOrder.getCurrWo().isLocal() && WorkOrder.getCurrWo().getTempID() != null
+                        && !WorkOrder.getCurrWo().getTempID().isEmpty() && !ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
+                    woObjNum = WorkOrder.getCurrWo().getTempID();
                 result = MeasurementPointReading.getPointReading(MeasuringPoint, woObjNum, OperationNum, CatalogType, CodeGroup);
                 if (result != null && !result.isError()) {
                     ArrayList<MeasurementPointReading> mpReadings = (ArrayList<MeasurementPointReading>) result.Content();
