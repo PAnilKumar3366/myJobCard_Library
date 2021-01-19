@@ -34,6 +34,8 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
     private String Description;
     private String TempID;
     private String URL;
+    private String FuncLocation;
+    private String Equipment;
 
     public UploadNotificationAttachmentContent(ODataEntity entity, ZAppSettings.FetchLevel fetchLevel) {
         try {
@@ -53,7 +55,6 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
             FormAttachments = new HashMap<>();
         FormAttachments.put(attachment.getDescription(), attachment);
     }
-    //Setter & getter Methods
 
     public static HashMap<String, UploadNotificationAttachmentContent> getFormAttachments() {
         return FormAttachments;
@@ -108,6 +109,7 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
         }
         return result;
     }
+    //Setter & getter Methods
 
     public static UploadNotificationAttachmentContent PrepareAttachmentObject(String fileContent, String fileName, String description, Notification notification, String fileSize, String fileType) {
         UploadNotificationAttachmentContent uploadAttachmentFile = null;
@@ -186,6 +188,22 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
             return result;
         else
             return new ResponseObject(ZConfigManager.Status.Error);
+    }
+
+    public String getFuncLocation() {
+        return FuncLocation;
+    }
+
+    public void setFuncLocation(String funcLocation) {
+        FuncLocation = funcLocation;
+    }
+
+    public String getEquipment() {
+        return Equipment;
+    }
+
+    public void setEquipment(String equipment) {
+        Equipment = equipment;
     }
 
     private void initializeEntityProperties() {
