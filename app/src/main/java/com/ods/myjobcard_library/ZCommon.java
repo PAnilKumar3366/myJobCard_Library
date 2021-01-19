@@ -447,6 +447,7 @@ public class ZCommon extends Common {
                                     Thread.sleep(1000);
                                 }
                             } else {
+                                res = DataHelper.getInstance().getErrorLogs(storeList);
                                 publishProgress(context.getString(R.string.msg_something_went_wrong_uploading));
                                 Thread.sleep(1000);
                             }
