@@ -112,7 +112,34 @@ public class CatalogCode extends ZBaseEntity {
         else
             return new ResponseObject(ZConfigManager.Status.Error);
     }
-
+    public static ResponseObject getDamageGrpandCodeDescritions(String catalogCode,String damagecodeGrp,String damageCode){
+        ResponseObject result = null;
+        String resPath = ZCollections.CATALOG_CODE_COLLECTION;
+        if (catalogCode != null && !catalogCode.isEmpty()&&damagecodeGrp != null && !damagecodeGrp.isEmpty()&&damageCode != null && !damageCode.isEmpty()) {
+            resPath += "?$filter=(Catalog eq '" + catalogCode + "' and CodeGroup eq '" + damagecodeGrp + "' and Code eq '" + damageCode + "')";
+            result = DataHelper.getInstance().getEntities(ZCollections.CATALOG_CODE_COLLECTION, resPath);
+            if (!result.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
+                ArrayList<CatalogCode> content = null;
+                CatalogCode catlogCode;
+                content = new ArrayList<CatalogCode>();
+                for (ODataEntity entity : entities) {
+                    catlogCode = new CatalogCode(entity);
+                    if (catlogCode != null) {
+                        content.add(catlogCode);
+                    } else {
+                        //pending: log the error message
+                    }
+                }
+                if (result == null) {
+                    result = new ResponseObject(ZConfigManager.Status.Success);
+                }
+                result.setMessage("");
+                result.setContent(content);
+            }
+        }
+        return result;
+    }
     public String getCatalog() {
         return Catalog;
     }
