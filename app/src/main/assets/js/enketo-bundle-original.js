@@ -34,19 +34,6 @@ $(".or-group").addClass("or-appearance-compact");
 
 // validate handler for validate button
 $( '#validate-form' ).on( 'click', function() {
-    // validate form
-    /*form.validate()
-        .then( function( valid ) {
-            if ( !valid ) {
-                window.alert( 'Form contains errors. Please see fields marked in red.' );
-            } else {
-                //window.alert( 'Form is valid! (see XML record and media files in the console)' );
-                $( 'form.or' ).trigger( 'beforesave' );
-                console.log( 'record:', form.getDataStr() );
-                console.log( 'media files:', fileManager.getCurrentFiles() );
-                Interface.submitForm(form.getDataStr(),'');
-            }
-        } );*/
         saveForm();
 } );
 
@@ -55,7 +42,7 @@ function saveForm() {
     form.validate()
         .then( function( valid ) {
             if ( !valid ) {
-                window.alert( 'Form contains errors. Please see fields marked in red.' );
+                window.alert( 'Please fill all mandatory fields marked in red.' );
             } else {
                 //window.alert( 'Form is valid! (see XML record and media files in the console)' );
                 $( 'form.or' ).trigger( 'beforesave' );
@@ -68,11 +55,19 @@ function saveForm() {
 
 // save as draft functionality - Shubham
 $( '#draft-form' ).on( 'click', function() {
-	/*$( 'form.or' ).trigger( 'beforesave' );
-    console.log( 'record:', form.getDataStr() );
-    console.log( 'media files:', fileManager.getCurrentFiles() );
-    Interface.submitForm(form.getDataStr(),'X');*/
     saveFormAsDraft();
+} );
+
+//validate and save as draft form - Shubham
+$( '#validate-draft-form' ).on( 'click', function() {
+    form.validate()
+        .then( function( valid ) {
+            if ( !valid ) {
+                window.alert( 'Please fill all mandatory fields marked in red.' );
+            } else {
+                    saveFormAsDraft();
+            }
+        } );
 } );
 
 function saveFormAsDraft() {
