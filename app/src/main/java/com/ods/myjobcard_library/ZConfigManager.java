@@ -190,6 +190,9 @@ public class ZConfigManager extends ConfigManager {
     public static boolean isBGFlushInProgress = false;
 
     public static String DEFAULT_NOTIFICATION_STATUS_TO_SEND = "CRTD";//Added By Anil.
+
+    public static String USER_ROLE = "TECH";
+
     public static GregorianCalendar getDefaultCalendarVal() {
         try {
             DEFAULT_CALENDAR_VAL = (GregorianCalendar) GregorianCalendar.getInstance();
