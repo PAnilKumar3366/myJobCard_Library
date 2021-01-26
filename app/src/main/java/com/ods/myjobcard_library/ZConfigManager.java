@@ -178,12 +178,12 @@ public class ZConfigManager extends ConfigManager {
     public static boolean ENABLE_LOCAL_STATUS_CHANGE = true;
     public static boolean ENABLE_LOCAL_NO_TO_WO = true;
 
-    public static long BG_SYNC_TIME_INTERVAL = 8;
+    public static long BG_SYNC_TIME_INTERVAL = 5;
     public static int BG_SYNC_RETRY_INTERVAL = 2;
     public static int BG_SYNC_RETRY_COUNT = 2;
     public static String EventBased_Sync = "x";
     public static String TimeBased_Sync = "x";
-    public static int EventBased_Sync_Type = 1;
+    public static int EventBased_Sync_Type = 2;
     public static int TimeBased_Sync_Type = 2;
     public static String DOWNLOAD_CREATEDBY_NOTIF = "X";
     public static String DOWNLOAD_CREATEDBY_WO = "X";
