@@ -51,10 +51,10 @@ public class DisplayFormsViewModel extends ViewModel {
     }
 
     public void setOrderType(WorkOrder workOrder, String typeValue) {
-        taskListType = "";
+        /*taskListType = "";
         group = "";
         groupCounter = "";
-        internalCounter = "";
+        internalCounter = "";*/
         wo_Number = workOrder.getWorkOrderNum();
         if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
             opr_Num = workOrder.getCurrentOperation().getOperationNum();
@@ -62,8 +62,8 @@ public class DisplayFormsViewModel extends ViewModel {
             opr_Num = "";
         }
         getOrderType(workOrder, typeValue);
-        if (!isTaskType)
-            getFormItemsList();
+        /*if (!isTaskType)*/
+        getFormItemsList(list);
         formItems.setValue(formItemsList);
     }
 
@@ -74,31 +74,35 @@ public class DisplayFormsViewModel extends ViewModel {
     protected void getOrderType(WorkOrder workOrder, String type) {
         if (type.equals(ZAppSettings.FormAssignmentType.WorkOrderLevel.Value)) {
             orderType = workOrder.getOrderType();
-            equipmentCat = "";
+           /* equipmentCat = "";
             funcLocCat = "";
-            controlKey = "";
+            controlKey = "";*/
+            list=FormAssignmentSetModel.getFormAssignmentData_OrderType(orderType);
         } else if (type.equals(ZAppSettings.FormAssignmentType.OperationLevel.Value)) {
             controlKey = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? workOrder.getCurrentOperation().getControlKey() : "";
             orderType = workOrder.getOrderType();
-            equipmentCat = "";
-            funcLocCat = "";
+            /*equipmentCat = "";
+            funcLocCat = "";*/
+            list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);
         } else if (type.equals(ZAppSettings.FormAssignmentType.Equipment.Value)) {
-            funcLocCat = "";
+            //funcLocCat = "";
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
                 equipmentCat = workOrder.getEquipCategory();
             else
                 equipmentCat = workOrder.getCurrentOperation().getEquipCategory().isEmpty() ? workOrder.getEquipCategory() : workOrder.getCurrentOperation().getEquipCategory();
+            list=FormAssignmentSetModel.getFormAssignmentData_EquipmentType(equipmentCat);
         } else if (type.equals(ZAppSettings.FormAssignmentType.FuncLoc.Value)) {
-            equipmentCat = "";
+           // equipmentCat = "";
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
                 funcLocCat = workOrder.getFuncLocCategory();
             else
                 funcLocCat = workOrder.getCurrentOperation().getFuncLocCategory().isEmpty() ? workOrder.getFuncLocCategory() : workOrder.getCurrentOperation().getFuncLocCategory();
+            list=FormAssignmentSetModel.getFormAssignmentData_FunctionalLocType(funcLocCat);
         } else if (type.equals(ZAppSettings.FormAssignmentType.TaskListType.Value)) {
-            equipmentCat = "";
-            funcLocCat = "";
+            /*equipmentCat = "";
+            funcLocCat = "";*/
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
-                isTaskType = true;
+               // isTaskType = true;
                 ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
                 ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                 for (Operation operation : totalOperations) {
@@ -108,7 +112,7 @@ public class DisplayFormsViewModel extends ViewModel {
                     group = operation.getGroup();
                     groupCounter = operation.getGroupCounter();
                     internalCounter = operation.getInternalCounter();
-                    getFormItemsList();
+                    list=FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType,controlKey,taskListType,group,groupCounter,internalCounter);
                 }
             } else {
                 orderType = workOrder.getCurrentOperation().getOrderType();
@@ -117,17 +121,18 @@ public class DisplayFormsViewModel extends ViewModel {
                 group = workOrder.getCurrentOperation().getGroup();
                 groupCounter = workOrder.getCurrentOperation().getGroupCounter();
                 internalCounter = workOrder.getCurrentOperation().getInternalCounter();
+                list=FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType,controlKey,taskListType,group,groupCounter,internalCounter);
             }
         } else if (type.equals(ZAppSettings.FormAssignmentType.None.Value)) {
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
-                orderType = workOrder.getOrderType();
+                list=FormAssignmentSetModel.getFormAssignmentData_OrderType(workOrder.getOrderType());
             else
-                controlKey = workOrder.getCurrentOperation().getControlKey();
+                list=FormAssignmentSetModel.getFormAssignmentData_OperationType(workOrder.getOrderType(),workOrder.getCurrentOperation().getControlKey());
         }
     }
 
-    private void getFormItemsList() {
-        list = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat, taskListType, group, groupCounter, internalCounter);
+    private void getFormItemsList(ArrayList<FormAssignmentSetModel> list) {
+        //list = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat, taskListType, group, groupCounter, internalCounter);
 
         Iterator<FormAssignmentSetModel> it1 = list.iterator();
 
