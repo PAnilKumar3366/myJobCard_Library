@@ -2355,12 +2355,11 @@ public class WorkOrder extends ZBaseEntity {
                             responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
                             if (!responseObject.isError()) {
                                 rawData = responseObject.Content();
-                                formsCount = formsCount + Integer.parseInt(rawData.toString());
+                                formsCount+= Integer.parseInt(rawData.toString());
                             }
                         }
-
+                        return formsCount;
                     }
-                    break;
                 default:
                     strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "/$count?$filter=(OrderType eq '" + WorkOrder.getCurrWo().getOrderType() + "' and ControlKey eq '' and TaskListType eq '' and Group eq '' and GroupCounter eq '' and InternalCounter eq '')";
                     break;
@@ -2375,8 +2374,8 @@ public class WorkOrder extends ZBaseEntity {
             else if (ZConfigManager.FORM_ASSIGNMENT_TYPE.equals(ZAppSettings.FormAssignmentType.OperationLevel.Value))
                 strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "/$count?$filter= (ControlKey eq '" + WorkOrder.getCurrWo().getCurrentOperation().getControlKey() + "' and OrderType eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOrderType() + "')";*/
 
-            if (formsCount == 0)
-                responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
+            //if (formsCount == 0)
+            responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
             if (!responseObject.isError()) {
                 rawData = responseObject.Content();
                 formsCount = Integer.parseInt(rawData.toString());
@@ -2395,8 +2394,9 @@ public class WorkOrder extends ZBaseEntity {
         String strResPath = "";
         Object rawData = null;
         try {
-            strResPath = getFormResPath(true);
-            responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
+           // strResPath = getFormResPath(true);
+            responseObject=getFormEntities(true);
+           // responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
             if (!responseObject.isError()) {
                 rawData = responseObject.Content();
                 ArrayList<FormAssignmentSetModel> forms = (ArrayList<FormAssignmentSetModel>) rawData;
@@ -2422,12 +2422,14 @@ public class WorkOrder extends ZBaseEntity {
         }
         return unSubmittedFormsCount;
     }
-/* prepared the filter query based on Form Assignment type
+/* getting the forms data for manadatory check based on Form Assignment type
 * */
-    private String getFormResPath(boolean mandatoryFormChk) {
+    private ResponseObject getFormEntities(boolean mandatoryFormChk) {
+        ResponseObject responseObject = null;
         String formAssignType = ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
         String strResPath = "";
         String strMandatoryChk="";
+        Object rawData = null;
         if(mandatoryFormChk)
             strMandatoryChk=" eq 'x'";
         else
@@ -2466,6 +2468,7 @@ public class WorkOrder extends ZBaseEntity {
                 else {
                     ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, WorkOrder.getCurrWo().getWorkOrderNum());
                     ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
+                    ArrayList<FormAssignmentSetModel> contentList = new ArrayList<FormAssignmentSetModel>();
                     for (Operation operation : totalOperations) {
                         orderType = operation.getOrderType();
                         controlKey = operation.getControlKey();
@@ -2473,14 +2476,25 @@ public class WorkOrder extends ZBaseEntity {
                         group = operation.getGroup();
                         groupCounter = operation.getGroupCounter();
                         internalCounter = operation.getInternalCounter();
+                        strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (OrderType eq '" + orderType + "' and ControlKey eq '" + controlKey + "' and TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "' and tolower(Mandatory)" + strMandatoryChk + ")";
+                        responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
+                        if (!responseObject.isError()) {
+                            rawData = responseObject.Content();
+                            //contentList = (ArrayList<FormAssignmentSetModel>) rawData;
+                            if (rawData != null) {
+                                contentList.addAll((ArrayList<FormAssignmentSetModel>) rawData);
+                            }
                         }
+                    }
+                    responseObject.setContent(contentList);
+                    return responseObject;
                 }
-                break;
             default:
                 strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (OrderType eq '" + WorkOrder.getCurrWo().getOrderType() + "' and ControlKey eq '' and TaskListType eq '' and Group eq '' and GroupCounter eq '' and InternalCounter eq '' and tolower(Mandatory)"+strMandatoryChk+")";
                 break;
         }
-        return strResPath;
+        responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
+        return responseObject;
     }
     /* get the count of the un-submitted Optional forms based on Form Assignment type
      * */
@@ -2490,8 +2504,9 @@ public class WorkOrder extends ZBaseEntity {
         String strResPath = "";
         Object rawData = null;
         try {
-            strResPath = getFormResPath(false);
-            responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
+            //strResPath = getFormResPath(false);
+            responseObject =getFormEntities(false);
+            //responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
             if (!responseObject.isError()) {
                 rawData = responseObject.Content();
                 ArrayList<FormAssignmentSetModel> forms = (ArrayList<FormAssignmentSetModel>) rawData;
