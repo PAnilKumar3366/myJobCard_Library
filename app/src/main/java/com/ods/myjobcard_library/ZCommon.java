@@ -277,6 +277,12 @@ public class ZCommon extends Common {
         return new DecimalFormat("##.###").format(value);
     }
 
+
+    /**
+     * Checks whether the device is connected to a network.
+     * @param context the application context
+     * @return True if the device is connected to a network otherwise false
+     */
     public static boolean isNetworkAvailable(Context context) {
 
         try {
@@ -321,6 +327,10 @@ public class ZCommon extends Common {
         return localNetworkInfo.isConnected();
     }
 
+    /**
+     * Checks the internet accessibility
+     * @return True if the device can access the internet
+     */
     private static boolean isInternetAvailable() {
         try {
             InetAddress ipAddr = InetAddress.getByName("google.com");
