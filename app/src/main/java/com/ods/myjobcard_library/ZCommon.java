@@ -288,7 +288,8 @@ public class ZCommon extends Common {
                     @Override
                     protected Boolean doInBackground(Void... params) {
                         try {
-                            if (ZAppSettings.isHttps)
+                            // if the app port is 443 or connecting to cloud or open internet
+                            if (ZAppSettings.App_Port == 443)
                                 return isInternetAvailable();
                             Socket socket = new Socket();
                             socket.connect(new InetSocketAddress(ZAppSettings.App_IP, ZAppSettings.App_Port), 5000);
