@@ -83,6 +83,17 @@ public class UserTimeSheet extends ZBaseEntity {
     private String PremiumID;
     private boolean ErrorEntity;
     private String ErrorMsg;
+
+    private String TempID; //Added By Anil.
+
+    public String getTempID() {
+        return TempID;
+    }
+
+    public void setTempID(String tempID) {
+        TempID = tempID;
+    }
+
     public UserTimeSheet() {
         initializeEntityProperties();
         this.setEntityResourcePath(getEntitySetName());

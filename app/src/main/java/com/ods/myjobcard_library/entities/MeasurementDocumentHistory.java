@@ -43,6 +43,17 @@ public class MeasurementDocumentHistory extends ZBaseEntity {
     private String ValuationCode;
     private String Equipment;
     private String FunctionalLocation;
+
+    private String EnteredBy;
+
+    public String getEnteredBy() {
+        return EnteredBy;
+    }
+
+    public void setEnteredBy(String enteredBy) {
+        EnteredBy = enteredBy;
+    }
+
     public MeasurementDocumentHistory(ODataEntity entity) {
         create(entity);
     }

@@ -52,6 +52,36 @@ public class WOComponentIssue extends ZBaseEntity {
     private String Counter;
     private String ValType;
 
+    //Added by Anil.
+    private String TempID;
+    private String Batch;
+    private String OnlineSearch;
+
+    public String getTempID() {
+        return TempID;
+    }
+
+    public void setTempID(String tempID) {
+        TempID = tempID;
+    }
+
+    public String getBatch() {
+        return Batch;
+    }
+
+    public void setBatch(String batch) {
+        Batch = batch;
+    }
+
+    public String getOnlineSearch() {
+        return OnlineSearch;
+    }
+
+    public void setOnlineSearch(String onlineSearch) {
+        OnlineSearch = onlineSearch;
+    }
+
+
     public String getReservation() {
         return Reservation;
     }

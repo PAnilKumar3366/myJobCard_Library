@@ -38,6 +38,15 @@ public class WOPendingHistory extends ZBaseEntity {
     private String Equipment;
     private String FunctionalLoc;
 
+    private String OnlineSearch; //Added by Anil.
+
+    public String getOnlineSearch() {
+        return OnlineSearch;
+    }
+
+    public void setOnlineSearch(String onlineSearch) {
+        OnlineSearch = onlineSearch;
+    }
     //Setters and Getters Method
 
     public WOPendingHistory(String workOrderNum) {

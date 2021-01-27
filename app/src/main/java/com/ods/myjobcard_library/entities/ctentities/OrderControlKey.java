@@ -29,6 +29,16 @@ public class OrderControlKey extends ZBaseEntity {
     private String CompanyCode;
     private String CompanyName;
 
+    private String BusinessProcess;//Added By Anil.
+
+    public String getBusinessProcess() {
+        return BusinessProcess;
+    }
+
+    public void setBusinessProcess(String businessProcess) {
+        BusinessProcess = businessProcess;
+    }
+
     public OrderControlKey(ODataEntity entity) {
         create(entity);
     }

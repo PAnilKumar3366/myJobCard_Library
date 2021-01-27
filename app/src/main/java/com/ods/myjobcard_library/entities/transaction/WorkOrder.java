@@ -25,6 +25,7 @@ import com.ods.myjobcard_library.entities.ctentities.WorkOrderStatus;
 import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.utils.ConfigManager;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.client.odata.v4.EntityValue;
 import com.sap.smp.client.odata.ODataEntity;
@@ -2305,7 +2306,7 @@ public class WorkOrder extends ZBaseEntity {
 
     public int getTotalNumForms() {
         int formsCount = 0;
-        ResponseObject responseObject = null;
+        ResponseObject responseObject = new ResponseObject(ConfigManager.Status.Error);
         String strResPath = "";
         Object rawData = null;
         try {
@@ -2350,7 +2351,14 @@ public class WorkOrder extends ZBaseEntity {
                             group = operation.getGroup();
                             groupCounter = operation.getGroupCounter();
                             internalCounter = operation.getInternalCounter();
+                            strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "/$count?$filter= (OrderType eq '" + orderType + "' and ControlKey eq '" + controlKey + "' and TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "')";
+                            responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
+                            if (!responseObject.isError()) {
+                                rawData = responseObject.Content();
+                                formsCount = formsCount + Integer.parseInt(rawData.toString());
+                            }
                         }
+
                     }
                     break;
                 default:
@@ -2367,7 +2375,8 @@ public class WorkOrder extends ZBaseEntity {
             else if (ZConfigManager.FORM_ASSIGNMENT_TYPE.equals(ZAppSettings.FormAssignmentType.OperationLevel.Value))
                 strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "/$count?$filter= (ControlKey eq '" + WorkOrder.getCurrWo().getCurrentOperation().getControlKey() + "' and OrderType eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOrderType() + "')";*/
 
-            responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
+            if (formsCount == 0)
+                responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
             if (!responseObject.isError()) {
                 rawData = responseObject.Content();
                 formsCount = Integer.parseInt(rawData.toString());

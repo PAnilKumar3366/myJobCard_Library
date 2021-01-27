@@ -48,6 +48,180 @@ public class MeasurementPointReading extends ZBaseEntity {
     private String ValuationCodeText;
     private MeasurementPointReading PointReading;
 
+    //New Fields Added By Anil.
+    private String IntMeasUnit;
+    private boolean RefCodeGroup;
+    private Double MeasDifference;
+    private String UomChar;
+    private Double LoMRLimit;
+    private String EnteredBy;
+    private Double MeasCntrReading;
+    private String MeasCodeText;
+    private String MeasCodeGroup;
+    private String PCdiffChar;
+    private String Characteristic;
+    private String LimitMinChar1;
+    private boolean UpMRContainvalue;
+    private String MeasPtCategory;
+    private String PCntrrChar;
+    private String UpMRLimit;
+    private String LimitMaxChar1;
+    private String MeasCatalogType;
+    private String LoMRContainsvalue;
+
+    public String getIntMeasUnit() {
+        return IntMeasUnit;
+    }
+
+    public void setIntMeasUnit(String intMeasUnit) {
+        IntMeasUnit = intMeasUnit;
+    }
+
+    public boolean isRefCodeGroup() {
+        return RefCodeGroup;
+    }
+
+    public void setRefCodeGroup(boolean refCodeGroup) {
+        RefCodeGroup = refCodeGroup;
+    }
+
+    public Double getMeasDifference() {
+        return MeasDifference;
+    }
+
+    public void setMeasDifference(Double measDifference) {
+        MeasDifference = measDifference;
+    }
+
+    public String getUomChar() {
+        return UomChar;
+    }
+
+    public void setUomChar(String uomChar) {
+        UomChar = uomChar;
+    }
+
+    public Double getLoMRLimit() {
+        return LoMRLimit;
+    }
+
+    public void setLoMRLimit(Double loMRLimit) {
+        LoMRLimit = loMRLimit;
+    }
+
+    public String getEnteredBy() {
+        return EnteredBy;
+    }
+
+    public void setEnteredBy(String enteredBy) {
+        EnteredBy = enteredBy;
+    }
+
+    public Double getMeasCntrReading() {
+        return MeasCntrReading;
+    }
+
+    public void setMeasCntrReading(Double measCntrReading) {
+        MeasCntrReading = measCntrReading;
+    }
+
+    public String getMeasCodeText() {
+        return MeasCodeText;
+    }
+
+    public void setMeasCodeText(String measCodeText) {
+        MeasCodeText = measCodeText;
+    }
+
+    public String getMeasCodeGroup() {
+        return MeasCodeGroup;
+    }
+
+    public void setMeasCodeGroup(String measCodeGroup) {
+        MeasCodeGroup = measCodeGroup;
+    }
+
+    public String getPCdiffChar() {
+        return PCdiffChar;
+    }
+
+    public void setPCdiffChar(String PCdiffChar) {
+        this.PCdiffChar = PCdiffChar;
+    }
+
+    public String getCharacteristic() {
+        return Characteristic;
+    }
+
+    public void setCharacteristic(String characteristic) {
+        Characteristic = characteristic;
+    }
+
+    public String getLimitMinChar1() {
+        return LimitMinChar1;
+    }
+
+    public void setLimitMinChar1(String limitMinChar1) {
+        LimitMinChar1 = limitMinChar1;
+    }
+
+    public boolean isUpMRContainvalue() {
+        return UpMRContainvalue;
+    }
+
+    public void setUpMRContainvalue(boolean upMRContainvalue) {
+        UpMRContainvalue = upMRContainvalue;
+    }
+
+    public String getMeasPtCategory() {
+        return MeasPtCategory;
+    }
+
+    public void setMeasPtCategory(String measPtCategory) {
+        MeasPtCategory = measPtCategory;
+    }
+
+    public String getPCntrrChar() {
+        return PCntrrChar;
+    }
+
+    public void setPCntrrChar(String PCntrrChar) {
+        this.PCntrrChar = PCntrrChar;
+    }
+
+    public String getUpMRLimit() {
+        return UpMRLimit;
+    }
+
+    public void setUpMRLimit(String upMRLimit) {
+        UpMRLimit = upMRLimit;
+    }
+
+    public String getLimitMaxChar1() {
+        return LimitMaxChar1;
+    }
+
+    public void setLimitMaxChar1(String limitMaxChar1) {
+        LimitMaxChar1 = limitMaxChar1;
+    }
+
+    public String getMeasCatalogType() {
+        return MeasCatalogType;
+    }
+
+    public void setMeasCatalogType(String measCatalogType) {
+        MeasCatalogType = measCatalogType;
+    }
+
+    public String getLoMRContainsvalue() {
+        return LoMRContainsvalue;
+    }
+
+    public void setLoMRContainsvalue(String loMRContainsvalue) {
+        LoMRContainsvalue = loMRContainsvalue;
+    }
+
+
     //    Constructors
     public MeasurementPointReading() {
         initializeEntityProperties();
