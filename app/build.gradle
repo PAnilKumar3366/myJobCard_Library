@@ -38,7 +38,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8"*/
 
     //api 'ODS_SDK_Android:app:unspecified'
-    implementation (name: 'ODS-Foundation-v1.0.1', ext: 'aar')
+    implementation (name: 'ODS-Foundation-v1.0.2', ext: 'aar')
 
     //SMP SDK 3.2 SP02 PL0 Relevant
     implementation(name: 'ODataAPI-4.4.0', ext: 'aar')
