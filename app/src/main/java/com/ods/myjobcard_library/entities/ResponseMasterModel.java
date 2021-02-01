@@ -157,11 +157,20 @@ public class ResponseMasterModel extends ZBaseEntity {
             return new ArrayList<>();
     }
 
-    public static ArrayList<ResponseMasterModel> getFilledFormsForSupervisorView(String orderNum) {
+    /**
+     * Get the required data for filled forms based on input parameters.
+     *
+     * @param orderNum Work Order Number.
+     * @param formID   Form's unique id.
+     * @param version  Version of the form.
+     *
+     * @return ArrayList of ResponseMasterModel.
+     */
+    public static ArrayList<ResponseMasterModel> getFilledFormsForSupervisorView(String orderNum, String formID, String version) {
         ArrayList<ResponseMasterModel> arrayList = new ArrayList<>();
         try {
             String entitySetName = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION;
-            String resPath = entitySetName + "?$filter=(WoNum eq '" + orderNum + "')";
+            String resPath = entitySetName + "?$filter=(WoNum eq '" + orderNum + "' and FormID eq '" + formID + "' and Version eq '" + version + "')";
             ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
             if (result != null && !result.isError()) {
                 result = FromEntity((List<ODataEntity>) result.Content());

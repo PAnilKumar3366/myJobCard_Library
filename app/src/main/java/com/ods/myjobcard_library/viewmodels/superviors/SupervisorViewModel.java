@@ -20,7 +20,7 @@ public class SupervisorViewModel extends BaseViewModel {
 
     private ArrayList<FormAssignmentSetModel> formAssignmentList = new ArrayList<>();
     private ArrayList<FormSetModel> formSetList = new ArrayList<>();
-    private String orderType, workOrderNum, operationNum, equipmentCat, funcLocCat, controlKey,taskListType,group,groupCounter,internalCounter;
+    private String orderType, workOrderNum, operationNum, equipmentCat, funcLocCat, controlKey, taskListType, group, groupCounter, internalCounter;
     private MutableLiveData<ArrayList<FormListObject>> listOfForms = new MutableLiveData<>();
     private MutableLiveData<SupervisorWorkOrder> currWorkOrder = new MutableLiveData<>();
 
@@ -41,6 +41,10 @@ public class SupervisorViewModel extends BaseViewModel {
             controlKey = "";
             operationNum = "";
             workOrderNum = workOrder.getWorkOrderNum();
+            taskListType = "";
+            group = "";
+            groupCounter = "";
+            internalCounter = "";
             getFormsList();
         } catch (Exception e) {
             DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
@@ -56,15 +60,20 @@ public class SupervisorViewModel extends BaseViewModel {
         currWorkOrder.setValue(workOrder);
     }
 
+    /**
+     * Get the list of forms in Supervisor View.
+     */
     private void getFormsList() {
         ArrayList<FormListObject> arrayList = new ArrayList<>();
-        formAssignmentList = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat,taskListType,group,groupCounter,internalCounter);
+        formAssignmentList = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat, taskListType, group, groupCounter, internalCounter);
 
         for (FormAssignmentSetModel formAssignmentSetModel : formAssignmentList) {
             int filledForms = 0;
             String instanceId = null;
+            String formID = formAssignmentSetModel.getFormID();
+            String version = formAssignmentSetModel.getVersion();
             String isDraft = "";
-            ArrayList<ResponseMasterModel> listOfFilledForms = ResponseMasterModel.getFilledFormsForSupervisorView(workOrderNum);
+            ArrayList<ResponseMasterModel> listOfFilledForms = ResponseMasterModel.getFilledFormsForSupervisorView(workOrderNum, formID, version);
             if (listOfFilledForms != null && listOfFilledForms.size() > 0) {
                 for (ResponseMasterModel response : listOfFilledForms) {
                     if (!(formAssignmentSetModel.getMultipleSub().equals("X"))) {
