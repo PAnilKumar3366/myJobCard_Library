@@ -13,6 +13,7 @@ import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
+import com.ods.myjobcard_library.entities.appsettings.AppFeature;
 import com.ods.myjobcard_library.entities.ctentities.UserTable;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.Collections;
@@ -145,8 +146,8 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
 
     @Override
     public void onDeregisterSuccess(){
-        preferences.edit().remove(Collections.ARG_USER_ID).remove(Collections.ARG_USER_PASSWORD).
-                remove(Collections.ARG_APP_CONNECTION_ID).remove(Collections.ARG_FCM_TOKEN).remove(ZCollections.IS_ONLINE_APPSTORE).apply();
+        preferences.edit().remove(Collections.ARG_USER_ID).remove(Collections.ARG_USER_PASSWORD).remove(Collections.ARG_APP_CONNECTION_ID).remove(Collections.ARG_FCM_TOKEN).remove(ZCollections.IS_ONLINE_APPSTORE).apply();
+        AppFeature.resetUserRoleFeatures();
     }
 
     @Override

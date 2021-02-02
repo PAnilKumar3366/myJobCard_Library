@@ -132,4 +132,9 @@ public class AppFeature extends ZBaseEntity {
         }
         return false;
     }
+    /* resetting the feature data for the user when switching from one user to another user
+    * */
+    public static void resetUserRoleFeatures() {
+        userRoleFeatures=null;
+    }
 }
