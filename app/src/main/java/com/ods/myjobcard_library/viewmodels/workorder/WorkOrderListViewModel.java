@@ -5,7 +5,6 @@ import android.location.Location;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -17,13 +16,14 @@ import com.ods.myjobcard_library.entities.attachment.UploadAttachmentContent;
 import com.ods.myjobcard_library.entities.attachment.WorkOrderAttachment;
 import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
+import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.ods_sdk.entities.ResponseObject;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class WorkOrderListViewModel extends AndroidViewModel {
+public class WorkOrderListViewModel extends BaseViewModel {
 
     private static final String TAG = "WorkOrderListViewModel";
     ArrayList<UploadAttachmentContent> uploadList;
