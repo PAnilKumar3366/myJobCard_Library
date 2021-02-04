@@ -59,14 +59,13 @@ public class ScheduleWork {
         return result;
     }
 
-    public Constraints getNetWorkConstraint() {
-        return new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
+    public static Constraints getNetWorkConstraint() {
+        return new Constraints.Builder().setRequiredNetworkType(ZConfigManager.NETWORK_CONSTRAINTS?NetworkType.CONNECTED:NetworkType.NOT_REQUIRED).build();
     }
 
     public void scheduleMasterDataRefresh() {
         try {
-            OneTimeWorkRequest uniqueMasterRefresh = new OneTimeWorkRequest.Builder(MasterDataRefreshWorker.class)
-                    .setConstraints(getNetWorkConstraint())
+            OneTimeWorkRequest uniqueMasterRefresh = new OneTimeWorkRequest.Builder(MasterDataRefreshWorker.class).setConstraints(getNetWorkConstraint())
                     .addTag(ZConfigManager.MASTER_DATA_REFRESH_TAG)
                     .build();
             WorkManager.getInstance().enqueueUniqueWork(ZConfigManager.MASTER_DATA_REFRESH_TAG, ExistingWorkPolicy.APPEND, uniqueMasterRefresh);
@@ -127,8 +126,8 @@ public class ScheduleWork {
                     .addTag(ZConfigManager.TRANSACTION_WORK)
                     //Once the doWork is return the result is retry then this request will start after 60 seconds
                     .setBackoffCriteria(BackoffPolicy.LINEAR, BACKOFF_DELAY_SECONDS, TimeUnit.SECONDS)
-                    .setInputData(inputData.build())
-                    .setConstraints(getNetWorkConstraint()).build();
+                    .setInputData(inputData.build()).setConstraints(getNetWorkConstraint()).build();
+
             WorkManager.getInstance().enqueueUniqueWork(ZConfigManager.TRANSACTION_WORK, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
             Log.d(TAG, "workSchedule: WorkRequest TAG is " + workTag + " and Id is " + oneTimeWorkRequest.getId());
             obserWorkRequestWithId(oneTimeWorkRequest.getId());

@@ -193,6 +193,10 @@ public class ZConfigManager extends ConfigManager {
 
     public static String USER_ROLE = "TECH";
 
+    /*Added new config flag for set the network Contriants to execute the workers
+    * */
+    public static boolean NETWORK_CONSTRAINTS = true;
+
     public static GregorianCalendar getDefaultCalendarVal() {
         try {
             DEFAULT_CALENDAR_VAL = (GregorianCalendar) GregorianCalendar.getInstance();
