@@ -144,7 +144,7 @@ function setformAttachments(){
             }
         })
         //canvas or signature rendering
-        $(".or-appearance-signature").each(function (index, element) {
+       /* $(".or-appearance-signature").each(function (index, element) {
                         var imagetype = '';
                         for (var i = 0; i < element.childNodes.length; i++) {
                             var de = element.childNodes[i];
@@ -164,7 +164,41 @@ function setformAttachments(){
                         }
                         }
                         }
-                        })
+                        })*/
+
+
+            //canvas or signature rendering added by - Hurunnisa - signature gets editable
+
+                    $(".or-appearance-signature").each(function (index, element) {
+//console.log(element)
+                        for (var i = 0; i < element.childNodes.length; i++) {
+//console.log(element.childNodes.innerHTML)
+                        console.log(element.childNodes[i])
+                            if (element.childNodes[i].accept == undefined) {
+                        } else {
+//console.log(element.childNodes[i].accept.slice(0, -2)+"-image-"+" Name  "+ element.childNodes[i].outerHTML.includes(attachments[k].FileName))
+                          if (element.childNodes[i].accept.slice(0, -2) == "image" && element.childNodes[i].outerHTML.includes(attachments[k].FileName)) {
+                              element.childNodes[i].setAttribute("value", attachments[k].FileName);
+// console.log(element.childNodes[i + 1].children[0].firstElementChild);
+   //////////////////////Display Canvas///////////
+                             var ctx = element.childNodes[i + 1].children[0].firstElementChild;
+                                if (ctx.getContext) {
+                                ctx = ctx.getContext('2d');
+                                }
+//Loading of the home test image - img1
+                               var img1 = new Image();
+//drawing of the test image - img1
+                                img1.onload = function () {
+//draw background image
+                                ctx.drawImage(img1, 0, 0);
+           //draw a box over the top
+            //ctx.fillStyle = "rgba(200, 0, 0, 0.5)";
+            //ctx.fillRect(0, 0, 500, 500);
+        };
+        img1.src = "data:image/png;base64," + attachments[k].ImageData;
+    }
+}
+})
 
         setTimeout(function(){
             loopform();
