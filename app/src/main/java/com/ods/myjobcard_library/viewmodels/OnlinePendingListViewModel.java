@@ -1,121 +1,141 @@
 package com.ods.myjobcard_library.viewmodels;
 
 import android.app.Application;
-import android.os.AsyncTask;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.entities.transaction.Notification;
-import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
-import com.ods.ods_sdk.StoreHelpers.DataHelper;
-import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
-import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.myjobcard_library.interfaces.BackgroundTaskInterface;
+import com.ods.myjobcard_library.viewmodels.notification.NotificationHelper;
+import com.ods.myjobcard_library.viewmodels.workorder.WorkOrderHelper;
+import com.ods.ods_sdk.AppSettings;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
-import com.sap.client.odata.v4.EntityValue;
-import com.sap.client.odata.v4.EntityValueList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+/*Created By Anil Kumar*/
 
 public class OnlinePendingListViewModel extends BaseViewModel {
     private static final String TAG = "OnlinePendingListViewMo";
-    private MutableLiveData<ArrayList<WorkOrder>> onlineWoList = new MutableLiveData<>();
-    private MutableLiveData<Notification> onlineNotificationList = new MutableLiveData<>();
-    private ArrayList<WorkOrder> onlineWorkorders = new ArrayList<>();
+    private MutableLiveData<ArrayList<WorkOrder>> onlineWoList = new MutableLiveData<ArrayList<WorkOrder>>();
+    private MutableLiveData<ArrayList<Notification>> onlineNotificationList = new MutableLiveData<>();
 
     public OnlinePendingListViewModel(@NonNull Application application) {
         super(application);
-    }
-
-    public ArrayList<WorkOrder> getOnlineWorkorders() {
-        return onlineWorkorders;
     }
 
     public MutableLiveData<ArrayList<WorkOrder>> getOnlineWoList() {
         return onlineWoList;
     }
 
-    public void setOnlineWoList(String woQuery) {
-        String entitySetName = "WoHeaderSet";
-        String resPath = entitySetName + woQuery;
+    public MutableLiveData<ArrayList<Notification>> getOnlineNotificationList() {
+        return onlineNotificationList;
+    }
+
+    /*Fetching Online Pending Work orders list as ZODataEntity List */
+    public void fetchWorkOrdersOnline(HashMap<String, String> mapQuery) {
+        WorkOrderHelper workOrderHelper = new WorkOrderHelper();
         try {
-            new AsyncTask<Void, Void, ResponseObject>() {
-
+            workOrderHelper.setTaskInterface(new BackgroundTaskInterface() {
                 @Override
-                protected ResponseObject doInBackground(Void... voids) {
-                    ResponseObject result = DataHelper.getInstance().getEntitiesOnline(resPath, entitySetName, TableConfigSet.getStore(entitySetName));
-                    return result;
+                public void onTaskPostExecute(ArrayList<ZODataEntity> zoDataEntities, boolean isError, String errorMsg) {
+                    if (!isError)
+                        onFetchOnlineWOList(zoDataEntities);
+                    else
+                        setError(errorMsg);
                 }
 
                 @Override
-                protected void onPostExecute(ResponseObject responseObject) {
-                    super.onPostExecute(responseObject);
-                    try {
-                        getWorkordersList(responseObject);
-                    } catch (Exception e) {
-                        DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
-                    }
+                public void onTaskPreExecute() {
                 }
-            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+                @Override
+                public void onTaskProgressUpdate() {
+                }
+            });
+            String finalQuery = workOrderHelper.getQuery(mapQuery);
+            if (!finalQuery.isEmpty())
+                workOrderHelper.getWorkOrdersOnline(finalQuery);
+            else
+                setError("Error in Query");
         } catch (Exception e) {
-            DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            e.printStackTrace();
+            setError(e.getMessage());
+        }
+
+    }
+
+    /*Fetching the final online query and fetching online notifications pending list as ZODataEntity List*/
+    public void fetchNotificationsOnline(HashMap<String, String> mapQuery) {
+        try {
+            NotificationHelper notificationHelper = new NotificationHelper();
+            notificationHelper.setTaskInterface(new BackgroundTaskInterface() {
+                @Override
+                public void onTaskPostExecute(ArrayList<ZODataEntity> zoDataEntities, boolean isError, String errorMsg) {
+                    if (!isError)
+                        onFetchOnlineNOList(zoDataEntities);
+                    else
+                        setError(errorMsg);
+                }
+
+                @Override
+                public void onTaskPreExecute() {
+
+                }
+
+                @Override
+                public void onTaskProgressUpdate() {
+
+                }
+            });
+            String finalQuery = notificationHelper.getQuery(mapQuery);
+            if (!finalQuery.isEmpty())
+                notificationHelper.getNotificationsOnline(finalQuery);
+            else
+                setError("Error in Query");
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
         }
     }
 
-    private void getWorkordersList(ResponseObject responseObject) {
+    /*Converting the ZODataEntity list to WorkOrder's list  */
+    protected void onFetchOnlineWOList(ArrayList<ZODataEntity> zoDataEntities) {
+        ArrayList<WorkOrder> onlineWo = new ArrayList<>();
         try {
-            if (!responseObject.isError()) {
-                //operations.clear();
-                onlineWorkorders.clear();
-                EntityValueList entityList = (EntityValueList) responseObject.Content();
-                EntityValueList oprEntityList;
-                ArrayList<WorkOrder> onlineworkOrdersList = new ArrayList<>();
-                ArrayList<Operation> workOrderOperations;
-                for (EntityValue entityValue : entityList) {
-
-                    WorkOrder order = new WorkOrder(entityValue);
-                    oprEntityList = entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue);
-
-                    workOrderOperations = new ArrayList<>();
-                        /*for (EntityValue oprEntity : oprEntityList) {
-                            workOrderOperations.add(new Operation(oprEntity));
-                            operations.add(new Operation(oprEntity));
-                        }*/
-                    order.setWorkOrderOperations(workOrderOperations);
-                    onlineworkOrdersList.add(order);
-                    //oprEntityValueList.add( entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue));
-                }
-                onlineWorkorders.addAll(onlineworkOrdersList);
-                Log.d(TAG, "getWorkordersList: " + onlineworkOrdersList.size());
-                onlineWoList.setValue(onlineWorkorders);
-                  /*  if (onlineworkOrdersList.size() == 0) {
-                        showSnackbar(context.getString(R.string.msgNoWorkOrdersAvailable), mBinding.getRoot());
-                    } else {
-                        DialogsUtility.showOnlineWOListAlertPopupWithOneOpt(context, "", onlineWorkorders, context.getString(R.string.txtNeutralBtn),
-                                new DialogsUtility.OnPositiveBtnClickListener() {
-                                    @Override
-                                    public void onPositiveBtnClick(Dialog dialog) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                    }
-                } else {
-                    showSnackbar(context.getString(R.string.workorders_fetch_failed), getRootView());
-                }
-                pDialog.dismiss();*/
-
-
-            } else
-                setError(responseObject.getMessage());
+            for (ZODataEntity entity : zoDataEntities) {
+                WorkOrder item = new WorkOrder(entity);
+                onlineWo.add(item);
+            }
+            onlineWoList.postValue(onlineWo);
         } catch (Exception e) {
-            DliteLogger.WriteLog(OnlinePendingListViewModel.class, ZAppSettings.LogLevel.Error, e.getMessage());
-            setError(e.getMessage());
             e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
         }
+    }
+
+    /*Converting the ZODataEntity List to Notification's List */
+    protected void onFetchOnlineNOList(ArrayList<ZODataEntity> zoDataEntities) {
+        ArrayList<Notification> onlineNoList = new ArrayList<>();
+        try {
+            for (ZODataEntity entity : zoDataEntities) {
+                Notification item = new Notification(entity);
+                onlineNoList.add(item);
+            }
+            onlineNotificationList.setValue(onlineNoList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
+        }
+    }
+
+    @Override
+    public void onFetchEntitiesResult(ArrayList<ZODataEntity> entities) {
+        //super.onFetchEntitiesResult(entities);
 
     }
 }

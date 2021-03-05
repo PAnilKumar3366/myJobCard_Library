@@ -25,6 +25,7 @@ import com.ods.myjobcard_library.entities.ctentities.WorkOrderStatus;
 import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.ConfigManager;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.client.odata.v4.EntityValue;
@@ -175,6 +176,14 @@ public class WorkOrder extends ZBaseEntity {
     }
 
     public WorkOrder(ODataEntity entity, ZAppSettings.FetchLevel fetchLevel) {
+        create(entity);
+        deriveWOStatus();
+        initializeEntityProperties();
+    }
+    /*Added by Anil
+     * Customized OData Entity Constructor*/
+
+    public WorkOrder(ZODataEntity entity) {
         create(entity);
         deriveWOStatus();
         initializeEntityProperties();

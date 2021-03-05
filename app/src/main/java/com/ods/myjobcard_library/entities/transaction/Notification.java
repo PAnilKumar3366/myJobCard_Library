@@ -19,6 +19,7 @@ import com.ods.myjobcard_library.entities.ctentities.UserTable;
 import com.ods.myjobcard_library.entities.ctentities.WorkOrderStatus;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.client.odata.v4.EntityValue;
 import com.sap.smp.client.odata.ODataEntity;
@@ -133,6 +134,14 @@ public class Notification extends ZBaseEntity {
 
     public Notification(EntityValue entityValue) {
         create(entityValue);
+        initializeEntityProperties(false);
+        deriveNotificationStatus();
+    }
+    /*Added by Anil
+     * Customized OData Entity Constructor*/
+
+    public Notification(ZODataEntity zoDataEntity) {
+        create(zoDataEntity);
         initializeEntityProperties(false);
         deriveNotificationStatus();
     }

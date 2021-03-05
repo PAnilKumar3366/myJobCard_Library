@@ -21,6 +21,7 @@ import com.ods.myjobcard_library.entities.transaction.Notification;
 import com.ods.myjobcard_library.entities.transaction.NotificationItem;
 import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
+import com.ods.myjobcard_library.viewmodels.online.OnlineDataList;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
 import com.ods.ods_sdk.entities.ResponseObject;
@@ -593,7 +594,7 @@ public class DashBoardViewModel extends BaseViewModel {
             oprEntityList= entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue);
 
             workOrderOperations = new ArrayList<>();
-            for(EntityValue oprEntity : oprEntityList){
+            for (EntityValue oprEntity : oprEntityList) {
                 workOrderOperations.add(new Operation(oprEntity));
                 operations.add(new Operation(oprEntity));
             }
@@ -601,9 +602,9 @@ public class DashBoardViewModel extends BaseViewModel {
             onlineworkOrders.add(order);
             //oprEntityValueList.add( entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue));
         }
-        workOrders.addAll(onlineworkOrders);
-        /*OnlineDataList.getInstance().setOnlineWorkOrderList(workOrders);
-        OnlineDataList.getInstance().setWorkOrdersOperationsList(operations);*/
+           workOrders.addAll(onlineworkOrders);
+           OnlineDataList.getInstance().setOnlineWorkOrderList(workOrders);
+           OnlineDataList.getInstance().setWorkOrdersOperationsList(operations);
        }
        else{
            setError(responseObject.getMessage());
@@ -634,17 +635,17 @@ public class DashBoardViewModel extends BaseViewModel {
                 for(EntityValue oprEntity : oprEntityList){
                     notificationItems.add(new NotificationItem(oprEntity));
                     onlineItemsList.add(new NotificationItem(oprEntity));
-                    Log.d(TAG, "onPostExecute: Notification items"+notification.getNotification()+" item num");
+                    Log.d(TAG, "onPostExecute: Notification items" + notification.getNotification() + " item num");
                 }
                 notification.setNotificationItems(notificationItems);
                 notifications.add(notification);
 
                 //oprEntityValueList.add( entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue));
-                Log.d(TAG, "onPostExecute: Notification"+notification.toString());
+                Log.d(TAG, "onPostExecute: Notification" + notification.toString());
             }
             onlineNotifications.addAll(notifications);
-            /*OnlineDataList.getInstance().setOnLineNotifications(notifications);
-            OnlineDataList.getInstance().setOnlineNotificationItems(onlineItemsList);*/
+            OnlineDataList.getInstance().setOnLineNotifications(notifications);
+            OnlineDataList.getInstance().setOnlineNotificationItems(onlineItemsList);
         }
         else{
             setError(responseObject.getMessage() != null ? responseObject.getMessage() : responseObject.Content().toString());
