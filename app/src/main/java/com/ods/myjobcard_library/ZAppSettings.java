@@ -668,7 +668,7 @@ public class ZAppSettings extends AppSettings {
         COMPLETED("COMPLETE", "complete", "NOCO", false, 8, R.string.notificationCompleteAlert, true, R.drawable.complete),
         NotSet("", "", "NTST", false, 16, R.string.noAlert, false, R.drawable.download);
 */
-
+        CRTD("RECEIVED", "created", "PEND", false, 0, R.string.noAlert, true, R.drawable.download),
         ACCP("ACCEPT", "accept", "ACCP", false, 4, R.string.notificationAcceptAlert, true, R.drawable.accept),
         REJC("REJECT", "reject", "MRJC", false, 9, R.string.notificationRejectAlert, true, R.drawable.reject),
         STRT("START", "in progress", "SCRN", true, 5, R.string.notificationStartAlert, true, R.drawable.start),
