@@ -1633,7 +1633,7 @@ public class Operation extends ZBaseEntity implements Serializable {
             setMobileStatus(status.getStatusCode());
             setUserStatus(status.getStatusCode());
             setMobileObjectType(status.getObjectType());
-            String statusDesc = status.woOprStatus != null ? status.woOprStatus.getMobileStatusDesc() : status.getStatusCode();
+            String statusDesc = status.woOprStatus != null ? status.getStatusDescKey() : status.getStatusCode();
             if (StatusReason != null && !StatusReason.isEmpty()) {
                 strReasonText = ZConfigManager.AUTO_NOTES_TEXT_LINE4 + " " + StatusReason;
             }
@@ -1646,7 +1646,7 @@ public class Operation extends ZBaseEntity implements Serializable {
                 }
                 strStatusText = "Operation " + getOperationNum() + ": " + ZConfigManager.AUTO_NOTES_TEXT_LINE1 + " " + statusDesc + " " +
                         ZConfigManager.AUTO_NOTES_TEXT_LINE2 + " " + ZAppSettings.strUser.toUpperCase() + " " +
-                        (status.woOprStatus == ZAppSettings.MobileStatus.TRANSFER ? (ZConfigManager.AUTO_NOTES_TEXT_LINE5 + " " + getTransferPerson() + " ") : "") +
+                        (status.woOprStatus == ZAppSettings.MobileStatus.TRNS ? (ZConfigManager.AUTO_NOTES_TEXT_LINE5 + " " + getTransferPerson() + " ") : "") +
                         ZConfigManager.AUTO_NOTES_TEXT_LINE3 + " " + deviceTime;
                 if (ZConfigManager.ENABLE_POST_DEVICE_LOCATION_NOTES && deviceLocation != null) {
                     strStatusText = strStatusText + " at location Lat: " + deviceLocation.getLatitude() + "; Long: " + deviceLocation.getLongitude();

@@ -1194,7 +1194,7 @@ public class Notification extends ZBaseEntity {
         boolean result = false;
 
         try {
-            result = getStatusDetail().getStatusCode().contains(ZAppSettings.MobileStatus.COMPLETED.getMobileStatusCode());
+            result = getStatusDetail().getStatusCode().contains(ZAppSettings.MobileStatus.COMP.getMobileStatusCode());
         } catch (Exception e) {
             DliteLogger.WriteLog(Operation.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
@@ -1368,7 +1368,7 @@ public class Notification extends ZBaseEntity {
             setStatusFlag(ZConfigManager.STATUS_SET_FLAG);
             setMobileStatus(status.getStatusCode());
             setMobileObjectType(status.getObjectType());
-            String statusDesc = status.notificationStatus != null ? status.notificationStatus.getMobileStatusDesc() : status.getStatusCode();
+            String statusDesc = status.notificationStatus != null ? status.getStatusDescKey() : status.getStatusCode();
             if (!ZConfigManager.AUTO_NOTES_ON_STATUS) {
                 strNotesText = (notes != null ? notes : "");
             } else {

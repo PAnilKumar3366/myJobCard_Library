@@ -71,7 +71,7 @@ public class OperationGlassEntity implements Serializable {
                     operationGlassEntity.setEarlSchFinishExecDate(ZCommon.getFormattedDate(operation.getEarlSchFinishExecDate().getTime()));
                     operationGlassEntity.setEarlSchStartExecTime(ZCommon.getFormattedTime(operation.getEarlSchStartExecTime()));
                     operationGlassEntity.setEarlSchFinishExecTime(ZCommon.getFormattedTime(operation.getEarlSchFinishExecTime()));
-                    operationGlassEntity.setMobileStatus(operation.getStatusDetail().woOprStatus != null ? operation.getStatusDetail().woOprStatus.getMobileStatusDesc() : operation.getStatusDetail().getStatusCode());
+                    operationGlassEntity.setMobileStatus(operation.getStatusDetail().woOprStatus != null ? operation.getStatusDetail().getStatusDescKey() : operation.getStatusDetail().getStatusCode());
                     operations.add(operationGlassEntity);
                 }
             }
