@@ -1812,7 +1812,7 @@ public class WorkOrder extends ZBaseEntity {
             setMobileObjStatus(status.getStatusCode());
             setUserStatus(status.getStatusCode());
             setMobileObjectType(status.getObjectType());
-            String statusDesc = status.woOprStatus != null ? status.getStatusDescKey() : status.getStatusCode();
+            String statusDesc = status.getStatusDescKey();
             if (status.woOprStatus.equals(ZAppSettings.MobileStatus.STRT))
                 setActlStrtDate(ZCommon.getDeviceDateTime());
             if (status.woOprStatus.equals(ZAppSettings.MobileStatus.COMP))

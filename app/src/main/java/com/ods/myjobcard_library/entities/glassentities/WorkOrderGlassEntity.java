@@ -114,7 +114,7 @@ public class WorkOrderGlassEntity implements Serializable {
         WorkOrderGlassEntity workOrderGlassEntity = new WorkOrderGlassEntity();
         workOrderGlassEntity.setEquipNum(workOrder.getEquipNum());
         workOrderGlassEntity.setFuncLocation(workOrder.getFuncLocation());
-        workOrderGlassEntity.setMobileObjStatus(workOrder.getStatusDetail().woOprStatus != null ? workOrder.getStatusDetail().getStatusDescKey() : workOrder.getStatusDetail().getStatusCode());
+        workOrderGlassEntity.setMobileObjStatus(workOrder.getStatusDetail().getStatusCode());
         workOrderGlassEntity.setOrderType(workOrder.getOrderType());
         workOrderGlassEntity.setPriority(workOrder.getPriority());
         workOrderGlassEntity.setShortText(workOrder.getShortText());

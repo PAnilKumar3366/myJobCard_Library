@@ -1368,7 +1368,7 @@ public class Notification extends ZBaseEntity {
             setStatusFlag(ZConfigManager.STATUS_SET_FLAG);
             setMobileStatus(status.getStatusCode());
             setMobileObjectType(status.getObjectType());
-            String statusDesc = status.notificationStatus != null ? status.getStatusDescKey() : status.getStatusCode();
+            String statusDesc = status.getStatusDescKey();
             if (!ZConfigManager.AUTO_NOTES_ON_STATUS) {
                 strNotesText = (notes != null ? notes : "");
             } else {

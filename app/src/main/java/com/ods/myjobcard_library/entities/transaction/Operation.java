@@ -1633,7 +1633,7 @@ public class Operation extends ZBaseEntity implements Serializable {
             setMobileStatus(status.getStatusCode());
             setUserStatus(status.getStatusCode());
             setMobileObjectType(status.getObjectType());
-            String statusDesc = status.woOprStatus != null ? status.getStatusDescKey() : status.getStatusCode();
+            String statusDesc = status.getStatusDescKey();
             if (StatusReason != null && !StatusReason.isEmpty()) {
                 strReasonText = ZConfigManager.AUTO_NOTES_TEXT_LINE4 + " " + StatusReason;
             }
