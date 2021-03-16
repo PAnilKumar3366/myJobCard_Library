@@ -39,9 +39,11 @@ public class WorkOrderHelper {
     public String getQuery(Map<String, String> queryMap) {
         StringBuilder WoFilterQuery = null;
         try {
-            String baseQuery = "?$filter=(OnlineSearch eq 'X' and Unassigned eq '' and ";
+            String baseQuery = "?$filter=(OnlineSearch eq 'X' and ";
             WoFilterQuery = new StringBuilder();
             WoFilterQuery.append(baseQuery);
+            if (queryMap.containsKey("Unassigned"))
+                WoFilterQuery.append("Unassigned'").append(queryMap.get("Unassigned")).append("' and ");
             if (queryMap.containsKey("From"))
                 WoFilterQuery.append("CreatedOn eq datetime'").append(queryMap.get("From")).append("' and ");
             if (queryMap.containsKey("To"))
