@@ -43,7 +43,7 @@ public class WorkOrderHelper {
             WoFilterQuery = new StringBuilder();
             WoFilterQuery.append(baseQuery);
             if (queryMap.containsKey("Unassigned"))
-                WoFilterQuery.append("Unassigned'").append(queryMap.get("Unassigned")).append("' and ");
+                WoFilterQuery.append("Unassigned eq'").append(queryMap.get("Unassigned")).append("' and ");
             if (queryMap.containsKey("From"))
                 WoFilterQuery.append("CreatedOn eq datetime'").append(queryMap.get("From")).append("' and ");
             if (queryMap.containsKey("To"))
