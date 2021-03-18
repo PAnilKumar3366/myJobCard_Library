@@ -31,8 +31,8 @@ public class ZAppSettings extends AppSettings {
 
     // public static boolean IsDemoModeEnabled = false;
 
-    public static String App_FCM_Token;
-    public static String App_Connection_ID;
+/*    public static String App_FCM_Token;
+    public static String App_Connection_ID;*/
 
     //For Bluetooth related constants
     public static String DEVICE_NAME = "";
