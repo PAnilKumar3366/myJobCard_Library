@@ -72,9 +72,17 @@ public class StatusCategory extends ZBaseEntity {
                 if (entities != null && entities.size() > 0) {
                     statusCategory = new StatusCategory(entities.get(0));
                     if (object == ZConfigManager.Fetch_Object_Type.Notification)
-                        statusCategory.notificationStatus = ZAppSettings.NotificationUserStatus.valueOf(statusCategory.getStatusDescKey());
+                        try {
+                            statusCategory.notificationStatus = ZAppSettings.NotificationUserStatus.valueOf(statusCategory.getImageResKey());
+                        } catch (IllegalArgumentException e) {
+                            statusCategory.notificationStatus = ZAppSettings.NotificationUserStatus.NotSet;
+                        }
                     else
-                        statusCategory.woOprStatus = ZAppSettings.MobileStatus.valueOf(statusCategory.getStatusDescKey());
+                        try {
+                            statusCategory.woOprStatus = ZAppSettings.MobileStatus.valueOf(statusCategory.getImageResKey());
+                        } catch (IllegalArgumentException e) {
+                            statusCategory.woOprStatus = ZAppSettings.MobileStatus.NotSet;
+                        }
                 }
             }
         } catch (Exception e) {

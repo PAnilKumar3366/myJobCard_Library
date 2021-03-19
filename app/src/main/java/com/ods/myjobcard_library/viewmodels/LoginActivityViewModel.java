@@ -71,7 +71,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                 //return null;
             }
         }.execute();
-        return false;
+        return true;
     }
 
     public LiveData<String> getError() {

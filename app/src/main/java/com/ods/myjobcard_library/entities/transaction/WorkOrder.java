@@ -1821,10 +1821,10 @@ public class WorkOrder extends ZBaseEntity {
             setMobileObjStatus(status.getStatusCode());
             setUserStatus(status.getStatusCode());
             setMobileObjectType(status.getObjectType());
-            String statusDesc = status.woOprStatus != null ? status.woOprStatus.getMobileStatusDesc() : status.getStatusCode();
-            if (status.woOprStatus.equals(ZAppSettings.MobileStatus.START))
+            String statusDesc = status.getStatusDescKey();
+            if (status.woOprStatus.equals(ZAppSettings.MobileStatus.STRT))
                 setActlStrtDate(ZCommon.getDeviceDateTime());
-            if (status.woOprStatus.equals(ZAppSettings.MobileStatus.COMPLETE))
+            if (status.woOprStatus.equals(ZAppSettings.MobileStatus.COMP))
                 setActlFnshDate(ZCommon.getDeviceDateTime());
 
             if (StatusReason != null && !StatusReason.isEmpty()) {
@@ -1839,7 +1839,7 @@ public class WorkOrder extends ZBaseEntity {
                 }
                 strStatusText = ZConfigManager.AUTO_NOTES_TEXT_LINE1 + " " + statusDesc + " " +
                         ZConfigManager.AUTO_NOTES_TEXT_LINE2 + " " + ZAppSettings.strUser.toUpperCase() + " " +
-                        (status.woOprStatus == ZAppSettings.MobileStatus.TRANSFER ? (ZConfigManager.AUTO_NOTES_TEXT_LINE5 + " " + getTransferPerson() + " ") : "") +
+                        (status.woOprStatus == ZAppSettings.MobileStatus.TRNS ? (ZConfigManager.AUTO_NOTES_TEXT_LINE5 + " " + getTransferPerson() + " ") : "") +
                         ZConfigManager.AUTO_NOTES_TEXT_LINE3 + " " + deviceTime;
                 if (ZConfigManager.ENABLE_POST_DEVICE_LOCATION_NOTES && deviceLocation != null) {
                     strStatusText = strStatusText + " at location Lat: " + deviceLocation.getLatitude() + "; Long: " + deviceLocation.getLongitude();
@@ -2161,7 +2161,7 @@ public class WorkOrder extends ZBaseEntity {
         String strResPath;
         Object rawData = null;
         try {
-            strResPath = ZCollections.OPR_COLLECTION + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and (startswith(SystemStatus,'" + ZAppSettings.MobileStatus.CONFIRMED.getMobileStatusCode() + "') eq true or MobileStatus eq '" + ZAppSettings.MobileStatus.COMPLETE.getMobileStatusCode() + "' or startswith(UserStatus, '" + ZAppSettings.MobileStatus.COMPLETE.getMobileStatusCode() + "') eq true) and (SubOperation eq '' or SubOperation eq null))";
+            strResPath = ZCollections.OPR_COLLECTION + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and (startswith(SystemStatus,'" + ZAppSettings.MobileStatus.CONFIRMED.getMobileStatusCode() + "') eq true or MobileStatus eq '" + ZAppSettings.MobileStatus.COMP.getMobileStatusCode() + "' or startswith(UserStatus, '" + ZAppSettings.MobileStatus.COMP.getMobileStatusCode() + "') eq true) and (SubOperation eq '' or SubOperation eq null))";
             responseObject = DataHelper.getInstance().getEntities(ZCollections.OPR_COLLECTION, strResPath);
             if (!responseObject.isError()) {
                 rawData = responseObject.Content();
@@ -2708,11 +2708,11 @@ public class WorkOrder extends ZBaseEntity {
                     int totalCompletedOprs = getTotalNumCompletedOperations();
 
                     if (totalActiveOprs > 0)
-                        mobileStatus = ZAppSettings.MobileStatus.START;
+                        mobileStatus = ZAppSettings.MobileStatus.STRT;
                     else if (totalOprs != 0 && totalCompletedOprs == totalOprs)
-                        mobileStatus = ZAppSettings.MobileStatus.COMPLETE;
+                        mobileStatus = ZAppSettings.MobileStatus.COMP;
                     else
-                        mobileStatus = ZAppSettings.MobileStatus.RECEIVED;
+                        mobileStatus = ZAppSettings.MobileStatus.MOBI;
                 }
                 status = mobileStatus.getMobileStatusCode();
             } else {

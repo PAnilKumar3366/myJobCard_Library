@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ZAppSettings extends AppSettings {
-   // public static String App_Name = "com.ods.myJobCard"; //"com.sap.wmUpd";
-   // public static String App_ID = "com.ods.myJobCard";//"com.sap.wmNupd"; //"com.sap.wmDlite"; //"com.sap.wmWin";// "com.sap.wmNupd"; //"com.sap.wmUpd";
+    // public static String App_Name = "com.ods.myJobCard"; //"com.sap.wmUpd";
+    // public static String App_ID = "com.ods.myJobCard";//"com.sap.wmNupd"; //"com.sap.wmDlite"; //"com.sap.wmWin";// "com.sap.wmNupd"; //"com.sap.wmUpd";
     /*//added by Shubham
     public static String App_LowVol_CT_Service_Root = "ctRootService";
     public static String App_HighVol_CT_ServiceRoot = "HighVolumeCTService";
@@ -17,22 +17,22 @@ public class ZAppSettings extends AppSettings {
     public static String App_Asset_Service_Root = "Equipment"; //"com.sap.wmUpd";
     public static String HTML_FOMRS_PATH = ""; //"com.sap.wmUpd";
     //public static String App_IP = "mobile-a53d86cd7.hana.ondemand.com";//"52.166.195.165";//"52.18.115.57"; // "192.168.0.52";
-   // public static int App_Port = 443; //8080;
+    // public static int App_Port = 443; //8080;
     public static int Log_Level = 0;
     public static Context context = null;
     public static String strPrimaryUser;
-   // public static String strUser;
+    // public static String strUser;
     public static String strPswd;
     public static String userFirstName;
     public static String userLastName;
     //public static boolean isLoggedIn = false;
-   // public static boolean isHttps = true;
+    // public static boolean isHttps = true;
     public static int App_Name_MinLength = 3;
 
-   // public static boolean IsDemoModeEnabled = false;
+    // public static boolean IsDemoModeEnabled = false;
 
-    public static String App_FCM_Token;
-    public static String App_Connection_ID;
+/*    public static String App_FCM_Token;
+    public static String App_Connection_ID;*/
 
     //For Bluetooth related constants
     public static String DEVICE_NAME = "";
@@ -568,27 +568,8 @@ public class ZAppSettings extends AppSettings {
         SERRDY("SVC-RDY", "assigned", "SEDY", false, 0, R.string.noAlert, false, R.drawable.accept),
         AWTSDN("AWT-STDN", "assigned", "AWSD", false, 0, R.string.noAlert, false, R.drawable.ic_alert),
         AWTTURN("AWT-TURN", "assigned", "AWTA", false, 0, R.string.noAlert, false, R.drawable.ic_alert),
-        ASSIGNED("ASSIGNED", "assigned", "ASGD", false, 0, R.string.noAlert, false, R.drawable.download),
-        RECEIVED("RECEIVED", "received", "MOBI", false, 1, R.string.noAlert, true, R.drawable.download),
         WORECEIVED("RDY-EXE", "received", "REFE", false, 1, R.string.noAlert, true, R.drawable.download),
-        ENROUTE("ENROUTE", "enroute", "ENRT", true, 2, R.string.enrouteAlert, true, R.drawable.enrote),
-        ENROUT("ENROUTE", "enroute", "ENRT", true, 2, R.string.enrouteAlert, false, R.drawable.enrote),
-        ARRIVED("ONSITE", "arrived", "ARRI", true, 3, R.string.arrivedAlert, true, R.drawable.onsite),
-        ARRIVE("ONSITE", "arrived", "ARRI", true, 3, R.string.arrivedAlert, false, R.drawable.onsite),
-        ACCEPT("ACCEPT", "accept", "ACCP", false, 4, R.string.acceptAlert, true, R.drawable.accept),
-        START("START", "start", "INPR", true, 5, R.string.startAlert, false, R.drawable.start),
-        STARTED("START", "start", "STRT", true, 5, R.string.startAlert, true, R.drawable.start),
-        HOLD("HOLD", "hold", "HOLD", false, 6, R.string.noAlert, true, R.drawable.hold),
-        SUSPEND("SUSPEND", "suspend", "SUSP", false, 7, R.string.noAlert, false, R.drawable.suspend),
-        SUSPENDED("SUSPEND", "suspend", "SUSP", false, 7, R.string.noAlert, false, R.drawable.suspend),
-        COMPLETE("COMPLETE", "complete", "CPLT", false, 8, R.string.noAlert, true, R.drawable.complete),
-        COMPLETED("COMPLETE", "complete", "COMP", false, 8, R.string.noAlert, false, R.drawable.complete),
-        REJECT("REJECT", "reject", "REJC", false, 9, R.string.noAlert, false, R.drawable.reject),
-        REJC("REJECT", "reject", "REJC", false, 9, R.string.noAlert, false, R.drawable.reject),
-        TRANSFER("TRANSFER", "transfer", "TRNS", false, 10, R.string.noAlert, false, R.drawable.ic_trans_horiz),
-        TRNS("TRANSFER", "transfer", "TRNS", false, 10, R.string.noAlert, false, R.drawable.ic_trans_horiz),
         InComplete("INCOMPLETE", "incomplete", "INCP", false, 11, R.string.noAlert, false, R.drawable.download),
-        CREATED("CREATED", "create", "CRTD", false, 12, R.string.noAlert, false, R.drawable.download),
         Released("Released", "release", "REL", false, 13, R.string.noAlert, false, R.drawable.download),
         CONFIRMED("Confirmed", "confirm", "CNF", false, 14, R.string.noAlert, false, R.drawable.download),
         PARTIALCONFIRMED("Partial Confirmed", "partial confirm", "PCNF", false, 14, R.string.noAlert, false, R.drawable.download),
@@ -599,6 +580,21 @@ public class ZAppSettings extends AppSettings {
         EQUIPMENTAVAILABLE("AVAILABLE", "available", "AVLB", false, 17, R.string.noAlert, false, R.drawable.equipment_install),
         INACTIVE("INACTIVE", "inactive", "INAC", false, 18, R.string.noAlert, false, R.drawable.equipment_install),
 
+        /*
+         defined ImageResKeys as a constants for getting the relavent staus images from resoure drawable
+         */
+        ASGD("ASSIGNED", "assigned", "ASGD", false, 0, R.string.noAlert, false, R.drawable.download),
+        MOBI("RECEIVED", "received", "MOBI", false, 1, R.string.noAlert, true, R.drawable.download),
+        ACCP("ACCEPT", "accept", "ACCP", false, 4, R.string.acceptAlert, true, R.drawable.accept),
+        ENRT("ENROUTE", "enroute", "ENRT", true, 2, R.string.enrouteAlert, true, R.drawable.enrote),
+        ARRI("ONSITE", "arrived", "ARRI", true, 3, R.string.arrivedAlert, false, R.drawable.onsite),
+        STRT("START", "start", "STRT", true, 5, R.string.startAlert, true, R.drawable.start),
+        HOLD("HOLD", "hold", "HOLD", false, 6, R.string.noAlert, true, R.drawable.hold),
+        SUSPENDED("SUSPEND", "suspend", "SUSP", false, 7, R.string.noAlert, false, R.drawable.suspend),
+        COMP("COMPLETE", "complete", "CPLT", false, 8, R.string.noAlert, true, R.drawable.complete),
+        TRNS("TRANSFER", "transfer", "TRNS", false, 10, R.string.noAlert, false, R.drawable.ic_trans_horiz),
+        REJC("REJECT", "reject", "REJC", false, 9, R.string.noAlert, false, R.drawable.reject),
+        CRTD("CREATED", "create", "CRTD", false, 12, R.string.noAlert, false, R.drawable.download),
         NotSet("", "", "NTST", false, 16, R.string.noAlert, false, R.drawable.download);
 
         boolean consideredAsActive;
@@ -664,11 +660,19 @@ public class ZAppSettings extends AppSettings {
     //Added by Anil
     public enum NotificationUserStatus {
 
+/*
         CREATED("RECEIVED", "created", "PEND", false, 0, R.string.noAlert, true, R.drawable.download),
         ACCEPTED("ACCEPT", "accept", "ACCP", false, 4, R.string.notificationAcceptAlert, true, R.drawable.accept),
         REJECTED("REJECT", "reject", "MRJC", false, 9, R.string.notificationRejectAlert, true, R.drawable.reject),
         INPROGRESS("START", "in progress", "SCRN", true, 5, R.string.notificationStartAlert, true, R.drawable.start),
         COMPLETED("COMPLETE", "complete", "NOCO", false, 8, R.string.notificationCompleteAlert, true, R.drawable.complete),
+        NotSet("", "", "NTST", false, 16, R.string.noAlert, false, R.drawable.download);
+*/
+        CRTD("RECEIVED", "created", "PEND", false, 0, R.string.noAlert, true, R.drawable.download),
+        ACCP("ACCEPT", "accept", "ACCP", false, 4, R.string.notificationAcceptAlert, true, R.drawable.accept),
+        REJC("REJECT", "reject", "MRJC", false, 9, R.string.notificationRejectAlert, true, R.drawable.reject),
+        STRT("START", "in progress", "SCRN", true, 5, R.string.notificationStartAlert, true, R.drawable.start),
+        COMP("COMPLETE", "complete", "NOCO", false, 8, R.string.notificationCompleteAlert, true, R.drawable.complete),
         NotSet("", "", "NTST", false, 16, R.string.noAlert, false, R.drawable.download);
 
         boolean consideredAsActive;

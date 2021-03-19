@@ -176,11 +176,11 @@ public class SupervisorWorkOrder extends ZBaseEntity {
             }
             if (status != null) {
                 switch (status) {
-                    case ACCEPT:
-                        resPath += " and endswith(UserStatus, '" + status.getMobileStatusCode() + "') eq true and (startswith(UserStatus, '" + ZAppSettings.MobileStatus.CREATED.getMobileStatusCode() + "') eq true or startswith(UserStatus,'" + ZAppSettings.MobileStatus.RECEIVED.getMobileStatusCode() + "') eq true)";
+                    case ACCP:
+                        resPath += " and endswith(UserStatus, '" + status.getMobileStatusCode() + "') eq true and (startswith(UserStatus, '" + ZAppSettings.MobileStatus.CRTD.getMobileStatusCode() + "') eq true or startswith(UserStatus,'" + ZAppSettings.MobileStatus.MOBI.getMobileStatusCode() + "') eq true)";
                         break;
-                    case RECEIVED:
-                        resPath += " and endswith(UserStatus, '" + ZAppSettings.MobileStatus.ACCEPT.getMobileStatusCode() + "') eq false and (UserStatus eq '" + status.getMobileStatusCode() + "' or startswith(UserStatus, '" + ZAppSettings.MobileStatus.CREATED.getMobileStatusCode() + "') eq true)";
+                    case MOBI:
+                        resPath += " and endswith(UserStatus, '" + ZAppSettings.MobileStatus.ACCP.getMobileStatusCode() + "') eq false and (UserStatus eq '" + status.getMobileStatusCode() + "' or startswith(UserStatus, '" + ZAppSettings.MobileStatus.CRTD.getMobileStatusCode() + "') eq true)";
                         break;
                     default:
                         resPath += " and (startswith(UserStatus, '" + status.getMobileStatusCode() + "') eq true or endswith(UserStatus, '" + status.getMobileStatusCode() + "') eq true)";
@@ -932,25 +932,25 @@ public class SupervisorWorkOrder extends ZBaseEntity {
             if (getMobileObjStatus() != null && getMobileObjStatus().length() > 0) {
                 status = getMobileObjStatus();
             } else {
-                if (UserStatus.equalsIgnoreCase(ZAppSettings.MobileStatus.CREATED.getMobileStatusCode()) ||
-                        UserStatus.equalsIgnoreCase(ZAppSettings.MobileStatus.ASSIGNED.getMobileStatusCode())) {
+                if (UserStatus.equalsIgnoreCase(ZAppSettings.MobileStatus.CRTD.getMobileStatusCode()) ||
+                        UserStatus.equalsIgnoreCase(ZAppSettings.MobileStatus.ASGD.getMobileStatusCode())) {
                     //mobileStatus = ZAppSettings.MobileStatus.ASSIGNED;
                     //Set WO status as Received
 //                    UpdateStatus(ZAppSettings.MobileStatus.RECEIVED,null,null);
-                    mobileStatus = ZAppSettings.MobileStatus.RECEIVED;
-                } else if (UserStatus.startsWith(ZAppSettings.MobileStatus.CREATED.getMobileStatusCode()) ||
-                        UserStatus.startsWith(ZAppSettings.MobileStatus.RECEIVED.getMobileStatusCode())) {
+                    mobileStatus = ZAppSettings.MobileStatus.MOBI;
+                } else if (UserStatus.startsWith(ZAppSettings.MobileStatus.CRTD.getMobileStatusCode()) ||
+                        UserStatus.startsWith(ZAppSettings.MobileStatus.MOBI.getMobileStatusCode())) {
                     String strDerivedStatus;
                     strDerivedStatus = UserStatus.substring(4).trim();
                     switch (strDerivedStatus) {
                         case "ACCP":
-                            mobileStatus = ZAppSettings.MobileStatus.ACCEPT;
+                            mobileStatus = ZAppSettings.MobileStatus.ACCP;
                             break;
                         case "REJC":
-                            mobileStatus = ZAppSettings.MobileStatus.REJECT;
+                            mobileStatus = ZAppSettings.MobileStatus.REJC;
                             break;
                         default:
-                            mobileStatus = ZAppSettings.MobileStatus.RECEIVED;
+                            mobileStatus = ZAppSettings.MobileStatus.MOBI;
                             break;
                     }
                 } else if (UserStatus.length() > 4) {
