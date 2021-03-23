@@ -2,6 +2,8 @@ package com.ods.myjobcard_library.viewmodels.notification;
 
 import android.os.AsyncTask;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.interfaces.BackgroundTaskInterface;
 import com.ods.ods_sdk.AppSettings;
@@ -17,22 +19,32 @@ import java.util.Map;
 
 /*Created By Anil Kumar*/
 
-/*This class helps the Notifications Related Operations like
-    fetching online Notifications, offline Notifications etc*/
 
+/**
+ * This class helps the Notifications Related Operations like
+ * fetching online Notifications, offline Notifications etc
+ */
 public class NotificationHelper {
 
     private BackgroundTaskInterface TaskInterface;
 
+    private MutableLiveData<ResponseObject> onlineNoEntity = new MutableLiveData<>();
+
+    public MutableLiveData<ResponseObject> getOnlineNoEntity() {
+        return onlineNoEntity;
+    }
 
     public NotificationHelper() {
-
     }
 
     public void setTaskInterface(BackgroundTaskInterface TaskInterface) {
         this.TaskInterface = TaskInterface;
     }
 
+    /**
+     * @param queryMap filed contains the Online search parameters and values as Key-Value Pair
+     * @return final filter query
+     */
     /*Preparing the final query for the online pendingList and returns to calling method.*/
     public String getQuery(Map<String, String> queryMap) {
 
@@ -63,7 +75,10 @@ public class NotificationHelper {
         return NoFilterQuery.toString();
     }
 
-    /*Fetching the online notifications as ZODataEntity List and set the CallBack*/
+    /**
+     * @param filterQuery which is the final query and pass the final query to the OnlineAsyncHelper.
+     */
+    /*Fetching the online notifications as ZODataEntity List and set the LiveData*/
     public void getNotificationsOnline(String filterQuery) {
         ArrayList<ZODataEntity> entityList = new ArrayList<>();
         String resPath = ZCollections.NOTIFICATION_COLLECTION + filterQuery;
@@ -77,12 +92,15 @@ public class NotificationHelper {
                             ZODataEntity item = new ZODataEntity(entity);
                             entityList.add(item);
                         }
-                        TaskInterface.onTaskPostExecute(entityList, false, "");
+                        response.setContent(entityList);
+                        onlineNoEntity.postValue(response);
+                        //TaskInterface.onTaskPostExecute(entityList, false, "");
                     } else
-                        TaskInterface.onTaskPostExecute(entityList, true, response.getMessage());
+                        onlineNoEntity.postValue(response);
+                    //TaskInterface.onTaskPostExecute(entityList, true, response.getMessage());
                 } catch (Exception e) {
                     e.printStackTrace();
-                    TaskInterface.onTaskPostExecute(entityList, true, e.getMessage());
+                    //TaskInterface.onTaskPostExecute(entityList, true, e.getMessage());
                 }
             }
         });

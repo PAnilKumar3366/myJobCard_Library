@@ -2,6 +2,8 @@ package com.ods.myjobcard_library.viewmodels.workorder;
 
 import android.os.AsyncTask;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.interfaces.BackgroundTaskInterface;
 import com.ods.ods_sdk.AppSettings;
@@ -14,14 +16,18 @@ import com.sap.client.odata.v4.EntityValueList;
 
 import java.util.ArrayList;
 import java.util.Map;
-
 /*Created By Anil Kumar*/
-        /*This class helps the Work Order Related Operations like
-fetching online workOrders, offline work orders etc*/
+
+/**
+ * This class helps the Work Order Related Operations like
+ * fetching online workOrders, offline work orders etc
+ */
+
+
 public class WorkOrderHelper {
 
     public BackgroundTaskInterface TaskInterface;
-
+    protected MutableLiveData<ResponseObject> onlineWoEntities = new MutableLiveData<>();
 
     public WorkOrderHelper() {
     }
@@ -35,6 +41,10 @@ public class WorkOrderHelper {
         TaskInterface = taskInterface;
     }
 
+    /**
+     * @param queryMap filed contains the Online search parameters and values as Key-Value Pair
+     * @return final filter query
+     */
     /*Preparing the final query for the online pendingList and returns to calling method.*/
     public String getQuery(Map<String, String> queryMap) {
         StringBuilder WoFilterQuery = null;
@@ -67,8 +77,15 @@ public class WorkOrderHelper {
         return WoFilterQuery.toString();
     }
 
-    /*Fetching the online Work Orders as ZODataEntity List and set the CallBack*/
 
+    public MutableLiveData<ResponseObject> getOnlineWoEntities() {
+        return onlineWoEntities;
+    }
+
+    /**
+     * @param filterQuery which is the final query and pass the final query to the OnlineAsyncHelper.
+     */
+    /*Fetching the online Work Orders as ZODataEntity List and set the CallBack*/
     public void getWorkOrdersOnline(String filterQuery) {
         ArrayList<ZODataEntity> entityList = new ArrayList<>();
         String resPath = ZCollections.WO_COLLECTION + filterQuery;
@@ -82,13 +99,16 @@ public class WorkOrderHelper {
                             ZODataEntity item = new ZODataEntity(entity);
                             entityList.add(item);
                         }
-                        TaskInterface.onTaskPostExecute(entityList, false, "");
+                        response.setContent(entityList);
+                        onlineWoEntities.postValue(response);
+                        //TaskInterface.onTaskPostExecute(entityList, false, "");
                     } else {
-                        TaskInterface.onTaskPostExecute(entityList, true, response.getMessage());
+                        //TaskInterface.onTaskPostExecute(entityList, true, response.getMessage());
+                        onlineWoEntities.postValue(response);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    TaskInterface.onTaskPostExecute(new ArrayList<ZODataEntity>(), true, e.getMessage());
+                    //TaskInterface.onTaskPostExecute(new ArrayList<ZODataEntity>(), true, e.getMessage());
                 }
             }
         });

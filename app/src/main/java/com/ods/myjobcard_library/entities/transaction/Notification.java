@@ -140,6 +140,12 @@ public class Notification extends ZBaseEntity {
     /*Added by Anil
      * Customized OData Entity Constructor*/
 
+    /**
+     * constructo to create or map the new instance with the given ZODataEntity Object.
+     *
+     * @param zoDataEntity ZODataEntity Contains the oDataEntity or EntityValue instance map to
+     */
+
     public Notification(ZODataEntity zoDataEntity) {
         create(zoDataEntity);
         initializeEntityProperties(false);

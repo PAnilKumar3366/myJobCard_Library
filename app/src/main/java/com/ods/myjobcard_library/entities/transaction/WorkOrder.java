@@ -183,6 +183,11 @@ public class WorkOrder extends ZBaseEntity {
     /*Added by Anil
      * Customized OData Entity Constructor*/
 
+    /**
+     * Constructor  to create or map the new instance with the given ZODataEntity Object.
+     *
+     * @param entity ZODataEntity Contains the oDataEntity or EntityValue instance map to
+     */
     public WorkOrder(ZODataEntity entity) {
         create(entity);
         deriveWOStatus();

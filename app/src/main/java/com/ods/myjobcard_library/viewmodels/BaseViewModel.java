@@ -14,8 +14,6 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
-import com.ods.myjobcard_library.interfaces.BackgroundTaskInterface;
-import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
@@ -23,7 +21,6 @@ import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.ConfigManager;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.ods.ods_sdk.utils.OfflineAsyncHelper;
-import com.ods.ods_sdk.utils.OnlineAsyncHelper;
 import com.sap.smp.client.odata.ODataEntity;
 
 import java.io.IOException;
@@ -45,7 +42,6 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
     private MutableLiveData<String > error=new MutableLiveData<>();
     public static String QUERIABLE_DATE_FORMAT = "yyyy-MM-dd'T'00:00:00";
     private String TAG = BaseViewModel.class.getSimpleName();
-    private BackgroundTaskInterface TaskInterface;
 
     public BaseViewModel(@NonNull Application application) {
         super(application);
@@ -54,13 +50,6 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
         transmitUpdateMsg = new MutableLiveData<>();
     }
 
-    protected void setBackgroundTaskInterface(BackgroundTaskInterface taskInterface) {
-        this.TaskInterface = taskInterface;
-    }
-
-    protected BackgroundTaskInterface getTaskInterface() {
-        return TaskInterface;
-    }
 
     public MutableLiveData<Boolean> getPosting() {
         return posting;
@@ -94,7 +83,7 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
         this.transmitUpdateMsg = transmitUpdateMsg;
     }
 
-    protected void fetchEntitiesOnline(String resPath, String entitySetName) {
+    /*protected void fetchEntitiesOnline(String resPath, String entitySetName) {
         OnlineAsyncHelper asyncHelper = new OnlineAsyncHelper(resPath, entitySetName, true, new OnlineAsyncHelper.Callbacks() {
             @Override
             public void onResult(ResponseObject responseObject) {
@@ -119,7 +108,7 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
             }
         });
         asyncHelper.execute((Void) null);
-    }
+    }*/
 
     protected void fetchEntitiesOffline(String resPath, String entitySetName) {
         OfflineAsyncHelper helper = new OfflineAsyncHelper(resPath, entitySetName, new OfflineAsyncHelper.Callbacks() {
