@@ -26,18 +26,46 @@ import java.util.HashMap;
 
 /*Created By Anil Kumar*/
 
-public class OnlinePendingListViewModel extends BaseViewModel {
+public class OnlineListViewModel extends BaseViewModel {
     private static final String TAG = "OnlinePendingListViewMo";
     private MutableLiveData<ArrayList<WorkOrder>> onlineWoList = new MutableLiveData<ArrayList<WorkOrder>>();
     private MutableLiveData<ArrayList<Notification>> onlineNotificationList = new MutableLiveData<>();
     private ArrayList<Operation> operations = new ArrayList<>();
     private ArrayList<NotificationItem> notificationItems = new ArrayList<>();
     private MutableLiveData<ResponseObject> onlineWOEntities = new MutableLiveData<>();
+
     private WorkOrderHelper workOrderHelper;
     private NotificationHelper notificationHelper;
     private LiveData<ResponseObject> OnlineWoResult, OnlineNoResult;
     private MutableLiveData<ArrayList<Operation>> onlineOperations = new MutableLiveData<>();
+    private MutableLiveData<ResponseObject> updateWOResult = new MutableLiveData<>();
     private Observer<ResponseObject> WorkOrderObserver, NotificationObserver;
+    private boolean fetchOpr, fetchNoItems;
+
+    public OnlineListViewModel(@NonNull Application application) {
+        super(application);
+        workOrderHelper = new WorkOrderHelper();
+        notificationHelper = new NotificationHelper();
+    }
+
+    public MutableLiveData<ResponseObject> getUpdateWOResult() {
+        return updateWOResult;
+    }
+
+    public void setUpdateWOResult(MutableLiveData<ResponseObject> updateWOResult) {
+        this.updateWOResult = updateWOResult;
+    }
+
+    public void setFetchOpr(boolean fetchOpr) {
+        this.fetchOpr = fetchOpr;
+        workOrderHelper.setFetchOpr(fetchOpr);
+    }
+
+    public void setFetchNoItems(boolean fetchNoItems) {
+        this.fetchNoItems = fetchNoItems;
+        notificationHelper.setFetchNOItems(fetchNoItems);
+    }
+
 
     public ArrayList<Operation> getOperations() {
         return operations;
@@ -45,10 +73,6 @@ public class OnlinePendingListViewModel extends BaseViewModel {
 
     public MutableLiveData<ArrayList<Operation>> getOnlineOperations() {
         return onlineOperations;
-    }
-
-    public OnlinePendingListViewModel(@NonNull Application application) {
-        super(application);
     }
 
 
@@ -70,7 +94,6 @@ public class OnlinePendingListViewModel extends BaseViewModel {
     /*Fetching Online Pending Work orders list as ZODataEntity List */
     public void fetchWorkOrdersOnline(HashMap<String, String> mapQuery) {
         try {
-            workOrderHelper = new WorkOrderHelper();
             OnlineWoResult = workOrderHelper.getOnlineWoEntities();
             WorkOrderObserver = new Observer<ResponseObject>() {
                 @Override
@@ -127,7 +150,6 @@ public class OnlinePendingListViewModel extends BaseViewModel {
     /*Fetching the final online query and fetching online notifications pending list as ZODataEntity List*/
     public void fetchNotificationsOnline(HashMap<String, String> mapQuery) {
         try {
-            notificationHelper = new NotificationHelper();
             OnlineNoResult = notificationHelper.getOnlineNoEntity();
             NotificationObserver = new Observer<ResponseObject>() {
                 @Override
@@ -141,26 +163,6 @@ public class OnlinePendingListViewModel extends BaseViewModel {
                 }
             };
             OnlineNoResult.observeForever(NotificationObserver);
-            /*NotificationHelper notificationHelper = new NotificationHelper();
-            notificationHelper.setTaskInterface(new BackgroundTaskInterface() {
-                @Override
-                public void onTaskPostExecute(ArrayList<ZODataEntity> zoDataEntities, boolean isError, String errorMsg) {
-                    if (!isError)
-                        onFetchOnlineNOList(zoDataEntities);
-                    else
-                        setError(errorMsg);
-                }
-
-                @Override
-                public void onTaskPreExecute() {
-
-                }
-
-                @Override
-                public void onTaskProgressUpdate() {
-
-                }
-            });*/
             String finalQuery = notificationHelper.getQuery(mapQuery);
             if (!finalQuery.isEmpty())
                 notificationHelper.getNotificationsOnline(finalQuery);
@@ -185,22 +187,23 @@ public class OnlinePendingListViewModel extends BaseViewModel {
         try {
             EntityValue entityValue;
             EntityValueList oprEntityList;
-
             for (ZODataEntity entity : zoDataEntities) {
                 WorkOrder item = new WorkOrder(entity);
                 entityValue = entity.getEntityValue();
                 ArrayList<Operation> workOrderOperations = new ArrayList<>();
-                oprEntityList = entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue);//Extracting the WorkOrder Operations from WorkOrder
-                for (EntityValue oprEntity : oprEntityList) {
-                    workOrderOperations.add(new Operation(oprEntity));
-                    operations.add(new Operation(oprEntity));
+                if (fetchOpr) {
+                    oprEntityList = entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue);//Extracting the WorkOrder Operations from WorkOrder
+                    for (EntityValue oprEntity : oprEntityList) {
+                        workOrderOperations.add(new Operation(oprEntity));
+                        operations.add(new Operation(oprEntity));
+                    }
                 }
                 onlineWo.add(item);
             }
             OnlineDataList.getInstance().setOnlineWorkOrderList(onlineWo);
             OnlineDataList.getInstance().setWorkOrdersOperationsList(operations);
             onlineWoList.postValue(onlineWo);
-            onlineOperations.postValue(operations);
+            //onlineOperations.postValue(operations);
         } catch (Exception e) {
             e.printStackTrace();
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
@@ -220,12 +223,14 @@ public class OnlinePendingListViewModel extends BaseViewModel {
             for (ZODataEntity entity : zoDataEntities) {
                 Notification item = new Notification(entity);
                 entityValue = entity.getEntityValue();
-                noItemsEntityValues = entity.getEntityValue().getEntityType().getProperty("NavNOItem").getEntityList(entityValue);//Extracting the NotificationItems from Notification
-                notificationItemsList = new ArrayList<>();
-                for (EntityValue itemEntity : noItemsEntityValues) {
-                    NotificationItem notificationItem = new NotificationItem(itemEntity);
-                    notificationItemsList.add(notificationItem);
-                    notificationItems.add(notificationItem);
+                if (fetchNoItems) {
+                    noItemsEntityValues = entity.getEntityValue().getEntityType().getProperty("NavNOItem").getEntityList(entityValue);//Extracting the NotificationItems from Notification
+                    notificationItemsList = new ArrayList<>();
+                    for (EntityValue itemEntity : noItemsEntityValues) {
+                        NotificationItem notificationItem = new NotificationItem(itemEntity);
+                        notificationItemsList.add(notificationItem);
+                        notificationItems.add(notificationItem);
+                    }
                 }
                 onlineNoList.add(item);
             }
@@ -237,6 +242,7 @@ public class OnlinePendingListViewModel extends BaseViewModel {
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
         }
     }
+
 
     /**
      * Remove  Global Observers when ever the the ViewModel data is cleared.

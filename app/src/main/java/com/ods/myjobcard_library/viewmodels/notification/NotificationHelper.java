@@ -28,6 +28,12 @@ public class NotificationHelper {
 
     private BackgroundTaskInterface TaskInterface;
 
+    private boolean fetchNOItems;
+
+    public void setFetchNOItems(boolean fetchNOItems) {
+        this.fetchNOItems = fetchNOItems;
+    }
+
     private MutableLiveData<ResponseObject> onlineNoEntity = new MutableLiveData<>();
 
     public MutableLiveData<ResponseObject> getOnlineNoEntity() {
@@ -52,6 +58,8 @@ public class NotificationHelper {
         try {
             NoFilterQuery = new StringBuilder();
             NoFilterQuery.append("?$filter=(OnlineSearch eq 'X' and ");
+            if (queryMap.containsKey("Priority"))
+                NoFilterQuery.append("Priority eq '").append(queryMap.get("Priority")).append("' and ");
             if (queryMap.containsKey("From"))
                 NoFilterQuery.append("CreatedOn eq datetime'").append(queryMap.get("From")).append("' and ");
             if (queryMap.containsKey("To"))
@@ -66,7 +74,10 @@ public class NotificationHelper {
                 NoFilterQuery.append("WorkCenter eq '").append(queryMap.get("MainWorkCtr")).append("' and ");
             String finalQuery = " " + NoFilterQuery.toString();
             NoFilterQuery.delete(finalQuery.length() - 6, NoFilterQuery.length());
-            NoFilterQuery.append(")&$expand=NavNOItem");
+            if (fetchNOItems)
+                NoFilterQuery.append(")&$expand=NavNOItem");
+            else
+                NoFilterQuery.append(")");
         } catch (Exception e) {
             e.printStackTrace();
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());

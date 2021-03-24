@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZCollections;
+import com.ods.myjobcard_library.entities.transaction.WorkOrder;
 import com.ods.myjobcard_library.interfaces.BackgroundTaskInterface;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
@@ -26,10 +27,24 @@ import java.util.Map;
 
 public class WorkOrderHelper {
 
+    protected MutableLiveData<ResponseObject> updatedWoResult = new MutableLiveData<>();
     public BackgroundTaskInterface TaskInterface;
-    protected MutableLiveData<ResponseObject> onlineWoEntities = new MutableLiveData<>();
+    private boolean fetchOpr;
+    private MutableLiveData<ResponseObject> onlineWoEntities = new MutableLiveData<>();
 
     public WorkOrderHelper() {
+    }
+
+    public void setFetchOpr(boolean fetchOpr) {
+        this.fetchOpr = fetchOpr;
+    }
+
+    public MutableLiveData<ResponseObject> getUpdatedWoResult() {
+        return updatedWoResult;
+    }
+
+    public MutableLiveData<ResponseObject> getOnlineWoEntities() {
+        return onlineWoEntities;
     }
 
 
@@ -54,6 +69,8 @@ public class WorkOrderHelper {
             WoFilterQuery.append(baseQuery);
             if (queryMap.containsKey("Unassigned"))
                 WoFilterQuery.append("Unassigned eq'").append(queryMap.get("Unassigned")).append("' and ");
+            if (queryMap.containsKey("Priority"))
+                WoFilterQuery.append("Priority eq '").append(queryMap.get("Priority")).append("' and ");
             if (queryMap.containsKey("From"))
                 WoFilterQuery.append("CreatedOn eq datetime'").append(queryMap.get("From")).append("' and ");
             if (queryMap.containsKey("To"))
@@ -68,7 +85,10 @@ public class WorkOrderHelper {
                 WoFilterQuery.append("MainWorkCtr eq '").append(queryMap.get("MainWorkCtr")).append("' and ");
             String finalQuery = " " + WoFilterQuery.toString();
             WoFilterQuery.delete(finalQuery.length() - 6, WoFilterQuery.length());
-            WoFilterQuery.append(")&$expand=NAVOPERA");
+            if (fetchOpr)
+                WoFilterQuery.append(")&$expand=NAVOPERA");
+            else
+                WoFilterQuery.append(")");
         } catch (Exception e) {
             e.printStackTrace();
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
@@ -78,9 +98,7 @@ public class WorkOrderHelper {
     }
 
 
-    public MutableLiveData<ResponseObject> getOnlineWoEntities() {
-        return onlineWoEntities;
-    }
+
 
     /**
      * @param filterQuery which is the final query and pass the final query to the OnlineAsyncHelper.
@@ -113,5 +131,15 @@ public class WorkOrderHelper {
             }
         });
         helper.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    public void UpdateWorkOrderOnline(WorkOrder workOrder) {
+        OnlineAsyncHelper updateWO = new OnlineAsyncHelper(workOrder, new OnlineAsyncHelper.Callbacks() {
+            @Override
+            public void onResult(ResponseObject responseObject) {
+                updatedWoResult.postValue(responseObject);
+            }
+        });
+        updateWO.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 }
