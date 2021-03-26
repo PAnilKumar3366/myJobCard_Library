@@ -71,6 +71,13 @@ public class WOLongText extends ZBaseEntity {
         create(entity);
     }
 
+    /**
+     * Added By Anil Kumar
+     * constructor to create or map the new instance with the given ZODataEntity Object.
+     *
+     * @param entity ZODataEntity Contains the oDataEntity or EntityValue instance map to
+     */
+
     public WOLongText(ZODataEntity entity) {
         initializeEntityProperties();
         create(entity);

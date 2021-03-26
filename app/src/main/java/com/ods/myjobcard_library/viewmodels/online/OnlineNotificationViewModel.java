@@ -77,6 +77,11 @@ public class OnlineNotificationViewModel extends BaseViewModel {
         return onlineNoLongText;
     }
 
+    /**
+     * this method is used to fetch the online Notification LongText with the help of Helper class and observes the result.
+     *
+     * @param hashMapQuery contains filter Parameters key-values
+     */
     public void fetchOnlineWOLongText(HashMap<String, String> hashMapQuery) {
         try {
             String finalQuery = longTextHelper.getOnlineQuery(hashMapQuery);
@@ -104,6 +109,11 @@ public class OnlineNotificationViewModel extends BaseViewModel {
         }
     }
 
+    /**
+     * this method helps to convert the ZODataEntity to NotificationLongText object and set it to LiveData.
+     *
+     * @param zoDataEntities contains NotificationLongtext
+     */
     private void onFetchNOLongText(ArrayList<ZODataEntity> zoDataEntities) {
         try {
             ArrayList<NotifLongText> longText = new ArrayList<>();
@@ -123,6 +133,10 @@ public class OnlineNotificationViewModel extends BaseViewModel {
         }
     }
 
+    /**
+     * @param notification updated Notification which is comes from UI
+     *                     this method helps to update the notification in online with help of NotificationLongTextHelper Class.
+     */
     public void updateNotificationOnline(Notification notification) {
         try {
             if (notificationHelper == null)
@@ -142,6 +156,9 @@ public class OnlineNotificationViewModel extends BaseViewModel {
         }
     }
 
+    /**
+     * @param responseObject contains the updated result
+     */
     private void updateNotification(ResponseObject responseObject) {
         updatedNoResult.postValue(responseObject);
         updatedNoResult.removeObserver(updatedNoObserver);

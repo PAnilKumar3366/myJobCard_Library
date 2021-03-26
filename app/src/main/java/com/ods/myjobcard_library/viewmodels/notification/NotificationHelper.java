@@ -126,6 +126,11 @@ public class NotificationHelper {
         helper.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+
+    /**
+     * @param notification Updated Notification.
+     *                     this method creates a aync task for updating the Notification in online. Updates like Edit,Assign and Transfer.
+     */
     public void UpdateNotificationOnline(Notification notification) {
         try {
             updatedNoResult = new MutableLiveData<>();

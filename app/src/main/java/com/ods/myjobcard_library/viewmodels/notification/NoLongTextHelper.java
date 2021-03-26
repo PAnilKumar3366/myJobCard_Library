@@ -18,6 +18,9 @@ import com.sap.client.odata.v4.EntityValueList;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This Class contains all helpers methods for notification such as fetchOnlineLongText.
+ */
 public class NoLongTextHelper {
 
     private MutableLiveData<ResponseObject> longTextLiveData;
@@ -30,6 +33,12 @@ public class NoLongTextHelper {
         return longTextLiveData;
     }
 
+    /**
+     * this method helps to prepare the final query before start to fetch online data.
+     *
+     * @param onlineQueryMap Contains the online Query Parameters and values in key-value pairs.
+     * @return final filter query
+     */
     public String getOnlineQuery(HashMap<String, String> onlineQueryMap) {
         StringBuilder NoLongTextQuery = null;
         longTextLiveData = new MutableLiveData<>();
@@ -57,6 +66,11 @@ public class NoLongTextHelper {
         return NoLongTextQuery.toString();
     }
 
+    /**
+     * This method creates a Async task to fetch online Notification Longtext and set the result in LiveData
+     *
+     * @param finalQuery final filter query.
+     */
     public void getOnlineNOLongText(String finalQuery) {
         ArrayList<ZODataEntity> entityList = new ArrayList<>();
         String resPath = ZCollections.NOTIFICATION_LONG_TEXT_COLLECTION + finalQuery;

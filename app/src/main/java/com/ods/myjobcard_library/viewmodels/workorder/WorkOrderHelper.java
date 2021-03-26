@@ -133,6 +133,11 @@ public class WorkOrderHelper {
         helper.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    /**
+     * this method creates a aynctask for updating the WorkOrder in online. Updates like Edit,Assign and Transfer.
+     *
+     * @param workOrder update workorder
+     */
     public void UpdateWorkOrderOnline(WorkOrder workOrder) {
         updatedWoResult = new MutableLiveData<>();
         OnlineAsyncHelper updateWO = new OnlineAsyncHelper(workOrder, new OnlineAsyncHelper.Callbacks() {

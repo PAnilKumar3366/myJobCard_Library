@@ -1854,7 +1854,9 @@ public class WorkOrder extends ZBaseEntity {
             //setNotes(strNotesText);
             //Update the WO to offlinestore
             setMode(ZAppSettings.EntityMode.Update);
+
             if (isOnline) {
+                //Update WO to Online.
                 result = new ResponseObject(ConfigManager.Status.Success);
                 result.setContent(this);
                 return result;

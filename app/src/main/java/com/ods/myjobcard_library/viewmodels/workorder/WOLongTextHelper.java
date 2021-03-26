@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
-import com.ods.myjobcard_library.interfaces.BackgroundTaskInterface;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.ConfigManager;
@@ -19,22 +18,27 @@ import com.sap.client.odata.v4.EntityValueList;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This Class contains all WorkOrderLongText related helpers methods  such as fetchOnlineLongText.
+ */
 public class WOLongTextHelper {
-    public BackgroundTaskInterface TaskInterface;
+
     private MutableLiveData<ResponseObject> OnlineLongText;
 
     public WOLongTextHelper() {
-
     }
 
     public MutableLiveData<ResponseObject> getOnlineLongText() {
         return OnlineLongText;
     }
 
-    public void setTaskInterface(BackgroundTaskInterface taskInterface) {
-        TaskInterface = taskInterface;
-    }
 
+    /**
+     * this method helps to prepare the final query before start to fetch online data.
+     *
+     * @param onlineQueryMap Contains the online Query Parameters and values in key-value pairs.
+     * @return final filter query
+     */
     public String getOnlineQuery(HashMap<String, String> onlineQueryMap) {
         OnlineLongText = new MutableLiveData<>();
         StringBuilder WoLongTextQuery = null;
@@ -59,6 +63,12 @@ public class WOLongTextHelper {
 
         return WoLongTextQuery.toString();
     }
+
+    /**
+     * This method creates a Async task to fetch online WorkOrder Longtext and set the result in LiveData
+     *
+     * @param finalQuery final filter query.
+     */
 
     public void getOnlineWOLongText(String finalQuery) {
         ArrayList<ZODataEntity> entityList = new ArrayList<>();

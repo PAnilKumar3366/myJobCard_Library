@@ -59,6 +59,14 @@ public class NotifLongText extends ZBaseEntity {
         initializeEntityProperties();
     }
 
+
+    /**
+     * Added By Anil Kumar
+     * constructo to create or map the new instance with the given ZODataEntity Object.
+     *
+     * @param entity ZODataEntity Contains the oDataEntity or EntityValue instance map to
+     */
+
     public NotifLongText(ZODataEntity entity) {
         initializeEntityProperties();
         create(entity);

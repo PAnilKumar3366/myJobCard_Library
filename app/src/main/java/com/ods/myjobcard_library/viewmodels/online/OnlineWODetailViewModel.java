@@ -93,6 +93,11 @@ public class OnlineWODetailViewModel extends BaseViewModel {
         this.woOprList.setValue(woOprList);
     }
 
+    /**
+     * this method is used to fetch the online Work Order LongText with the help of Helper class and observes the result.
+     *
+     * @param hashMapQuery contains filter Parameters key-values
+     */
 
     public void fetchOnlineWOLongText(HashMap<String, String> hashMapQuery) {
         try {
@@ -122,6 +127,12 @@ public class OnlineWODetailViewModel extends BaseViewModel {
         }
     }
 
+    /**
+     * this method helps to convert the ZODataEntity to WorkOrderLongText object and set it to LiveData.
+     *
+     * @param zoDataEntities contains NotificationLongtext
+     */
+
     private void onFetchWOLongText(ArrayList<ZODataEntity> zoDataEntities) {
         try {
             ArrayList<WOLongText> longText = new ArrayList<>();
@@ -141,6 +152,11 @@ public class OnlineWODetailViewModel extends BaseViewModel {
         }
     }
 
+    /**
+     * @param workOrder updated workOrder which is comes from UI
+     *                  this method helps to update the workOrder in online with help of WorkOrderLongTextHelper Class.
+     */
+
     public void updateWorkOrderOnline(WorkOrder workOrder) {
         if (mWorkOrderHelper == null)
             mWorkOrderHelper = new WorkOrderHelper();
@@ -153,6 +169,10 @@ public class OnlineWODetailViewModel extends BaseViewModel {
         };
         mWorkOrderHelper.getUpdatedWoResult().observeForever(updateObserver);
     }
+
+    /**
+     * @param responseObject contains the updated result
+     */
 
     private void updateWorkorder(ResponseObject responseObject) {
         updateWOResult.postValue(responseObject);
