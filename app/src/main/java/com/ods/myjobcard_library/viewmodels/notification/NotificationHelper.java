@@ -5,10 +5,12 @@ import android.os.AsyncTask;
 import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZCollections;
+import com.ods.myjobcard_library.entities.transaction.Notification;
 import com.ods.myjobcard_library.interfaces.BackgroundTaskInterface;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
+import com.ods.ods_sdk.utils.ConfigManager;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.ods.ods_sdk.utils.OnlineAsyncHelper;
 import com.sap.client.odata.v4.EntityValue;
@@ -29,6 +31,12 @@ public class NotificationHelper {
     private BackgroundTaskInterface TaskInterface;
 
     private boolean fetchNOItems;
+
+    private MutableLiveData<ResponseObject> updatedNoResult;
+
+    public MutableLiveData<ResponseObject> getUpdatedNoResult() {
+        return updatedNoResult;
+    }
 
     public void setFetchNOItems(boolean fetchNOItems) {
         this.fetchNOItems = fetchNOItems;
@@ -51,7 +59,7 @@ public class NotificationHelper {
      * @param queryMap filed contains the Online search parameters and values as Key-Value Pair
      * @return final filter query
      */
-    /*Preparing the final query for the online pendingList and returns to calling method.*/
+    /*Preparing the final query for the online List and returns to calling method.*/
     public String getQuery(Map<String, String> queryMap) {
 
         StringBuilder NoFilterQuery = null;
@@ -116,5 +124,21 @@ public class NotificationHelper {
             }
         });
         helper.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    public void UpdateNotificationOnline(Notification notification) {
+        try {
+            updatedNoResult = new MutableLiveData<>();
+            OnlineAsyncHelper updateWO = new OnlineAsyncHelper(notification, new OnlineAsyncHelper.Callbacks() {
+                @Override
+                public void onResult(ResponseObject responseObject) {
+                    updatedNoResult.postValue(responseObject);
+                }
+            });
+            updateWO.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } catch (Exception e) {
+            e.printStackTrace();
+            updatedNoResult.postValue(new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null));
+        }
     }
 }

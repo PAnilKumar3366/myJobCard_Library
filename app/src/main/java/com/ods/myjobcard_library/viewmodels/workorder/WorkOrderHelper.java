@@ -134,6 +134,7 @@ public class WorkOrderHelper {
     }
 
     public void UpdateWorkOrderOnline(WorkOrder workOrder) {
+        updatedWoResult = new MutableLiveData<>();
         OnlineAsyncHelper updateWO = new OnlineAsyncHelper(workOrder, new OnlineAsyncHelper.Callbacks() {
             @Override
             public void onResult(ResponseObject responseObject) {

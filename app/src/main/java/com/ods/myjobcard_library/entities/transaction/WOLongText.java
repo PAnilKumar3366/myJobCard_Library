@@ -9,6 +9,7 @@ import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.smp.client.odata.ODataEntity;
 
@@ -66,6 +67,11 @@ public class WOLongText extends ZBaseEntity {
     }
 
     public WOLongText(ODataEntity entity, ZAppSettings.FetchLevel fetchLevel) {
+        initializeEntityProperties();
+        create(entity);
+    }
+
+    public WOLongText(ZODataEntity entity) {
         initializeEntityProperties();
         create(entity);
     }

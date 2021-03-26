@@ -1,26 +1,21 @@
 package com.ods.myjobcard_library.viewmodels.online;
 
-import android.os.AsyncTask;
-import android.util.Log;
+import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
-import com.ods.ods_sdk.StoreHelpers.DataHelper;
-import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
-import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.ods_sdk.utils.DliteLogger;
-import com.sap.client.odata.v4.EntityValue;
-import com.sap.client.odata.v4.EntityValueList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class OnlineWOListViewModel extends ViewModel {
+public class OnlineWOListViewModel extends BaseViewModel {
 
     private static final String TAG = "OnlineWOListViewModel";
     private MutableLiveData<ArrayList<WorkOrder>> onlineWoList = new MutableLiveData<>();
@@ -34,20 +29,29 @@ public class OnlineWOListViewModel extends ViewModel {
     private MutableLiveData<Operation> currentOpr = new MutableLiveData<>();
     //Updated Work order.
     private MutableLiveData<WorkOrder> updatedWorkorder = new MutableLiveData<>();
+
     private ArrayList<WorkOrder> workOrders = new ArrayList<>();
     private ArrayList<Operation> operations = new ArrayList<>();
+
+    private MutableLiveData<ArrayList<String>> onlineWoLongText = new MutableLiveData<>();
 
     public MutableLiveData<Operation> getCurrentOpr() {
         return currentOpr;
     }
 
-    public MutableLiveData<WorkOrder> getUpdatedWorkorder() {
-        return updatedWorkorder;
+
+    public OnlineWOListViewModel(@NonNull Application application) {
+        super(application);
     }
 
-    public void setUpdatedWorkorder(WorkOrder updatedWorkorder) {
-        this.updatedWorkorder.setValue(updatedWorkorder);
+    public MutableLiveData<ArrayList<String>> getOnlineWoLongText() {
+        return onlineWoLongText;
     }
+
+    public void setOnlineWoLongText(MutableLiveData<ArrayList<String>> onlineWoLongText) {
+        this.onlineWoLongText = onlineWoLongText;
+    }
+
 
     public void setCurrentOpr(Operation opr, String woNum) {
         opr.isOnline = true;
@@ -68,6 +72,14 @@ public class OnlineWOListViewModel extends ViewModel {
         WorkOrder.setCurrWo(workOrder);
         workOrder.isOnline = true;
         selectedWo.setValue(workOrder);
+    }
+
+    public MutableLiveData<WorkOrder> getUpdatedWorkorder() {
+        return updatedWorkorder;
+    }
+
+    public void setUpdatedWorkorder(WorkOrder updatedWorkorder) {
+        this.updatedWorkorder.setValue(updatedWorkorder);
     }
 
     public ArrayList<WorkOrder> getWorkOrders() {
@@ -116,69 +128,6 @@ public class OnlineWOListViewModel extends ViewModel {
 
     public void setOnlineOprList(ArrayList<Operation> onlineOprList) {
         this.onlineOprList.setValue(onlineOprList);
-    }
-
-    public void fetchOnlineWorkOrders(String filterQuery, Boolean isWoSearch) {
-        String entitySetName;
-        if (isWoSearch)
-            entitySetName = "WoHeaderSet";
-        else entitySetName = "NotificationHeaderSet";
-        //filterQueryWo = "?$filter=(OnlineSearch eq 'X' and CreatedOn eq datetime'2020-02-04T00:00:00' and ChangeDtForOrderMaster eq datetime'2020-02-06T00:00:00' and Plant eq 'GB01' and MainWorkCtr eq 'GB01_OP')&$expand=NAVOPERA";
-        //filterQueryWo="?$filter=(OnlineSearch eq 'X' and CreatedOn eq datetime'2020-01-21T00:00:00' and ChangeDtForOrderMaster eq datetime'2020-01-22T00:00:00')&$expand=NAVOPERA";
-        String resPath = entitySetName + filterQuery;
-        try {
-            new AsyncTask<Void, Void, ResponseObject>() {
-
-                @Override
-                protected ResponseObject doInBackground(Void... voids) {
-                    ResponseObject result = DataHelper.getInstance().getEntitiesOnline(resPath, entitySetName, TableConfigSet.getStore(entitySetName));
-                    return result;
-                }
-
-                @Override
-                protected void onPostExecute(ResponseObject responseObject) {
-                    super.onPostExecute(responseObject);
-
-                    if (!responseObject.isError()) {
-
-                        Log.d(TAG, "onPostExecute: " + responseObject.Content());
-                        operations.clear();
-                        workOrders.clear();
-                        EntityValueList entityList = (EntityValueList) responseObject.Content();
-                        EntityValueList oprEntityList;
-                        ArrayList<WorkOrder> onlineworkOrders = new ArrayList<>();
-                        ArrayList<Operation> workOrderOperations;
-                        for (EntityValue entityValue : entityList) {
-
-                            WorkOrder order = new WorkOrder(entityValue);
-                            oprEntityList = entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue);
-
-                            workOrderOperations = new ArrayList<>();
-                            for (EntityValue oprEntity : oprEntityList) {
-                                workOrderOperations.add(new Operation(oprEntity));
-                                operations.add(new Operation(oprEntity));
-                            }
-                            order.setWorkOrderOperations(workOrderOperations);
-                            onlineworkOrders.add(order);
-
-                            //oprEntityValueList.add( entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue));
-                            Log.d(TAG, "onPostExecute: WorkOrder" + onlineworkOrders.toString());
-                        }
-                        workOrders.addAll(onlineworkOrders);
-
-                        //updateUI(onlineworkorders);
-                    } else {
-                        Log.d(TAG, "onPostExecute: " + responseObject.getMessage());
-                    }
-                    onlineWoList.setValue(workOrders);
-                    onlineOprList.setValue(operations);
-                }
-            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        } catch (Exception e) {
-            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
-        }
-
     }
 
     public MutableLiveData<ArrayList<WorkOrder>> getFilterListLiveData() {
@@ -287,5 +236,10 @@ public class OnlineWOListViewModel extends ViewModel {
 
     public void setFilterOprListLiveData(HashMap<String, ArrayList<String>> filterHashmap) {
         operationsFilterList(filterHashmap);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
     }
 }

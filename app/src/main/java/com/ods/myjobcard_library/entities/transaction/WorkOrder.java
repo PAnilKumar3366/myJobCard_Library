@@ -1854,10 +1854,11 @@ public class WorkOrder extends ZBaseEntity {
             //setNotes(strNotesText);
             //Update the WO to offlinestore
             setMode(ZAppSettings.EntityMode.Update);
-            if (isOnline)
-                result = SaveToOnlineStore();
-
-            else {
+            if (isOnline) {
+                result = new ResponseObject(ConfigManager.Status.Success);
+                result.setContent(this);
+                return result;
+            } else {
                 if (!strNotesText.isEmpty()) {
                     WOLongText longText = new WOLongText();
                     int count = WOLongText.getLongTextsCount(getWorkOrderNum(), null, null, ZConfigManager.Fetch_Object_Type.WorkOrder);
