@@ -9,6 +9,7 @@ import com.ods.myjobcard_library.entities.transaction.Notification;
 import com.ods.myjobcard_library.utils.DocsUtil;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.smp.client.odata.ODataEntity;
 
@@ -37,7 +38,27 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
     private String FuncLocation;
     private String Equipment;
 
+    /**
+     * Newly added fields for uploading the notification task and Item's task attachment
+     */
+    private String Item;
+    private String Task;
+
     public UploadNotificationAttachmentContent(ODataEntity entity, ZAppSettings.FetchLevel fetchLevel) {
+        try {
+            initializeEntityProperties();
+            create(entity);
+        } catch (Exception e) {
+            DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+    }
+
+    /**
+     newly added constructer to create or map the new instance with the given ZODataEntity Object.
+     *
+     * @param entity ZODataEntity Contains the oDataEntity or EntityValue
+     */
+    public UploadNotificationAttachmentContent(ZODataEntity entity) {
         try {
             initializeEntityProperties();
             create(entity);
@@ -321,5 +342,21 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
 
     public void setURL(String url) {
         this.URL = url;
+    }
+
+    public String getItem() {
+        return Item;
+    }
+
+    public void setItem(String item) {
+        Item = item;
+    }
+
+    public String getTask() {
+        return Task;
+    }
+
+    public void setTask(String task) {
+        Task = task;
     }
 }

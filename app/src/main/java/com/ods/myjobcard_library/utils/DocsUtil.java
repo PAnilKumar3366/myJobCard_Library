@@ -699,7 +699,7 @@ public class DocsUtil {
                     uploadAttachment.setBINARY_FLG("N");
                     uploadAttachment.setMode(ZAppSettings.EntityMode.Update);
                     entitySetName = ZCollections.NO_ATTACHMENT_COLLECTION;
-                    String resPath = entitySetName + "/$count?$filter=endswith(ObjectKey,'" + uploadAttachment.getNotification() + "') eq true and " +
+                    String resPath = entitySetName + "/$count?$filter=(ObjectKey eq '" + uploadAttachment.getNotification() + "' or ObjectKey eq '" + uploadAttachment.getNotification() +uploadAttachment.getItem()+uploadAttachment.getTask() +"')  and " +
                             "(tolower(Extension) eq 'url' or tolower(CompID) eq '" + uploadAttachment.getFILE_NAME().toLowerCase() + "') and tolower(PropValue) eq '" + uploadAttachment.getDescription().toLowerCase() + "'";
                     result = DataHelper.getInstance().getEntities(entitySetName, resPath);
                     if (!result.isError()) {

@@ -55,6 +55,19 @@ public class NotificationTask extends ZBaseEntity {
     private String EnteredBy;
     private String StatusFlag;
 
+
+    /**
+     * newly added fields for task status management feature
+     */
+    private Time PlannedStartTime;
+    private Time PlannedFinishTime;
+    private String CompletedBy;
+    private GregorianCalendar CompletedOn;
+    private Time CompletionTime;
+    private String UserStatusCode;
+    private String MobileObjectType;
+
+
     //constructor
     public NotificationTask(String notification, String task, boolean isWONotif) {
         super();
@@ -432,4 +445,59 @@ public class NotificationTask extends ZBaseEntity {
         return truncatedNumber + "";
     }
 
+    public Time getPlannedStartTime() {
+        return PlannedStartTime;
+    }
+
+    public void setPlannedStartTime(Time plannedStartTime) {
+        PlannedStartTime = plannedStartTime;
+    }
+
+    public Time getPlannedFinishTime() {
+        return PlannedFinishTime;
+    }
+
+    public void setPlannedFinishTime(Time plannedFinishTime) {
+        PlannedFinishTime = plannedFinishTime;
+    }
+
+    public String getCompletedBy() {
+        return CompletedBy;
+    }
+
+    public void setCompletedBy(String completedBy) {
+        CompletedBy = completedBy;
+    }
+
+    public GregorianCalendar getCompletedOn() {
+        return CompletedOn;
+    }
+
+    public void setCompletedOn(GregorianCalendar completedOn) {
+        CompletedOn = completedOn;
+    }
+
+    public Time getCompletionTime() {
+        return CompletionTime;
+    }
+
+    public void setCompletionTime(Time completionTime) {
+        CompletionTime = completionTime;
+    }
+
+    public String getUserStatusCode() {
+        return UserStatusCode;
+    }
+
+    public void setUserStatusCode(String userStatusCode) {
+        UserStatusCode = userStatusCode;
+    }
+
+    public String getMobileObjectType() {
+        return MobileObjectType;
+    }
+
+    public void setMobileObjectType(String mobileObjectType) {
+        MobileObjectType = mobileObjectType;
+    }
 }
