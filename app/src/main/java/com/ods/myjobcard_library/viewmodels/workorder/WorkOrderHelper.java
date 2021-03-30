@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
-import com.ods.myjobcard_library.interfaces.BackgroundTaskInterface;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
@@ -20,47 +19,51 @@ import java.util.Map;
 /*Created By Anil Kumar*/
 
 /**
- * This class helps the Work Order Related Operations like
- * fetching online workOrders, offline work orders etc
+ * This class Provides the  Work Order Related Operations like
+ * fetching online workOrders, Update work orders etc
  */
 
 
 public class WorkOrderHelper {
 
-    protected MutableLiveData<ResponseObject> updatedWoResult = new MutableLiveData<>();
-    public BackgroundTaskInterface TaskInterface;
+    private MutableLiveData<ResponseObject> updatedWoResult = new MutableLiveData<>();
     private boolean fetchOpr;
     private MutableLiveData<ResponseObject> onlineWoEntities = new MutableLiveData<>();
 
     public WorkOrderHelper() {
     }
 
+    /**
+     * this setter is called from ViewModel
+     *
+     * @param fetchOpr flag  relates to fetchOperations from online.
+     */
     public void setFetchOpr(boolean fetchOpr) {
         this.fetchOpr = fetchOpr;
     }
 
+    /**
+     * @return returns the updatedWOResult Live Data Object
+     */
     public MutableLiveData<ResponseObject> getUpdatedWoResult() {
         return updatedWoResult;
     }
 
+    /**
+     * @return returns the online Entity live data
+     */
     public MutableLiveData<ResponseObject> getOnlineWoEntities() {
         return onlineWoEntities;
     }
 
 
-    public WorkOrderHelper(BackgroundTaskInterface taskInterface) {
-        TaskInterface = taskInterface;
-    }
-
-    public void setTaskInterface(BackgroundTaskInterface taskInterface) {
-        TaskInterface = taskInterface;
-    }
-
     /**
+     * Preparing the final query for the online pendingList and returns to calling method.
+     *
      * @param queryMap filed contains the Online search parameters and values as Key-Value Pair
      * @return final filter query
      */
-    /*Preparing the final query for the online pendingList and returns to calling method.*/
+    /**/
     public String getQuery(Map<String, String> queryMap) {
         StringBuilder WoFilterQuery = null;
         try {
@@ -98,12 +101,12 @@ public class WorkOrderHelper {
     }
 
 
-
-
     /**
+     * Fetching the online Work Orders as ZODataEntity List and set the LiveData
+     *
      * @param filterQuery which is the final query and pass the final query to the OnlineAsyncHelper.
      */
-    /*Fetching the online Work Orders as ZODataEntity List and set the CallBack*/
+    /**/
     public void getWorkOrdersOnline(String filterQuery) {
         ArrayList<ZODataEntity> entityList = new ArrayList<>();
         String resPath = ZCollections.WO_COLLECTION + filterQuery;
@@ -118,12 +121,9 @@ public class WorkOrderHelper {
                             entityList.add(item);
                         }
                         response.setContent(entityList);
-                        onlineWoEntities.postValue(response);
                         //TaskInterface.onTaskPostExecute(entityList, false, "");
-                    } else {
-                        //TaskInterface.onTaskPostExecute(entityList, true, response.getMessage());
-                        onlineWoEntities.postValue(response);
                     }
+                    onlineWoEntities.postValue(response);
                 } catch (Exception e) {
                     e.printStackTrace();
                     //TaskInterface.onTaskPostExecute(new ArrayList<ZODataEntity>(), true, e.getMessage());
@@ -134,18 +134,35 @@ public class WorkOrderHelper {
     }
 
     /**
-     * this method creates a aynctask for updating the WorkOrder in online. Updates like Edit,Assign and Transfer.
-     *
      * @param workOrder update workorder
      */
     public void UpdateWorkOrderOnline(WorkOrder workOrder) {
+        saveOrderOnline(workOrder);
+    }
+
+    /**
+     * this method creates a task in separate thread for updating the WorkOrder in online. Updates like Edit,Assign and Transfer.
+     *
+     * @param order update workorder
+     */
+
+    private void saveOrderOnline(WorkOrder order) {
         updatedWoResult = new MutableLiveData<>();
-        OnlineAsyncHelper updateWO = new OnlineAsyncHelper(workOrder, new OnlineAsyncHelper.Callbacks() {
+        OnlineAsyncHelper updateWO = new OnlineAsyncHelper(order, new OnlineAsyncHelper.Callbacks() {
             @Override
             public void onResult(ResponseObject responseObject) {
                 updatedWoResult.postValue(responseObject);
             }
         });
         updateWO.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    /**
+     * This method internally call the SaveEnityOnline method.
+     *
+     * @param order Delete Order
+     */
+    public void deleteOrder(WorkOrder order) {
+
     }
 }

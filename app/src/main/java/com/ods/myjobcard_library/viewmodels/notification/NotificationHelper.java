@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.transaction.Notification;
-import com.ods.myjobcard_library.interfaces.BackgroundTaskInterface;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
@@ -28,7 +27,7 @@ import java.util.Map;
  */
 public class NotificationHelper {
 
-    private BackgroundTaskInterface TaskInterface;
+
 
     private boolean fetchNOItems;
 
@@ -51,15 +50,13 @@ public class NotificationHelper {
     public NotificationHelper() {
     }
 
-    public void setTaskInterface(BackgroundTaskInterface TaskInterface) {
-        this.TaskInterface = TaskInterface;
-    }
-
     /**
+     * Preparing the final query for the online List and returns to calling method.
+     *
      * @param queryMap filed contains the Online search parameters and values as Key-Value Pair
      * @return final filter query
      */
-    /*Preparing the final query for the online List and returns to calling method.*/
+    /**/
     public String getQuery(Map<String, String> queryMap) {
 
         StringBuilder NoFilterQuery = null;
@@ -95,9 +92,10 @@ public class NotificationHelper {
     }
 
     /**
+     * Fetching  online notifications as ZODataEntity List and set the LiveData
      * @param filterQuery which is the final query and pass the final query to the OnlineAsyncHelper.
      */
-    /*Fetching the online notifications as ZODataEntity List and set the LiveData*/
+    /**/
     public void getNotificationsOnline(String filterQuery) {
         ArrayList<ZODataEntity> entityList = new ArrayList<>();
         String resPath = ZCollections.NOTIFICATION_COLLECTION + filterQuery;
@@ -112,10 +110,10 @@ public class NotificationHelper {
                             entityList.add(item);
                         }
                         response.setContent(entityList);
-                        onlineNoEntity.postValue(response);
+
                         //TaskInterface.onTaskPostExecute(entityList, false, "");
-                    } else
-                        onlineNoEntity.postValue(response);
+                    }
+                    onlineNoEntity.postValue(response);
                     //TaskInterface.onTaskPostExecute(entityList, true, response.getMessage());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -128,10 +126,20 @@ public class NotificationHelper {
 
 
     /**
+     * This method calls the saveEntityOnline Method.
+     *
      * @param notification Updated Notification.
-     *                     this method creates a aync task for updating the Notification in online. Updates like Edit,Assign and Transfer.
      */
     public void UpdateNotificationOnline(Notification notification) {
+        saveNotificationOnline(notification);
+    }
+
+    /**
+     * This method updates the Notification in online  asynchronously
+     *
+     * @param notification Updated Notification.
+     */
+    private void saveNotificationOnline(Notification notification) {
         try {
             updatedNoResult = new MutableLiveData<>();
             OnlineAsyncHelper updateWO = new OnlineAsyncHelper(notification, new OnlineAsyncHelper.Callbacks() {
@@ -146,4 +154,14 @@ public class NotificationHelper {
             updatedNoResult.postValue(new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null));
         }
     }
+
+    /**
+     * This method deletes the notifications in online.
+     *
+     * @param notification delete notification
+     */
+    public void deleteNotification(Notification notification) {
+
+    }
+
 }

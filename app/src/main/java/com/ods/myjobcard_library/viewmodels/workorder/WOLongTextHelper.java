@@ -65,7 +65,7 @@ public class WOLongTextHelper {
     }
 
     /**
-     * This method creates a Async task to fetch online WorkOrder Longtext and set the result in LiveData
+     * This method internally creates a async job to fetch online WorkOrder Longtext and set the result in LiveData
      *
      * @param finalQuery final filter query.
      */
