@@ -302,7 +302,20 @@ public class ZAppSettings extends AppSettings {
             return type;
         }
     }
+    public enum StatusCategoryType{
+        WorkOrderLevel("WORKORDERLEVEL"),
+        OperationLevel("OPERATIONLEVEL"),
+        NoticationLevel("NOTIFICATIONLEVEL"),
+        NotificationTaskLevel("NOTIFICATIONTASKLEVEL");
+        String statusCategoryType;
 
+        StatusCategoryType(String type) {
+            this.statusCategoryType=type;
+        }
+        public String getStatusCategoryType(){
+            return statusCategoryType;
+        }
+    }
     public enum WorkFlowActionKey {
 
         WOHoldScreen("key_WO_SC_HOLD", "Screen"),
@@ -361,6 +374,7 @@ public class ZAppSettings extends AppSettings {
         //WONO("WONOTIFICATION"),
         EQUI("EQUIPMENT"),
         FUNCLOC("FUNCTIONALLOCATION"),
+        NOTASK("NOTIFICATIONTASK")
         ;
 
         String objCategory;
@@ -769,7 +783,111 @@ public class ZAppSettings extends AppSettings {
         }
 
     }
+/*
+    Create new enum for getting the status information for notification task
+ */
+    public enum NotificationTaskStatus{
+    CRTD("RECEIVED", "created", "PEND", false, 0, R.string.noAlert, false, R.drawable.download),
+    STR("START", "start", "STRT", true, 5, R.string.notificationtaskStartAlert, true, R.drawable.start),
+    HOLD("HOLD", "hold", "HOLD", false, 6, R.string.noAlert, false, R.drawable.hold),
+    SUCC("SUCCESS", "success", "SUCC", true, 4, R.string.noAlert, true, R.drawable.accept),
+    COMP("COMPLETE", "complete", "COMP", false, 8, R.string.notificationtaskCompleteAlert, true, R.drawable.complete),
+    NotSet("", "", "NTST", false, 16, R.string.noAlert, false, R.drawable.download);
 
+    boolean consideredAsActive;
+    boolean showOnChart;
+    int drawableResId;
+    private String mobileStatusCode;
+    private String mobileStatusDesc;
+    private String voiceActionDesc;
+    private String viewID;
+    private int mobileStatusIcon, mobileStatusChangeAlertText;
+
+    NotificationTaskStatus(String mobileStatusDesc, String voiceActionDesc, String MobileStatusCode, boolean ConsideredAsActive, int MobileStatusIcon,
+                           int MobileStatusChangeAlertText, boolean showOnChart, int drawableResId) {
+        this.mobileStatusCode = MobileStatusCode;
+        this.voiceActionDesc = voiceActionDesc;
+        this.mobileStatusDesc = mobileStatusDesc;
+        this.mobileStatusIcon = MobileStatusIcon;
+        this.consideredAsActive = ConsideredAsActive;
+        this.mobileStatusChangeAlertText = MobileStatusChangeAlertText;
+        this.showOnChart = showOnChart;
+        this.drawableResId = drawableResId;
+    }
+
+    public String getMobileStatusCode() {
+        return mobileStatusCode;
+    }
+
+    public void setMobileStatusCode(String mobileStatusCode) {
+        this.mobileStatusCode = mobileStatusCode;
+    }
+
+    public String getMobileStatusDesc() {
+        return mobileStatusDesc;
+    }
+
+    public void setMobileStatusDesc(String mobileStatusDesc) {
+        this.mobileStatusDesc = mobileStatusDesc;
+    }
+
+    public String getVoiceActionDesc() {
+        return voiceActionDesc;
+    }
+
+    public void setVoiceActionDesc(String voiceActionDesc) {
+        this.voiceActionDesc = voiceActionDesc;
+    }
+
+    public String getViewID() {
+        return viewID;
+    }
+
+    public void setViewID(String viewID) {
+        this.viewID = viewID;
+    }
+
+    public int getMobileStatusIcon() {
+        return mobileStatusIcon;
+    }
+
+    public void setMobileStatusIcon(int mobileStatusIcon) {
+        this.mobileStatusIcon = mobileStatusIcon;
+    }
+
+    public int getMobileStatusChangeAlertText() {
+        return mobileStatusChangeAlertText;
+    }
+
+    public void setMobileStatusChangeAlertText(int mobileStatusChangeAlertText) {
+        this.mobileStatusChangeAlertText = mobileStatusChangeAlertText;
+    }
+
+    public boolean isConsideredAsActive() {
+        return consideredAsActive;
+    }
+
+    public void setConsideredAsActive(boolean consideredAsActive) {
+        this.consideredAsActive = consideredAsActive;
+    }
+
+    public boolean isShowOnChart() {
+        return showOnChart;
+    }
+
+    public void setShowOnChart(boolean showOnChart) {
+        this.showOnChart = showOnChart;
+    }
+
+    public int getDrawableResId() {
+        return drawableResId;
+    }
+
+    public void setDrawableResId(int drawableResId) {
+        this.drawableResId = drawableResId;
+    }
+
+}
     public enum Priorities {
 
         VeryHigh("1", "Very High", "#f23b3b", R.drawable.emergency_veryhigh),

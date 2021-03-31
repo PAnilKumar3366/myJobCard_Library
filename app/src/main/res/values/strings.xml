@@ -14,6 +14,10 @@
     <string name="notificationStartAlert">You are starting this notification. Do you want to continue?</string>
     <string name="notificationCompleteAlert">You are completing this notification. Do you want to continue?</string>
 
+    <!-- Notification task/Item's task Status Change Alert messages-->
+    <string name="notificationtaskCompleteAlert">You are completing this task. Do you want to continue?</string>
+    <string name="notificationtaskStartAlert">You are starting this task. Do you want to continue?</string>
+
     <!--Attachments-->
     <string name="alertUploadFileSizeAboveLimit">File size should not be more than %1$s MB</string>
     <string name="alertDownloadSizeZeroErrorMsg">Something went wrong while downloading attachment. Please try to download again!</string>

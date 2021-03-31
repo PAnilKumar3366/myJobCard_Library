@@ -7,6 +7,7 @@ import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.appsettings.TableConfigSet;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.smp.client.odata.ODataEntity;
 
@@ -39,6 +40,20 @@ public class WorkOrderAttachment extends ZBaseEntity {
     private String OnlineSearch;
 
     public WorkOrderAttachment(ODataEntity entity) {
+        try {
+            create(entity);
+            initializeEntityProperties();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     newly added constructer to create or map the new instance with the given ZODataEntity Object.
+     *
+     * @param entity ZODataEntity Contains the oDataEntity or EntityValue
+     */
+    public WorkOrderAttachment(ZODataEntity entity){
         try {
             create(entity);
             initializeEntityProperties();

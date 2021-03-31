@@ -15,6 +15,7 @@ import java.util.List;
 public class StatusCategory extends ZBaseEntity {
     public ZAppSettings.NotificationUserStatus notificationStatus;
     public ZAppSettings.MobileStatus woOprStatus = ZAppSettings.MobileStatus.NotSet;
+    public ZAppSettings.NotificationTaskStatus notificationTaskStatus;
     private String RecordNo;
     private String ObjectType;
     private Short Sequence;
@@ -55,8 +56,8 @@ public class StatusCategory extends ZBaseEntity {
     public static StatusCategory getStatusDetails(String statusCode, String objectType, ZConfigManager.Fetch_Object_Type object) {
         StatusCategory statusCategory = null;
         try {
-            String objectStr = object.equals(ZConfigManager.Fetch_Object_Type.WorkOrder) ? "WORKORDERLEVEL"
-                    : object.equals(ZConfigManager.Fetch_Object_Type.Operation) ? "OPERATIONLEVEL" : "NOTIFICATIONLEVEL";
+            String objectStr = object.equals(ZConfigManager.Fetch_Object_Type.WorkOrder) ? ZAppSettings.StatusCategoryType.WorkOrderLevel.getStatusCategoryType()
+                    : object.equals(ZConfigManager.Fetch_Object_Type.Operation) ? ZAppSettings.StatusCategoryType.OperationLevel.getStatusCategoryType() :object.equals(ZConfigManager.Fetch_Object_Type.NotificationTasks)?ZAppSettings.StatusCategoryType.NotificationTaskLevel.getStatusCategoryType(): ZAppSettings.StatusCategoryType.NoticationLevel.getStatusCategoryType();
             String entitySetName = ZCollections.STATUS_CATEGORY_SET_COLLECTION;
             String resPath = entitySetName + "?$filter=StatusCode eq '" + statusCode + "' and ObjectType eq '" + objectType + "' and tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
             ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
@@ -77,6 +78,13 @@ public class StatusCategory extends ZBaseEntity {
                         } catch (IllegalArgumentException e) {
                             statusCategory.notificationStatus = ZAppSettings.NotificationUserStatus.NotSet;
                         }
+                    else if(object == ZConfigManager.Fetch_Object_Type.NotificationTasks){
+                        try {
+                            statusCategory.notificationTaskStatus = ZAppSettings.NotificationTaskStatus.valueOf(statusCategory.getImageResKey());
+                        } catch (IllegalArgumentException e) {
+                            statusCategory.notificationTaskStatus = ZAppSettings.NotificationTaskStatus.NotSet;
+                        }
+                    }
                     else
                         try {
                             statusCategory.woOprStatus = ZAppSettings.MobileStatus.valueOf(statusCategory.getImageResKey());

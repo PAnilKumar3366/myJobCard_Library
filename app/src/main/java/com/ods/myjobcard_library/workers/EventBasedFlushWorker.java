@@ -13,6 +13,7 @@ import androidx.work.WorkerParameters;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
+import com.ods.myjobcard_library.utils.DocsUtil;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
@@ -87,6 +88,7 @@ public class EventBasedFlushWorker extends Worker {
                             putString("ErrorMsg", result.getMessage()).build();
                     return Result.failure(errorData);
                 }
+                DocsUtil.RemoveUnRequiredUploadEntities();
                 return Result.success(new Data.Builder().putString("Result", "Success").build());
             } else {
                 WorkManager.getInstance(getApplicationContext()).cancelWorkById(this.getId());
