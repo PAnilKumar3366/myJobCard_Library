@@ -203,7 +203,8 @@ public class OnlineListViewModel extends BaseViewModel {
             OnlineDataList.getInstance().setOnlineWorkOrderList(onlineWo);
             OnlineDataList.getInstance().setWorkOrdersOperationsList(operations);
             onlineWoList.postValue(onlineWo);
-            //onlineOperations.postValue(operations);
+            if (fetchOpr)
+                onlineOperations.postValue(operations);
         } catch (Exception e) {
             e.printStackTrace();
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
