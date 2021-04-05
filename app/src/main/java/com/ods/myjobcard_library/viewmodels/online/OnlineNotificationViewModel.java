@@ -13,6 +13,7 @@ import com.ods.myjobcard_library.entities.transaction.NotificationItem;
 import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.myjobcard_library.viewmodels.notification.NoLongTextHelper;
 import com.ods.myjobcard_library.viewmodels.notification.NotificationHelper;
+import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.ConfigManager;
@@ -34,6 +35,7 @@ public class OnlineNotificationViewModel extends BaseViewModel {
     private NoLongTextHelper longTextHelper;
     private NotificationHelper notificationHelper;
 
+    private Notification currentNotification;
     public OnlineNotificationViewModel(@NonNull Application application) {
         super(application);
         longTextHelper = new NoLongTextHelper();
@@ -54,6 +56,7 @@ public class OnlineNotificationViewModel extends BaseViewModel {
 
     public void setNotification(Notification notification, Boolean isWONotif) {
         Notification.setCurrNotification(notification);
+        currentNotification = notification;
         this.notification.setValue(notification);
     }
 
@@ -134,14 +137,16 @@ public class OnlineNotificationViewModel extends BaseViewModel {
     }
 
     /**
-     * @param notification updated Notification which is comes from UI
-     *                     this method helps to update the notification in online with help of NotificationLongTextHelper Class.
+     * this method helps to update the notification in online with help of NotificationLongTextHelper Class.
+     *
+     * @param notification updated Notification.
      */
-    public void updateNotificationOnline(Notification notification) {
+    private void updateNotificationOnline(Notification notification) {
         try {
             if (notificationHelper == null)
                 notificationHelper = new NotificationHelper();
             //updatedNoResult=notificationHelper.getUpdatedNoResult();
+            notification.setMode(AppSettings.EntityMode.Update);
             notificationHelper.UpdateNotificationOnline(notification);
             updatedNoObserver = new Observer<ResponseObject>() {
                 @Override
@@ -154,6 +159,23 @@ public class OnlineNotificationViewModel extends BaseViewModel {
             e.printStackTrace();
             updatedNoResult.postValue(new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null));
         }
+    }
+
+    /**
+     * This method calls from UI Module and calls the internal updateNotificationOnline method to update the Notification in online.
+     *
+     * @param priority     Updated Priority
+     * @param description  Updated Description
+     * @param notification Updated Notification Number
+     */
+    public void EditNotification(String priority, String description, String notification) {
+        if (currentNotification == null || !currentNotification.getNotification().equals(notification))
+            currentNotification = Notification.getCurrNotification();
+        else {
+            currentNotification.setPriority(priority);
+            currentNotification.setShortText(description);
+        }
+        updateNotificationOnline(currentNotification);
     }
 
     /**
