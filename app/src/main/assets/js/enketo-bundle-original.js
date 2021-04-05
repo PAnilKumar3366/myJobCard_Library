@@ -144,7 +144,7 @@ function setformAttachments(){
             }
         })
         //canvas or signature rendering
-       /* $(".or-appearance-signature").each(function (index, element) {
+        $(".or-appearance-signature").each(function (index, element) {
                         var imagetype = '';
                         for (var i = 0; i < element.childNodes.length; i++) {
                             var de = element.childNodes[i];
@@ -164,12 +164,12 @@ function setformAttachments(){
                         }
                         }
                         }
-                        })*/
+                        })
 
 
             //canvas or signature rendering added by - Hurunnisa - signature gets editable
 
-                    $(".or-appearance-signature").each(function (index, element) {
+                    /*$(".or-appearance-signature").each(function (index, element) {
 //console.log(element)
                         for (var i = 0; i < element.childNodes.length; i++) {
 //console.log(element.childNodes.innerHTML)
@@ -198,7 +198,7 @@ function setformAttachments(){
         img1.src = "data:image/png;base64," + attachments[k].ImageData;
     }
 }
-})
+})*/
 
         setTimeout(function(){
             loopform();
