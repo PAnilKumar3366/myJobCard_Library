@@ -58,13 +58,13 @@ public class WorkOrderHelper {
 
 
     /**
-     * Preparing the final query for the online pendingList and returns to calling method.
+     * Preparing the final query for the online pendingList and returns final query.
      *
      * @param queryMap filed contains the Online search parameters and values as Key-Value Pair
      * @return final filter query
      */
     /**/
-    public String getQuery(Map<String, String> queryMap) {
+    private String getQuery(Map<String, String> queryMap) {
         StringBuilder WoFilterQuery = null;
         try {
             String baseQuery = "?$filter=(OnlineSearch eq 'X' and ";
@@ -100,6 +100,9 @@ public class WorkOrderHelper {
         return WoFilterQuery.toString();
     }
 
+    public String getOnlineQuery(Map<String, String> mapQuery) {
+        return getQuery(mapQuery);
+    }
 
     /**
      * Fetching the online Work Orders as ZODataEntity List and set the LiveData
@@ -107,7 +110,11 @@ public class WorkOrderHelper {
      * @param filterQuery which is the final query and pass the final query to the OnlineAsyncHelper.
      */
     /**/
-    public void getWorkOrdersOnline(String filterQuery) {
+    public void getWorkOrderOnline(String filterQuery) {
+        getEntitiesOnline(filterQuery);
+    }
+
+    private void getEntitiesOnline(String filterQuery) {
         ArrayList<ZODataEntity> entityList = new ArrayList<>();
         String resPath = ZCollections.WO_COLLECTION + filterQuery;
         OnlineAsyncHelper helper = new OnlineAsyncHelper(resPath, ZCollections.WO_COLLECTION, false, new OnlineAsyncHelper.Callbacks() {

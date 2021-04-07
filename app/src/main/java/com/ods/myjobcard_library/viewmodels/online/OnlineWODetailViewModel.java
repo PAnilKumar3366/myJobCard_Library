@@ -107,9 +107,9 @@ public class OnlineWODetailViewModel extends BaseViewModel {
     public void fetchOnlineWOLongText(HashMap<String, String> hashMapQuery) {
         try {
 
-            String finalQuery = helper.getOnlineQuery(hashMapQuery);
+            String finalQuery = helper.getQuery(hashMapQuery);
             if (!finalQuery.isEmpty())
-                helper.getOnlineWOLongText(finalQuery);
+                helper.getOnlineLongText(finalQuery);
             else
                 setError("Query Error");
             longTextLiveData = helper.getOnlineLongText();

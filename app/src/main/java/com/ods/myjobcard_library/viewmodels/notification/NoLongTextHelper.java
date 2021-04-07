@@ -39,7 +39,7 @@ public class NoLongTextHelper {
      * @param onlineQueryMap Contains the online Query Parameters and values in key-value pairs.
      * @return final filter query
      */
-    public String getOnlineQuery(HashMap<String, String> onlineQueryMap) {
+    public String getQuery(HashMap<String, String> onlineQueryMap) {
         StringBuilder NoLongTextQuery = null;
         longTextLiveData = new MutableLiveData<>();
         try {
@@ -66,12 +66,16 @@ public class NoLongTextHelper {
         return NoLongTextQuery.toString();
     }
 
+    public String getOnlineQuery(HashMap<String, String> mapQuery) {
+        return getQuery(mapQuery);
+    }
+
     /**
      * This method creates a Async task to fetch online Notification Longtext and set the result in LiveData
      *
      * @param finalQuery final filter query.
      */
-    public void getOnlineNOLongText(String finalQuery) {
+    private void getOnlineNOLongTextEntities(String finalQuery) {
         ArrayList<ZODataEntity> entityList = new ArrayList<>();
         String resPath = ZCollections.NOTIFICATION_LONG_TEXT_COLLECTION + finalQuery;
         OnlineAsyncHelper onlineAsyncHelper = new OnlineAsyncHelper(resPath, ZCollections.NOTIFICATION_LONG_TEXT_COLLECTION, false, new OnlineAsyncHelper.Callbacks() {
@@ -101,5 +105,9 @@ public class NoLongTextHelper {
             }
         });
         onlineAsyncHelper.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    public void getOnlineNoLongText(String finalQuery) {
+        getOnlineNOLongTextEntities(finalQuery);
     }
 }

@@ -17,6 +17,7 @@ import com.sap.client.odata.v4.EntityValueList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This Class contains all WorkOrderLongText related helpers methods  such as fetchOnlineLongText.
@@ -39,7 +40,7 @@ public class WOLongTextHelper {
      * @param onlineQueryMap Contains the online Query Parameters and values in key-value pairs.
      * @return final filter query
      */
-    public String getOnlineQuery(HashMap<String, String> onlineQueryMap) {
+    private String getQuery(HashMap<String, String> onlineQueryMap) {
         OnlineLongText = new MutableLiveData<>();
         StringBuilder WoLongTextQuery = null;
         try {
@@ -64,13 +65,17 @@ public class WOLongTextHelper {
         return WoLongTextQuery.toString();
     }
 
+    public String getQuery(Map<String, String> mapQuery) {
+        return getQuery(mapQuery);
+    }
+
     /**
      * This method internally creates a async job to fetch online WorkOrder Longtext and set the result in LiveData
      *
      * @param finalQuery final filter query.
      */
 
-    public void getOnlineWOLongText(String finalQuery) {
+    private void getOnlineLongTextEntities(String finalQuery) {
         ArrayList<ZODataEntity> entityList = new ArrayList<>();
         String resPath = ZCollections.WO_LONG_TEXT_COLLECTION + finalQuery;
         OnlineAsyncHelper onlineAsyncHelper = new OnlineAsyncHelper(resPath, ZCollections.WO_LONG_TEXT_COLLECTION, false, new OnlineAsyncHelper.Callbacks() {
@@ -100,5 +105,9 @@ public class WOLongTextHelper {
             }
         });
         onlineAsyncHelper.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    public void getOnlineLongText(String finalQuery) {
+        getOnlineLongTextEntities(finalQuery);
     }
 }

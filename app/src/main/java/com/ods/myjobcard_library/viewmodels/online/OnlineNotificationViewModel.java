@@ -87,10 +87,10 @@ public class OnlineNotificationViewModel extends BaseViewModel {
      */
     public void fetchOnlineWOLongText(HashMap<String, String> hashMapQuery) {
         try {
-            String finalQuery = longTextHelper.getOnlineQuery(hashMapQuery);
+            String finalQuery = longTextHelper.getQuery(hashMapQuery);
             longTextLiveData = longTextHelper.getLongTextLiveData();
             if (!finalQuery.isEmpty())
-                longTextHelper.getOnlineNOLongText(finalQuery);
+                longTextHelper.getOnlineNoLongText(finalQuery);
             else
                 setError("Query Error");
             longtextObserver = new Observer<ResponseObject>() {
