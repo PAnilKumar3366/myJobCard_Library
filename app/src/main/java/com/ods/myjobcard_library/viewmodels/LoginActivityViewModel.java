@@ -177,9 +177,10 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                 }
             }).execute((Void) null);
         else {*/
+
         if(AppSettings.IS_DEMO_MODE) {
             copyRAWtoSDCard();
-            AppSettings.App_IP="mobile-a53d86cd7.hana.ondemand.com";
+            AppSettings.App_IP="mobile-mpyi7hx6ox.eu3.hana.ondemand.com";
         }
         else
             ZAppSettings.isOpenOnlineAPStore=preferences.getBoolean("IS_ONLINE_APPSTORE",true);

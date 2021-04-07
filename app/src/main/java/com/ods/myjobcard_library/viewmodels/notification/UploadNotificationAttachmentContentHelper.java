@@ -33,7 +33,7 @@ import java.util.List;
 public class UploadNotificationAttachmentContentHelper
 {
     private LTAttachmentType ltAttachmentType;
-    private ArrayList<UploadNotificationAttachmentContent> uploadedTaskAttachList;
+    private ArrayList<ZODataEntity> uploadedTaskAttachList;
     /*    public BackgroundTaskInterface TaskInterface;
 
     public void setTaskInterface(BackgroundTaskInterface taskInterface) {
@@ -44,13 +44,13 @@ public class UploadNotificationAttachmentContentHelper
    }
 
     /**
-     * gettting uploaded task attachments
+     * getting array list of ZODataEntity for uploaded task attachments
      * @param notification
      * @param item
      * @param task
      * @return
      */
-   protected ArrayList<UploadNotificationAttachmentContent> getUploadedTaskAttachments(String notification, String item, String task){
+   protected ArrayList<ZODataEntity> getUploadedTaskAttachments(String notification, String item, String task){
        String resourcePath = null;
        String entitySetName = null;
        entitySetName = ZCollections.NO_ATTACHMENT_CONTENT_UPLOAD_COLLECTION;
@@ -64,15 +64,16 @@ public class UploadNotificationAttachmentContentHelper
                List<ODataEntity> entities = ZBaseEntity.setODataEntityList(responseObject.Content());
                for (ODataEntity entity : entities) {
                    ZODataEntity zoDataEntity = new ZODataEntity(entity);
-                   /*Converting the ZODataEntity  to UploadNotificationAttachmentContent object  */
+                   uploadedTaskAttachList.add(zoDataEntity);
+                  /* *//*Converting the ZODataEntity  to UploadNotificationAttachmentContent object  *//*
                    UploadNotificationAttachmentContent uploadNotificationAttachmentContent=new UploadNotificationAttachmentContent(zoDataEntity);
-                   uploadedTaskAttachList.add(uploadNotificationAttachmentContent);
+                   uploadedTaskAttachList.add(uploadNotificationAttachmentContent);*/
                }
            }
            return uploadedTaskAttachList;
        } catch (Exception e) {
            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
-           return new ArrayList<UploadNotificationAttachmentContent>();
+           return new ArrayList<ZODataEntity>();
        }
      /* OfflineAsyncHelper helper = new OfflineAsyncHelper(resourcePath, entitySetName, new OfflineAsyncHelper.Callbacks() {
            @Override
