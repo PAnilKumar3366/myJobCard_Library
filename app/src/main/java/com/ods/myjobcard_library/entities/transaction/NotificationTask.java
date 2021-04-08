@@ -6,6 +6,7 @@ import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.smp.client.odata.ODataEntity;
 
@@ -55,10 +56,7 @@ public class NotificationTask extends ZBaseEntity {
     private String EnteredBy;
     private String StatusFlag;
 
-
-    /**
-     * newly added fields for task status management feature
-     */
+    //newly added fields for task status management feature
     private Time PlannedStartTime;
     private Time PlannedFinishTime;
     private String CompletedBy;
@@ -79,6 +77,20 @@ public class NotificationTask extends ZBaseEntity {
     public NotificationTask(ODataEntity entity, boolean isWONotif) {
         initializeEntityProperties(isWONotif);
         create(entity);
+    }
+
+    /**
+     newly added constructer to create or map the new instance with the given ZODataEntity Object.
+     *
+     * @param entity ZODataEntity Contains the oDataEntity or EntityValue
+     */
+    public NotificationTask(ZODataEntity entity,boolean isWONotif){
+        try {
+            initializeEntityProperties(isWONotif);
+            create(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //get methods

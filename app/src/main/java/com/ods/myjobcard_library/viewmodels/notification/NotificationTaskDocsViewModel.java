@@ -19,8 +19,7 @@ import java.util.ArrayList;
 /**
  * This class contains all live data setter and getter methods by getting through its helper methods
  */
-public class NotificationTaskDocsViewModel extends NotificationBaseViewModel
-{
+public class NotificationTaskDocsViewModel extends NotificationBaseViewModel {
     ArrayList<WorkOrderAttachment> downloadableAttachList;
     ArrayList<UploadNotificationAttachmentContent> uploadedAttachList;
     private MutableLiveData<ArrayList<WorkOrderAttachment>> downloadableAttachLiveData = new MutableLiveData<ArrayList<WorkOrderAttachment>>();
@@ -33,74 +32,54 @@ public class NotificationTaskDocsViewModel extends NotificationBaseViewModel
 
     /**
      * creating the helper instances in this constructer for calling its helper methods
+     *
      * @param application
      */
     public NotificationTaskDocsViewModel(@NonNull Application application) {
         super(application);
-        uploadedattachmentContentHelper =new UploadNotificationAttachmentContentHelper();
-        downloadableAttachmentContentHelper=new WorkOrderAttachmentHelper();
-    }
-
-    public MutableLiveData<ArrayList<UploadNotificationAttachmentContent>> getUploadedAttachLiveData() {
-        return uploadedAttachLiveData;
+        uploadedattachmentContentHelper = new UploadNotificationAttachmentContentHelper();
+        downloadableAttachmentContentHelper = new WorkOrderAttachmentHelper();
     }
 
     /**
      * fetching the notification task or item's task uploaded attachmnets by calling through helper instances
+     *
      * @param notification
      * @param item
      * @param task
      */
-    public void fetchUploadedAttachLiveData(String notification,String item,String task){
+    public void fetchUploadedAttachLiveData(String notification, String item, String task) {
         try {
-            uploadedAttachLiveData.setValue(uploadedattachmentContentHelper.getUploadedTaskAttachments(notification,item,task));
+            ArrayList<ZODataEntity> zoDataEntityArrayList = uploadedattachmentContentHelper.getUploadedTaskAttachments(notification, item, task);
+            uploadedAttachLiveData.setValue(onFetchUploadedAttachEntities(zoDataEntityArrayList));
         } catch (Exception e) {
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
         }
-      /*  ArrayList<ZODataEntity> uploadedAttachmentArrayList=attachmentContentHelper.getUploadedNotificationItemTaskAttachments(notification,item,task);
-        if(uploadedAttachmentArrayList!=null)
-            onFetchUploadedAttachments(uploadedAttachmentArrayList);*/
-        /*attachmentContentHelper.setTaskInterface(new BackgroundTaskInterface() {
-            @Override
-            public void onTaskPostExecute(ArrayList<ZODataEntity> zoDataEntities, boolean isError, String errorMsg) {
-                if(!isError){
-                    onFetchUploadedAttachments(zoDataEntities);
-                }
-                else
-                    setError(errorMsg);
-            }
-
-            @Override
-            public void onTaskPreExecute() {
-
-            }
-
-            @Override
-            public void onTaskProgressUpdate() {
-
-            }
-        });
-        attachmentContentHelper.getUploadedNotificationItemTaskAttachments(notification,item,task);*/
-
     }
-    /*Converting the ZODataEntity list to WorkOrderAttachment's list  */
-    /*protected void onFetchDownloadableAttachLiveData (ArrayList<ZODataEntity> zODataEntities)
+    /**
+     * Converting the ZODataEntity  to UploadNotificationAttachmentContent object
+     * @param zODataEntities
+     */
+    protected ArrayList<UploadNotificationAttachmentContent> onFetchUploadedAttachEntities(ArrayList<ZODataEntity> zODataEntities)
     {
-        downloadableAttachList=new ArrayList<>();
+        uploadedAttachList=new ArrayList<>();
         try {
             for(ZODataEntity entity:zODataEntities){
-                WorkOrderAttachment workOrderAttachment=new WorkOrderAttachment(entity);
-                downloadableAttachList.add(workOrderAttachment);
+                UploadNotificationAttachmentContent uploadNotificationAttachmentContent=new UploadNotificationAttachmentContent(entity);
+                uploadedAttachList.add(uploadNotificationAttachmentContent);
             }
-            downloadableAttachLiveData.setValue(downloadableAttachList);
+        } catch (Exception e) {
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
         }
-        catch (Exception e){
-            e.printStackTrace();
-            DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
-        }
-    }*/
-    public MutableLiveData<ArrayList<WorkOrderAttachment>> getDownloadableAttachLiveData() {
-        return downloadableAttachLiveData;
+        return uploadedAttachList;
+    }
+
+    /**
+     * get the live data for the uploaded task attachments
+     * @return
+     */
+    public MutableLiveData<ArrayList<UploadNotificationAttachmentContent>> getUploadedAttachLiveData() {
+        return uploadedAttachLiveData;
     }
 
     /**
@@ -113,51 +92,48 @@ public class NotificationTaskDocsViewModel extends NotificationBaseViewModel
      */
     public void fetchDownloadableAttachLiveData(String notification,String item,String task,boolean isWONotif,String notificationType){
         try {
-            downloadableAttachLiveData.setValue(downloadableAttachmentContentHelper.getDownloadableNotificationItemTaskAttachments(notification,item,task,isWONotif,notificationType));
+            ArrayList<ZODataEntity> zoDataEntityArrayList=downloadableAttachmentContentHelper.getDownloadableNotificationItemTaskAttachments(notification,item,task,isWONotif,notificationType);
+            downloadableAttachLiveData.setValue(onFetchDownloadableAttachEntities(zoDataEntityArrayList));
         } catch (Exception e) {
             DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
         }
-
-/*        WorkOrderAttachmentHelper attachmentContentHelper=new WorkOrderAttachmentHelper();
-        attachmentContentHelper.setTaskInterface(new BackgroundTaskInterface() {
-            @Override
-            public void onTaskPostExecute(ArrayList<ZODataEntity> zoDataEntities, boolean isError, String errorMsg) {
-                if(!isError){
-                    onFetchDownloadableAttachLiveData(zoDataEntities);
-                }
-                else
-                    setError(errorMsg);
-            }
-
-            @Override
-            public void onTaskPreExecute() {
-
-            }
-
-            @Override
-            public void onTaskProgressUpdate() {
-
-            }
-        });
-        attachmentContentHelper.getDownloadableNotificationItemTaskAttachments(notification,item,task,isWONotif,notificationType);*/
     }
-    /*Converting the ZODataEntity list to Uploaded attachment's list  */
-   /* protected void onFetchUploadedAttachments(ArrayList<ZODataEntity> zODataEntities)
-    {
-        uploadedAttachList=new ArrayList<>();
-        for(ZODataEntity entity:zODataEntities){
-            UploadNotificationAttachmentContent uploadNotificationAttachmentContent=new UploadNotificationAttachmentContent(entity);
-            uploadedAttachList.add(uploadNotificationAttachmentContent);
+
+    /**
+     * Converting the ZODataEntity list to WorkOrderAttachment object
+     *
+     * @param zODataEntities
+     * @return
+     */
+    protected ArrayList<WorkOrderAttachment> onFetchDownloadableAttachEntities(ArrayList<ZODataEntity> zODataEntities) {
+        downloadableAttachList = new ArrayList<>();
+        try {
+            for (ZODataEntity entity : zODataEntities) {
+                WorkOrderAttachment workOrderAttachment = new WorkOrderAttachment(entity);
+                downloadableAttachList.add(workOrderAttachment);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
         }
-        uploadedAttachLiveData.setValue(uploadedAttachList);
-    }*/
+        return downloadableAttachList;
+    }
+
+    /**
+     * get the live data for the downloadable task attachments
+     * @return
+     */
+    public MutableLiveData<ArrayList<WorkOrderAttachment>> getDownloadableAttachLiveData() {
+        return downloadableAttachLiveData;
+    }
+
 
     public MutableLiveData<Boolean> getUploadTaskAttachmentResult() {
         return uploadTaskAttachment;
     }
 
     /**
-     * posting uploaded attachmnets by calling its helper method
+     * posting uploaded attachments by calling its helper method
      * @param filePath
      * @param fileName
      * @param isImage

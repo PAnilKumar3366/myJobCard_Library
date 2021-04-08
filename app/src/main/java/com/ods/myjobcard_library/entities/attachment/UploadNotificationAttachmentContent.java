@@ -38,9 +38,7 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
     private String FuncLocation;
     private String Equipment;
 
-    /**
-     * Newly added fields for uploading the notification task and Item's task attachment
-     */
+    //Newly added fields for uploading the notification task and Item's task attachment
     private String Item;
     private String Task;
 

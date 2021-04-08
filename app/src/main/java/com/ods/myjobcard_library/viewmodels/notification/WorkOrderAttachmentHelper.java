@@ -7,6 +7,7 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.attachment.WorkOrderAttachment;
 import com.ods.myjobcard_library.entities.lowvolume.LTAttachmentType;
+import com.ods.myjobcard_library.entities.transaction.NotificationActivity;
 import com.ods.myjobcard_library.interfaces.BackgroundTaskInterface;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
@@ -26,7 +27,7 @@ public class WorkOrderAttachmentHelper {
 
    // public BackgroundTaskInterface TaskInterface;
     private LTAttachmentType ltAttachmentType;
-    private ArrayList<WorkOrderAttachment> downloadableTaskAttachList;
+    private ArrayList<ZODataEntity> zoDatadownloadableTaskAttachEntities;
 
     protected WorkOrderAttachmentHelper(){
 
@@ -35,7 +36,16 @@ public class WorkOrderAttachmentHelper {
         TaskInterface = taskInterface;
     }*/
 
-    protected ArrayList<WorkOrderAttachment> getDownloadableNotificationItemTaskAttachments(String notification,String item,String task,boolean isWONotif,String notificationType) {
+    /**
+     * getting array list of ZODataEntity for downloadable task attachments
+     * @param notification
+     * @param item
+     * @param task
+     * @param isWONotif
+     * @param notificationType
+     * @return
+     */
+    protected ArrayList<ZODataEntity> getDownloadableNotificationItemTaskAttachments(String notification,String item,String task,boolean isWONotif,String notificationType) {
         String resourcePath = null;
         String entitySetName = null;
         String className;
@@ -48,22 +58,23 @@ public class WorkOrderAttachmentHelper {
         className = (ltAttachmentType!=null&&ltAttachmentType.getClassName() != null) ? ltAttachmentType.getClassName() : "";
         entitySetName = !isWONotif ? ZCollections.NO_ATTACHMENT_COLLECTION : ZCollections.WO_NO_ATTACHMENT_COLLECTION;
         resourcePath = entitySetName + "?$filter=(ObjectKey eq '" + objKey + "' and ClassName eq '" + className + "')";
-        ResponseObject responseObject = DataHelper.getInstance().getEntities(entitySetName, resourcePath);
         try {
-            downloadableTaskAttachList=new ArrayList<>();
+        ResponseObject responseObject = DataHelper.getInstance().getEntities(entitySetName, resourcePath);
+            zoDatadownloadableTaskAttachEntities=new ArrayList<>();
             if (responseObject != null && !responseObject.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(responseObject.Content());
                 for (ODataEntity entity : entities) {
                     ZODataEntity zoDataEntity = new ZODataEntity(entity);
-                    /*Converting the ZODataEntity  to WorkOrderAttachment object  */
+                    zoDatadownloadableTaskAttachEntities.add(zoDataEntity);
+                   /* *//*Converting the ZODataEntity  to WorkOrderAttachment object  *//*
                     WorkOrderAttachment workOrderAttachment = new WorkOrderAttachment(zoDataEntity);
-                    downloadableTaskAttachList.add(workOrderAttachment);
+                    downloadableTaskAttachList.add(workOrderAttachment);*/
                 }
             }
-            return downloadableTaskAttachList;
+            return zoDatadownloadableTaskAttachEntities;
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<WorkOrderAttachment>();
+            DliteLogger.WriteLog(NotificationActivity.class, ZAppSettings.LogLevel.Error, e.getMessage());
+            return new ArrayList<ZODataEntity>();
         }
     }
 
