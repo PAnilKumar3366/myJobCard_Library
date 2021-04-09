@@ -26,6 +26,9 @@ import java.util.HashMap;
 
 /*Created By Anil Kumar*/
 
+/**
+ * This helps to download the online orders and notifications along with child entities like Operations and NotificationItems.
+ */
 public class OnlineListViewModel extends BaseViewModel {
     private static final String TAG = "OnlinePendingListViewMo";
     private MutableLiveData<ArrayList<WorkOrder>> onlineWoList = new MutableLiveData<ArrayList<WorkOrder>>();
@@ -56,11 +59,21 @@ public class OnlineListViewModel extends BaseViewModel {
         this.updateWOResult = updateWOResult;
     }
 
+    /**
+     * Setter method needs to set before  fetchWorkOdersOnline call
+     *
+     * @param fetchOpr this flag tells  whether operations are downloaded along with workorders or not
+     */
     public void setFetchOpr(boolean fetchOpr) {
         this.fetchOpr = fetchOpr;
         workOrderHelper.setFetchOpr(fetchOpr);
     }
 
+    /**
+     * Setter method needs to set before  fetcNotificationsOnline call
+     *
+     * @param fetchNoItems this flag tells  whether notificationItems are downloaded along with Notifications or not
+     */
     public void setFetchNoItems(boolean fetchNoItems) {
         this.fetchNoItems = fetchNoItems;
         notificationHelper.setFetchNOItems(fetchNoItems);
@@ -76,6 +89,9 @@ public class OnlineListViewModel extends BaseViewModel {
     }
 
 
+    /**
+     * @return Online work orders
+     */
     public MutableLiveData<ArrayList<WorkOrder>> getOnlineWoList() {
         return onlineWoList;
     }
@@ -108,9 +124,9 @@ public class OnlineListViewModel extends BaseViewModel {
                 }
             };
             OnlineWoResult.observeForever(WorkOrderObserver);
-            String finalQuery = workOrderHelper.getQuery(mapQuery);
+            String finalQuery = workOrderHelper.getOnlineQuery(mapQuery);
             if (!finalQuery.isEmpty())
-                workOrderHelper.getWorkOrdersOnline(finalQuery);
+                workOrderHelper.getWorkOrderOnline(finalQuery);
             else
                 setError("Error in Query");
             /*workOrderHelper.setTaskInterface(new BackgroundTaskInterface() {
@@ -163,9 +179,9 @@ public class OnlineListViewModel extends BaseViewModel {
                 }
             };
             OnlineNoResult.observeForever(NotificationObserver);
-            String finalQuery = notificationHelper.getQuery(mapQuery);
+            String finalQuery = notificationHelper.getOnlineQuery(mapQuery);
             if (!finalQuery.isEmpty())
-                notificationHelper.getNotificationsOnline(finalQuery);
+                notificationHelper.getOnlineNoEntities(finalQuery);
             else
                 setError("Error in Query");
         } catch (IllegalArgumentException exception) {

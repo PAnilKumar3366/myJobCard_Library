@@ -57,7 +57,7 @@ public class NotificationHelper {
      * @return final filter query
      */
     /**/
-    public String getQuery(Map<String, String> queryMap) {
+    private String getQuery(Map<String, String> queryMap) {
 
         StringBuilder NoFilterQuery = null;
         try {
@@ -91,12 +91,17 @@ public class NotificationHelper {
         return NoFilterQuery.toString();
     }
 
+    public String getOnlineQuery(Map<String, String> mapQuery) {
+        return getQuery(mapQuery);
+    }
+
     /**
      * Fetching  online notifications as ZODataEntity List and set the LiveData
+     *
      * @param filterQuery which is the final query and pass the final query to the OnlineAsyncHelper.
      */
     /**/
-    public void getNotificationsOnline(String filterQuery) {
+    public void getOnlineNoEntities(String filterQuery) {
         ArrayList<ZODataEntity> entityList = new ArrayList<>();
         String resPath = ZCollections.NOTIFICATION_COLLECTION + filterQuery;
         OnlineAsyncHelper helper = new OnlineAsyncHelper(resPath, ZCollections.NOTIFICATION_COLLECTION, false, new OnlineAsyncHelper.Callbacks() {
@@ -124,6 +129,9 @@ public class NotificationHelper {
         helper.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    public void getOnlineNotifications(String finalQuery) {
+        getOnlineNoEntities(finalQuery);
+    }
 
     /**
      * This method calls the saveEntityOnline Method.
