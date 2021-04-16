@@ -40,7 +40,7 @@ public class WOLongTextHelper {
      * @param onlineQueryMap Contains the online Query Parameters and values in key-value pairs.
      * @return final filter query
      */
-    private String getQuery(HashMap<String, String> onlineQueryMap) {
+    public String getQuery(HashMap<String, String> onlineQueryMap) {
         OnlineLongText = new MutableLiveData<>();
         StringBuilder WoLongTextQuery = null;
         try {
@@ -65,9 +65,9 @@ public class WOLongTextHelper {
         return WoLongTextQuery.toString();
     }
 
-    public String getQuery(Map<String, String> mapQuery) {
+/*    public String getQuery(Map<String, String> mapQuery) {
         return getQuery(mapQuery);
-    }
+    }*/
 
     /**
      * This method internally creates a async job to fetch online WorkOrder Longtext and set the result in LiveData
