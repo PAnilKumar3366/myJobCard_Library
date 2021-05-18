@@ -5,7 +5,6 @@ import android.content.Context;
 import com.ods.ods_sdk.AppSettings;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class ZAppSettings extends AppSettings {
     // public static String App_Name = "com.ods.myJobCard"; //"com.sap.wmUpd";
@@ -443,7 +442,7 @@ public class ZAppSettings extends AppSettings {
 
         Notification("NotificationHeaderSet", "com.ods.myjobcard.types.Notification", "NotificationHeaderSet"),
         User("User", "com.ods.myjobcard.types.ctentities.UserTable", "AppUserTableSet"),
-        WorkOrder("WorkOrder", "com.ods.myjobcard.types.WorkOrder", "WoHeaderSet"),
+        WorkOrder("WorkOrder", "com.ods.myjobcard_library.entities.transaction.WorkOrder", "WoHeaderSet"),
         Operation("Operation", "com.ods.myjobcard.types.Operation", "WOOperationCollection"),
         ;
 

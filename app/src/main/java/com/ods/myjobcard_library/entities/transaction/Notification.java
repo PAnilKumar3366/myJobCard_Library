@@ -115,6 +115,122 @@ public class Notification extends ZBaseEntity {
     private String StatusFlag;
     private String MobileObjectType;
 
+    private String TechID;
+
+    public static ResponseObject getNotifications(ZAppSettings.FetchLevel fetchLevel, ZAppSettings.Hierarchy hierarchy, String notificationNum, String orderByCriteria, boolean isForWO) {
+        ResponseObject result = null;
+        String resourcePath = null;
+        String strOrderBy = "&$orderby=";
+        String strOrderByURI = null;
+        String strEntitySet = null;
+        ZConfigManager.Fetch_Object_Type notifType;
+        boolean fetchAddress = false;
+
+        try {
+            if (orderByCriteria == null || orderByCriteria.isEmpty()) {
+                orderByCriteria = "Notification";
+            }
+            strOrderByURI = strOrderBy + orderByCriteria;
+            if (isForWO) {
+                strEntitySet = ZCollections.WO_NOTIFICATION_COLLECTION;
+                notifType = ZConfigManager.Fetch_Object_Type.WONotification;
+            } else {
+                strEntitySet = ZCollections.NOTIFICATION_COLLECTION;
+                notifType = ZConfigManager.Fetch_Object_Type.Notification;
+            }
+            switch (fetchLevel) {
+                case ListMap:
+                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,Partner,PlannerGroup,MaintPlant,PlanningPlant,EnteredBy,LocationAddress,RequiredStartDate,RequiredEndDate" + strOrderByURI;
+                    fetchAddress = true;
+                    break;
+                case List:
+                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,Partner,PlannerGroup,MaintPlant,PlanningPlant,EnteredBy,RequiredStartDate,RequiredEndDate" + strOrderByURI;
+                    break;
+                case Header:
+                    resourcePath = strEntitySet;
+                    break;
+                case Single:
+                    if (notificationNum != null && notificationNum.length() > 0) {
+//                        resourcePath = strEntitySet + "?$filter=(Notification%20eq%20%27"+ NotificationNum +"%27)&$expand="+strExpandQuery;
+                        resourcePath = strEntitySet + "?$filter=(Notification%20eq%20%27" + notificationNum + "%27)";
+                        fetchAddress = true;
+                    }
+                    break;
+                case SingleWithItemCauses:
+                    if (notificationNum != null && notificationNum.length() > 0) {
+//                        resourcePath = strEntitySet + "?$filter=(Notification%20eq%20%27"+ NotificationNum +"%27)&$expand="+strExpandQuery;
+                        resourcePath = strEntitySet + "?$filter=(Notification%20eq%20%27" + notificationNum + "%27)";
+                        fetchAddress = true;
+                    }
+                    break;
+                case All:
+//                    resourcePath = strEntitySet + "?$expand="+strExpandQuery;
+                    resourcePath = strEntitySet;
+                    fetchAddress = true;
+                    break;
+                default:
+//                    resourcePath = strEntitySet + "?$expand="+strExpandQuery;
+                    resourcePath = strEntitySet;
+                    fetchAddress = true;
+                    break;
+            }
+            //offlineManager.openOfflineStore(ctx, StoreSettings.Stores.Tx);
+            result = DataHelper.getInstance().getEntities(strEntitySet, resourcePath);
+            if (!result.isError()) {
+                //parse data for WO from payload
+                result = FromEntity((List<ODataEntity>) result.Content(), isForWO, fetchAddress);
+            }
+
+        } catch (Exception e) {
+            DliteLogger.WriteLog(Notification.class, ZAppSettings.LogLevel.Error, e.getMessage());
+            return new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
+        }
+        return result;
+    }
+
+    public static ResponseObject getFilteredNotifications(@NonNull String filterQuery, ZAppSettings.FetchLevel fetchLevel, String orderByCriteria) {
+        ResponseObject result = null;
+        String entitySetName = ZCollections.NOTIFICATION_COLLECTION;
+        String resPath = entitySetName;
+        String orderByUrl = "$orderby=";
+        boolean fetchAddress = false;
+        try {
+            if (orderByCriteria == null || orderByCriteria.isEmpty()) {
+                orderByCriteria = "Notification";
+            }
+            orderByUrl += orderByCriteria;
+            if (!filterQuery.isEmpty()) {
+                if (fetchLevel == ZAppSettings.FetchLevel.Count)
+                    resPath += "/$count" + filterQuery + "&";
+                else
+                    resPath += filterQuery + "&";
+            } else
+                resPath += "?";
+            switch (fetchLevel) {
+                case ListMap:
+                    resPath += "$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,LocationAddress,Partner,PlannerGroup,MaintPlant,PlanningPlant,EnteredBy,RequiredStartDate,RequiredEndDate" + "&" + orderByUrl;
+                    fetchAddress = true;
+                    break;
+                case List:
+                    resPath += "$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,Partner,EnteredBy,PlannerGroup,MaintPlant,PlanningPlant,RequiredStartDate,RequiredEndDate" + "&" + orderByUrl;
+                    break;
+                default:
+                    resPath += orderByUrl;
+                    fetchAddress = true;
+                    break;
+            }
+            result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError() && !fetchLevel.equals(ZAppSettings.FetchLevel.Count)) {
+                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
+                result = FromEntity(entities, false, fetchAddress);
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(Notification.class, ZAppSettings.LogLevel.Error, e.getMessage());
+            result = new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
+        }
+        return result;
+    }
+
     private StatusCategory statusDetail;
     private ArrayList<StatusCategory> validStatuses;
 
@@ -171,75 +287,8 @@ public class Notification extends ZBaseEntity {
         currNotification = notification;
     }
 
-    public static ResponseObject getNotifications(ZAppSettings.FetchLevel fetchLevel, ZAppSettings.Hierarchy hierarchy, String notificationNum, String orderByCriteria, boolean isForWO) {
-        ResponseObject result = null;
-        String resourcePath = null;
-        String strOrderBy = "&$orderby=";
-        String strOrderByURI = null;
-        String strEntitySet = null;
-        ZConfigManager.Fetch_Object_Type notifType;
-        boolean fetchAddress = false;
-
-        try {
-            if (orderByCriteria == null || orderByCriteria.isEmpty()) {
-                orderByCriteria = "Notification";
-            }
-            strOrderByURI = strOrderBy + orderByCriteria;
-            if (isForWO) {
-                strEntitySet = ZCollections.WO_NOTIFICATION_COLLECTION;
-                notifType = ZConfigManager.Fetch_Object_Type.WONotification;
-            } else {
-                strEntitySet = ZCollections.NOTIFICATION_COLLECTION;
-                notifType = ZConfigManager.Fetch_Object_Type.Notification;
-            }
-            switch (fetchLevel) {
-                case ListMap:
-                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,LocationAddress,RequiredStartDate,RequiredEndDate" + strOrderByURI;
-                    fetchAddress = true;
-                    break;
-                case List:
-                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,RequiredStartDate,RequiredEndDate" + strOrderByURI;
-                    break;
-                case Header:
-                    resourcePath = strEntitySet;
-                    break;
-                case Single:
-                    if (notificationNum != null && notificationNum.length() > 0) {
-//                        resourcePath = strEntitySet + "?$filter=(Notification%20eq%20%27"+ NotificationNum +"%27)&$expand="+strExpandQuery;
-                        resourcePath = strEntitySet + "?$filter=(Notification%20eq%20%27" + notificationNum + "%27)";
-                        fetchAddress = true;
-                    }
-                    break;
-                case SingleWithItemCauses:
-                    if (notificationNum != null && notificationNum.length() > 0) {
-//                        resourcePath = strEntitySet + "?$filter=(Notification%20eq%20%27"+ NotificationNum +"%27)&$expand="+strExpandQuery;
-                        resourcePath = strEntitySet + "?$filter=(Notification%20eq%20%27" + notificationNum + "%27)";
-                        fetchAddress = true;
-                    }
-                    break;
-                case All:
-//                    resourcePath = strEntitySet + "?$expand="+strExpandQuery;
-                    resourcePath = strEntitySet;
-                    fetchAddress = true;
-                    break;
-                default:
-//                    resourcePath = strEntitySet + "?$expand="+strExpandQuery;
-                    resourcePath = strEntitySet;
-                    fetchAddress = true;
-                    break;
-            }
-            //offlineManager.openOfflineStore(ctx, StoreSettings.Stores.Tx);
-            result = DataHelper.getInstance().getEntities(strEntitySet, resourcePath);
-            if (!result.isError()) {
-                //parse data for WO from payload
-                result = FromEntity((List<ODataEntity>) result.Content(), isForWO, fetchAddress);
-            }
-
-        } catch (Exception e) {
-            DliteLogger.WriteLog(Notification.class, ZAppSettings.LogLevel.Error, e.getMessage());
-            return new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
-        }
-        return result;
+    public String getTechID() {
+        return TechID;
     }
 
     public static int getTotalNotificationCount() {
@@ -257,47 +306,8 @@ public class Notification extends ZBaseEntity {
         return 0;
     }
 
-    public static ResponseObject getFilteredNotifications(@NonNull String filterQuery, ZAppSettings.FetchLevel fetchLevel, String orderByCriteria) {
-        ResponseObject result = null;
-        String entitySetName = ZCollections.NOTIFICATION_COLLECTION;
-        String resPath = entitySetName;
-        String orderByUrl = "$orderby=";
-        boolean fetchAddress = false;
-        try {
-            if (orderByCriteria == null || orderByCriteria.isEmpty()) {
-                orderByCriteria = "Notification";
-            }
-            orderByUrl += orderByCriteria;
-            if (!filterQuery.isEmpty()) {
-                if (fetchLevel == ZAppSettings.FetchLevel.Count)
-                    resPath += "/$count" + filterQuery + "&";
-                else
-                    resPath += filterQuery + "&";
-            } else
-                resPath += "?";
-            switch (fetchLevel) {
-                case ListMap:
-                    resPath += "$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,LocationAddress,RequiredStartDate,RequiredEndDate" + "&" + orderByUrl;
-                    fetchAddress = true;
-                    break;
-                case List:
-                    resPath += "$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,RequiredStartDate,RequiredEndDate" + "&" + orderByUrl;
-                    break;
-                default:
-                    resPath += orderByUrl;
-                    fetchAddress = true;
-                    break;
-            }
-            result = DataHelper.getInstance().getEntities(entitySetName, resPath);
-            if (result != null && !result.isError() && !fetchLevel.equals(ZAppSettings.FetchLevel.Count)) {
-                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
-                result = FromEntity(entities, false, fetchAddress);
-            }
-        } catch (Exception e) {
-            DliteLogger.WriteLog(Notification.class, ZAppSettings.LogLevel.Error, e.getMessage());
-            result = new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
-        }
-        return result;
+    public void setTechID(String techID) {
+        TechID = techID;
     }
 
     private static ResponseObject FromEntity(List<ODataEntity> entities, boolean isWoNotif, boolean fetchAddress) {

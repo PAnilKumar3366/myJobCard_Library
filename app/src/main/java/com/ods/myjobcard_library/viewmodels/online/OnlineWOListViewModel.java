@@ -221,7 +221,13 @@ public class OnlineWOListViewModel extends BaseViewModel {
                 if (filterHashmap.containsKey("PersonNumber")) {
                     if (!order.getPersonnelNo().contains("00000000")) {
                         filterList.remove(order);
+                        continue;
                     }
+                }
+                if (filterHashmap.containsKey("CreatedByMe")) {                           //Newley Added by Anil.
+                    ArrayList<String> createdBy = filterHashmap.get("CreatedByMe");
+                    if (createdBy.get(0).contains(order.getEnteredBy().toUpperCase()))
+                        filterList.remove(order);
                 }
             }
             filterOprListLiveData.setValue(filterList);

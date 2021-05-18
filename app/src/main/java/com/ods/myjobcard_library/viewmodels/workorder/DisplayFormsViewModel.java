@@ -79,11 +79,24 @@ public class DisplayFormsViewModel extends ViewModel {
             controlKey = "";*/
             list=FormAssignmentSetModel.getFormAssignmentData_OrderType(orderType);
         } else if (type.equals(ZAppSettings.FormAssignmentType.OperationLevel.Value)) {
-            controlKey = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? workOrder.getCurrentOperation().getControlKey() : "";
-            orderType = workOrder.getOrderType();
+            if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
+                controlKey = workOrder.getCurrentOperation().getControlKey();
+                orderType = workOrder.getOrderType();
+                list = FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType, controlKey);
+            } else {
+                ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
+                ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
+                for (Operation operation : totalOperations) {
+                    orderType = operation.getOrderType();
+                    controlKey = operation.getControlKey();
+                    list.addAll(FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType, controlKey));
+                }
+            }
+            //controlKey = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? workOrder.getCurrentOperation().getControlKey() : "";
+
             /*equipmentCat = "";
             funcLocCat = "";*/
-            list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);
+
         } else if (type.equals(ZAppSettings.FormAssignmentType.Equipment.Value)) {
             //funcLocCat = "";
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
