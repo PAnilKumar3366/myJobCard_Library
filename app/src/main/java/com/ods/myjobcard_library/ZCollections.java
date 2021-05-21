@@ -399,6 +399,7 @@ public class ZCollections extends Collections {
 	public static final String descriptionIdentifier = "$mjc$";
 	public static final String valueIdentifier = "-999";
 	public static final String multiDataItemFormat = "<item><label>$mjc$</label><value>-999</value></item>";
+	public static final String multiDataItemFormat2 = "<item><label ref=\"jr:itext('$mjc$')\" /><value>-999</value></item>";
 	public static final String singleDataItemFormat = "<item><label>$mjc$</label><value>-999</value></item>";
 
 	public final static int STATUS_CHANGE_FORM_TRIGGERED = 998;
@@ -406,24 +407,24 @@ public class ZCollections extends Collections {
 
 	//OnlineSearch
 	public static boolean isUnAssigned = false;
-	public static HashMap<String, String> REFRESH_SERVICES = new HashMap<String, String>();
+	public static HashMap<String, String> REFRESH_SERVICES = new HashMap<>();
 	public static UUID OneTimeRequestId;
 	public static final String GenericNetworkError = "Unknown Network Error";
 
 	public static String getEditResourcePath(String collection, String key) {
-		return new String(collection + "('" + key + "')");
+		return String.format("%s('%s')", collection, key);
 
 	}
 
 	public static ArrayList<String> getCTSearchOptions() {
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		options.add(SEARCH_OPTION_ID);
 		options.add(SEARCH_OPTION_DESCRIPTION);
 		return options;
 	}
 
 	public static ArrayList<String> getResourceSearchOptions(){
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		options.add(SEARCH_OPTION_ID);
 		options.add(SEARCH_OPTION_NAME);
 		return options;
