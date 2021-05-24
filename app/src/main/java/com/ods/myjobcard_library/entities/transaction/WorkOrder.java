@@ -592,6 +592,19 @@ public class WorkOrder extends ZBaseEntity {
     }
 
     /**
+     * @return ArrayList of SpinnerItem of all distinct systemStatus among all workorders
+     */
+    public static ArrayList<SpinnerItem> getSpinnerSysStatuses() {
+        ArrayList<SpinnerItem> spinnerStatuses = new ArrayList<>();
+        ArrayList<String> statuses = getAllDistinctSysStatus();
+        for (String status : statuses) {
+            if (!status.isEmpty())
+                spinnerStatuses.add(new SpinnerItem(status, status));
+        }
+        return spinnerStatuses;
+    }
+
+    /**
      * @return ArrayList of all distinct WorkCenters among all workorders
      */
     public static ArrayList<String> getAllDistinctWorkCenters() {
@@ -821,6 +834,39 @@ public class WorkOrder extends ZBaseEntity {
             }
         }
         return spinnerTechnicians;
+    }
+
+    /**
+     * @return ArrayList of all distinct System Status among all workorder operations
+     */
+    public static ArrayList<String> getAllDistinctSysStatus() {
+        ArrayList<String> statuses = new ArrayList<>();
+        try {
+            String resPath = ZCollections.WO_COLLECTION + "?$select=SysStatus";
+            ResponseObject response = DataHelper.getInstance().getEntities(ZCollections.WO_COLLECTION, resPath);
+            if (response != null && !response.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) response.Content();
+                if (entities != null && entities.size() > 0) {
+                    for (ODataEntity entity : entities) {
+                        String userStatus = String.valueOf(entity.getProperties().get("SysStatus").getValue());
+                        String[] userStatuses;
+                        if (userStatus.contains(" ")) {
+                            userStatuses = userStatus.split(" ");
+                            if (userStatuses.length > 0) {
+                                statuses.addAll(Arrays.asList(userStatuses));
+                            }
+                        } else
+                            statuses.add(userStatus);
+                    }
+                    Set<String> strings = new HashSet<String>(statuses);
+                    statuses.clear();
+                    statuses.addAll(strings);
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return statuses;
     }
 
     @Override
