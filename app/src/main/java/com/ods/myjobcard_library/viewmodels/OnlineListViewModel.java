@@ -1,6 +1,7 @@
 package com.ods.myjobcard_library.viewmodels;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -43,7 +44,7 @@ public class OnlineListViewModel extends BaseViewModel {
     private MutableLiveData<ArrayList<Operation>> onlineOperations = new MutableLiveData<>();
     private MutableLiveData<ResponseObject> updateWOResult = new MutableLiveData<>();
     private Observer<ResponseObject> WorkOrderObserver, NotificationObserver;
-    private boolean fetchOpr, fetchNoItems;
+    private boolean fetchOpr, fetchNoItems, isObserveWO, isObserveNo;
 
     public OnlineListViewModel(@NonNull Application application) {
         super(application);
@@ -110,25 +111,30 @@ public class OnlineListViewModel extends BaseViewModel {
     /*Fetching Online Pending Work orders list as ZODataEntity List */
     public void fetchWorkOrdersOnline(HashMap<String, String> mapQuery) {
         try {
-            OnlineWoResult = workOrderHelper.getOnlineWoEntities();
-            WorkOrderObserver = new Observer<ResponseObject>() {
-                @Override
-                public void onChanged(ResponseObject responseObject) {
-                    if (!responseObject.isError()) {
-                        ArrayList<ZODataEntity> zoDataEntities = new ArrayList<>();
-                        zoDataEntities = (ArrayList<ZODataEntity>) responseObject.Content();
-                        onFetchOnlineWOList(zoDataEntities);
-                    } else
-                        setError(responseObject.getMessage());
-                    //workOrderHelper.getOnlineWoEntities().removeObserver(objectObserver);
-                }
-            };
-            OnlineWoResult.observeForever(WorkOrderObserver);
+            workOrderHelper = new WorkOrderHelper();
+            workOrderHelper.setFetchOpr(fetchOpr);
             String finalQuery = workOrderHelper.getOnlineQuery(mapQuery);
             if (!finalQuery.isEmpty())
                 workOrderHelper.getWorkOrderOnline(finalQuery);
             else
                 setError("Error in Query");
+            Log.d(TAG, "fetchWorkOrdersOnline: OnlineQuery" + finalQuery);
+            isObserveWO = true;
+            OnlineWoResult = workOrderHelper.getOnlineWoEntities();
+            WorkOrderObserver = new Observer<ResponseObject>() {
+                @Override
+                public void onChanged(ResponseObject responseObject) {
+                    if (isObserveWO && !responseObject.isError()) {
+                        ArrayList<ZODataEntity> zoDataEntities = new ArrayList<>();
+                        zoDataEntities = (ArrayList<ZODataEntity>) responseObject.Content();
+                        onFetchOnlineWOList(zoDataEntities);
+                    } else
+                        setError(responseObject.getMessage());
+                    isObserveWO = false;
+                    //workOrderHelper.getOnlineWoEntities().removeObserver(objectObserver);
+                }
+            };
+            OnlineWoResult.observeForever(WorkOrderObserver);
             /*workOrderHelper.setTaskInterface(new BackgroundTaskInterface() {
                 @Override
                 public void onTaskPostExecute(ArrayList<ZODataEntity> zoDataEntities, boolean isError, String errorMsg) {
@@ -166,6 +172,8 @@ public class OnlineListViewModel extends BaseViewModel {
     /*Fetching the final online query and fetching online notifications pending list as ZODataEntity List*/
     public void fetchNotificationsOnline(HashMap<String, String> mapQuery) {
         try {
+            notificationHelper = new NotificationHelper();
+            notificationHelper.setFetchNOItems(fetchNoItems);
             OnlineNoResult = notificationHelper.getOnlineNoEntity();
             NotificationObserver = new Observer<ResponseObject>() {
                 @Override
@@ -184,6 +192,7 @@ public class OnlineListViewModel extends BaseViewModel {
                 notificationHelper.getOnlineNoEntities(finalQuery);
             else
                 setError("Error in Query");
+            Log.d(TAG, "fetchNotificationsOnline: OnlineQuery" + finalQuery.toString());
         } catch (IllegalArgumentException exception) {
             setError(exception.getMessage());
         } catch (Exception e) {
@@ -218,6 +227,8 @@ public class OnlineListViewModel extends BaseViewModel {
             }
             OnlineDataList.getInstance().setOnlineWorkOrderList(onlineWo);
             OnlineDataList.getInstance().setWorkOrdersOperationsList(operations);
+            if (OnlineWoResult != null && WorkOrderObserver != null)
+                OnlineWoResult.removeObserver(WorkOrderObserver);
             onlineWoList.postValue(onlineWo);
             if (fetchOpr)
                 onlineOperations.postValue(operations);

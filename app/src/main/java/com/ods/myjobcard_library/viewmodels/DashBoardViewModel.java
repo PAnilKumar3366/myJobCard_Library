@@ -59,6 +59,8 @@ public class DashBoardViewModel extends BaseViewModel {
     private ArrayList<SpinnerItem> woTechnicians = new ArrayList<>();
     private ArrayList<SpinnerItem> noWOConversion = new ArrayList<>();
     public ArrayList<SpinnerItem> filterCategories = new ArrayList<>();
+    public ArrayList<SpinnerItem> woSysStatusSpinnerItems = new ArrayList<>();
+    public ArrayList<SpinnerItem> woInspLotSpinnerItems = new ArrayList<>();
     private boolean isWorkOrder = true;
     public String woSelectedCategory1 = "";
     public String woSelectedCategory2 = "";
@@ -111,7 +113,67 @@ public class DashBoardViewModel extends BaseViewModel {
         setFilterData(true);
     }
 
-    public void resetLists(){
+    private MutableLiveData<ArrayList<WorkOrder>> onlineWoList = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<Operation>> onlineOprList = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<WorkOrder>> filterListLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<SliceValue>> ordersPieChartData = new MutableLiveData<>();
+    private MutableLiveData<List<SliceValue>> notificationLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<SliceValue>> supervisorsLiveData = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<Notification>> onlineNotifiList = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<NotificationItem>> OnlineItemlist = new MutableLiveData<>();
+    private ArrayList<WorkOrder> workOrders = new ArrayList<>();
+    private ArrayList<Operation> operations = new ArrayList<>();
+    private ArrayList<Notification> onlineNotifications = new ArrayList<>();
+    private ArrayList<NotificationItem> onlineItemsList = new ArrayList<>();
+    private static final String TAG = "DashBoardViewModel";
+
+    public MutableLiveData<ArrayList<Notification>> getOnlineNotifiList() {
+        return onlineNotifiList;
+    }
+
+    public void setOnlineNotifiList(MutableLiveData<ArrayList<Notification>> onlineNotifiList) {
+        this.onlineNotifiList = onlineNotifiList;
+    }
+
+    public MutableLiveData<List<SliceValue>> getOrdersPieChartData() {
+        return ordersPieChartData;
+    }
+
+    public MutableLiveData<List<SliceValue>> getNotificationLiveData() {
+        return notificationLiveData;
+    }
+
+    public MutableLiveData<List<SliceValue>> getSupervisorsLiveData() {
+        return supervisorsLiveData;
+    }
+
+    private HashMap<Integer, String> orderMap = new HashMap<>();
+    private HashMap<Integer, String> notificationMap = new HashMap<>();
+
+
+    public HashMap<Integer, String> getOrderMap() {
+        return orderMap;
+    }
+
+    private void setOrderMap(HashMap<Integer, String> orderMap) {
+        this.orderMap = orderMap;
+    }
+
+    private HashMap<Integer, String> supOrderMap = new HashMap<>();
+
+    public HashMap<Integer, String> getNotificationMap() {
+        return notificationMap;
+    }
+
+    public void setNotificationMap(HashMap<Integer, String> notificationMap) {
+        this.notificationMap = notificationMap;
+    }
+
+    public void setSupOrderMap(HashMap<Integer, String> supOrderMap) {
+        this.supOrderMap = supOrderMap;
+    }
+
+    public void resetLists() {
         this.woStatuses = new ArrayList<>();
         this.noStatuses = new ArrayList<>();
         this.woPriorities = new ArrayList<>();
@@ -122,15 +184,20 @@ public class DashBoardViewModel extends BaseViewModel {
         this.woUserStatuses = new ArrayList<>();
         this.woTechnicians = new ArrayList<>();
         this.noWOConversion = new ArrayList<>();
+        this.woSysStatusSpinnerItems = new ArrayList<>();
     }
 
-    public void setFilterData(boolean isWorkOrder){
+    public HashMap<Integer, String> getSupOrderMap() {
+        return supOrderMap;
+    }
+
+    public void setFilterData(boolean isWorkOrder) {
         this.isWorkOrder = isWorkOrder;
         this.filterCategories = new ArrayList<>();
         this.woSelectedValues1 = new ArrayList<>();
         this.woSelectedValues2 = new ArrayList<>();
 
-        if(isWorkOrder){
+        if (isWorkOrder) {
             filterCategories.add(new SpinnerItem("0", "Select"));
             filterCategories.add(new SpinnerItem("Priority", "Priority"));
             filterCategories.add(new SpinnerItem("MobileObjStatus", "Status"));
@@ -139,11 +206,12 @@ public class DashBoardViewModel extends BaseViewModel {
             filterCategories.add(new SpinnerItem("MaintActivityType", "Mant. Activity Type"));
             filterCategories.add(new SpinnerItem("Date", "Date"));
             filterCategories.add(new SpinnerItem("FuncLocation", "Functional Location"));
-
+            filterCategories.add(new SpinnerItem("SysStatus", "System Status"));
+            //filterCategories.add(new SpinnerItem("InspectionLot","InspectionLot"));
             ArrayList<SpinnerItem> woPriorities = getPriorities();
             ArrayList<SpinnerItem> woStatuses = getStatuses();
             woSelectedCategory1 = "Priority";
-            if(woPriorities.size() > 3){
+            if (woPriorities.size() > 3) {
                 woSelectedValues1.add(woPriorities.get(0));
                 woSelectedValues1.add(woPriorities.get(1));
                 woSelectedValues1.add(woPriorities.get(2));
@@ -151,9 +219,9 @@ public class DashBoardViewModel extends BaseViewModel {
                 woSelectedValues1.addAll(woPriorities);
             woSelectedCategory2 = "MobileObjStatus";
             woSelectedValues2.addAll(woStatuses);
-            if(ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.OperationLevel.getAssignmentTypeText())){
+            if (ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.OperationLevel.getAssignmentTypeText())) {
                 filterCategories.add(new SpinnerItem("OperationTechnician", "Technician"));
-            } else if(ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.WorkOrderLevel.getAssignmentTypeText())){
+            } else if (ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.WorkOrderLevel.getAssignmentTypeText())) {
                 filterCategories.add(new SpinnerItem("PersonResponsible", "Technician"));
             }
         } else {
@@ -179,94 +247,25 @@ public class DashBoardViewModel extends BaseViewModel {
             filterCategories.add(new SpinnerItem("CreatedBy", "Created By Me/Assigned To Me"));
     }
 
-    private MutableLiveData<ArrayList<WorkOrder>> onlineWoList=new MutableLiveData<>();
-    private MutableLiveData<ArrayList<Operation>> onlineOprList=new MutableLiveData<>();
-
-    private MutableLiveData<ArrayList<WorkOrder>> filterListLiveData =new MutableLiveData<>();
-    private MutableLiveData<List<SliceValue>> ordersPieChartData=new MutableLiveData<>();
-
-    private MutableLiveData<List<SliceValue>> notificationLiveData=new MutableLiveData<>();
-
-    private MutableLiveData<List<SliceValue>> supervisorsLiveData=new MutableLiveData<>();
-
-
-    private MutableLiveData<ArrayList<Notification>> onlineNotifiList=new MutableLiveData<>();
-    private MutableLiveData<ArrayList<NotificationItem>> OnlineItemlist=new MutableLiveData<>();
-
-    private ArrayList<WorkOrder> workOrders=new ArrayList<>();
-    private ArrayList<Operation> operations=new ArrayList<>();
-    private static final String TAG = "DashBoardViewModel";
-
-    public MutableLiveData<ArrayList<Notification>> getOnlineNotifiList() {
-        return onlineNotifiList;
-    }
-
-    public void setOnlineNotifiList(MutableLiveData<ArrayList<Notification>> onlineNotifiList) {
-        this.onlineNotifiList = onlineNotifiList;
-    }
-
-    public MutableLiveData<List<SliceValue>> getOrdersPieChartData() {
-        return ordersPieChartData;
-    }
-
-    public MutableLiveData<List<SliceValue>> getNotificationLiveData() {
-        return notificationLiveData;
-    }
-
-    public MutableLiveData<List<SliceValue>> getSupervisorsLiveData() {
-        return supervisorsLiveData;
-    }
-
-    private ArrayList<Notification> onlineNotifications=new ArrayList<>();
-    private ArrayList<NotificationItem> onlineItemsList=new ArrayList<>();
-
-
-    public HashMap<Integer, String> getOrderMap() {
-        return orderMap;
-    }
-
-    private void setOrderMap(HashMap<Integer, String> orderMap) {
-        this.orderMap = orderMap;
-    }
-
-    private HashMap<Integer,String > orderMap=new HashMap<>();
-
-    public HashMap<Integer, String> getNotificationMap() {
-        return notificationMap;
-    }
-
-    public void setNotificationMap(HashMap<Integer, String> notificationMap) {
-        this.notificationMap = notificationMap;
-    }
-
-    public void setSupOrderMap(HashMap<Integer, String> supOrderMap) {
-        this.supOrderMap = supOrderMap;
-    }
-
-    private HashMap<Integer,String > notificationMap=new HashMap<>();
-
-    public HashMap<Integer, String> getSupOrderMap() {
-        return supOrderMap;
-    }
-
-    private HashMap<Integer,String > supOrderMap =new HashMap<>();
-
-    public void setOrderData(){
-        List<SliceValue> mWorkorderPieDataList=new ArrayList<>();
-        mWorkorderPieDataList=getOrderData();
+    public void setOrderData() {
+        List<SliceValue> mWorkorderPieDataList = new ArrayList<>();
+        mWorkorderPieDataList = getOrderData();
         ordersPieChartData.setValue(mWorkorderPieDataList);
     }
-    public void setNotificationData(){
-        List<SliceValue> mNotificationLiveDataList=new ArrayList<>();
-        mNotificationLiveDataList=getNotificationData();
+
+    public void setNotificationData() {
+        List<SliceValue> mNotificationLiveDataList = new ArrayList<>();
+        mNotificationLiveDataList = getNotificationData();
         notificationLiveData.setValue(mNotificationLiveDataList);
     }
-    public void setSupervisorsData(){
-        List<SliceValue> mSupervisoursLiveDataList=new ArrayList<>();
-        mSupervisoursLiveDataList=getSupervisorsData();
+
+    public void setSupervisorsData() {
+        List<SliceValue> mSupervisoursLiveDataList = new ArrayList<>();
+        mSupervisoursLiveDataList = getSupervisorsData();
         supervisorsLiveData.setValue(mSupervisoursLiveDataList);
     }
-    private List<SliceValue> getNotificationData(){
+
+    private List<SliceValue> getNotificationData() {
         pieData = new ArrayList<>();
         int notificationCount;
         int count = 0;
@@ -280,9 +279,9 @@ public class DashBoardViewModel extends BaseViewModel {
             setNotificationMap(notificationMap);
         }*/
         legendsMap = new ArrayList<>();
-        for(SpinnerItem item1: woSelectedValues1){
+        for (SpinnerItem item1 : woSelectedValues1) {
             String filterQuery1 = "";
-            if(woSelectedCategory1.equalsIgnoreCase("WOConversion"))
+            if (woSelectedCategory1.equalsIgnoreCase("WOConversion"))
                 filterQuery1 = "?$filter=" + getNotificationWOCreatedFilterQuery(item1.getId());
             else if (woSelectedCategory1.equalsIgnoreCase("date"))
                 filterQuery1 = "?$filter=" + getNotificationDateFilterQuery(item1.getId());
@@ -295,10 +294,10 @@ public class DashBoardViewModel extends BaseViewModel {
                     filterQuery1 = "?$filter=" + item1.getId() + " eq '" + CurrentUserWorkCenter + "'";
             } else
                 filterQuery1 = "?$filter=" + woSelectedCategory1 + " eq '" + item1.getId() + "'";
-            if(woSelectedValues2.size() > 0) {
+            if (woSelectedValues2.size() > 0) {
                 for (SpinnerItem item2 : woSelectedValues2) {
                     String filterQuery2 = "";
-                    if(woSelectedCategory2.equalsIgnoreCase("WOConversion"))
+                    if (woSelectedCategory2.equalsIgnoreCase("WOConversion"))
                         filterQuery2 = filterQuery1 + " and " + getNotificationWOCreatedFilterQuery(item2.getId());
                     else if (woSelectedCategory2.equalsIgnoreCase("date"))
                         filterQuery2 = filterQuery1 + " and " + getNotificationDateFilterQuery(item2.getId());
@@ -338,12 +337,13 @@ public class DashBoardViewModel extends BaseViewModel {
         }
         return pieData;
     }
+
     /*
     Always pass the Date filter values as selectedValues2  / selectedCategory2
      */
     private List<SliceValue> getOrderData() {
         pieData = new ArrayList<SliceValue>();
-        int orderCount=0;
+        int orderCount = 0;
         int count = 0;
         /*for (ZAppSettings.Priorities priority : ZAppSettings.Priorities.values()) {
             orderCount = WorkOrder.getWorkOrdersCountByPriority(priority.getValue());
@@ -363,6 +363,10 @@ public class DashBoardViewModel extends BaseViewModel {
                 String filterQuery1 = "";
                 if (woSelectedCategory1.equalsIgnoreCase("UserStatus"))
                     filterQuery1 = "?$filter=indexof(" + woSelectedCategory1 + ",'" + item1.getId() + "') ne -1";
+                else if (woSelectedCategory1.equalsIgnoreCase("SysStatus"))
+                    filterQuery1 = "?$filter=indexof(" + woSelectedCategory1 + ",'" + item1.getId() + "') ne -1";
+                /*else if(woSelectedCategory1.equalsIgnoreCase("InspectionLot"))
+                    filterQuery1="?$filter="+getWOInspFilterQuery(item1.getId());*/
                 else if (woSelectedCategory1.equalsIgnoreCase("date"))
                     filterQuery1 = "?$filter=" + getWorkOrderDateFilterQuery(item1.getId());
                 else if (woSelectedCategory1.equalsIgnoreCase("OperationTechnician"))
@@ -383,6 +387,10 @@ public class DashBoardViewModel extends BaseViewModel {
                         String filterQuery2 = "";
                         if (woSelectedCategory2.equalsIgnoreCase("UserStatus"))
                             filterQuery2 = filterQuery1 + " and (indexof(" + woSelectedCategory2 + ",'" + item2.getId() + "') ne -1)";
+                        else if (woSelectedCategory2.equalsIgnoreCase("SysStatus"))
+                            filterQuery2 = "?$filter=indexof(" + woSelectedCategory2 + ",'" + item2.getId() + "') ne -1";
+                        /*else if(woSelectedCategory2.equalsIgnoreCase("InspectionLot"))
+                            filterQuery1="?$filter="+getWOInspFilterQuery(item2.getId());*/
                         else if (woSelectedCategory2.equalsIgnoreCase("date"))
                             filterQuery2 = filterQuery1 + " and " + getWorkOrderDateFilterQuery(item2.getId());
                         else if (woSelectedCategory2.equalsIgnoreCase("OperationTechnician"))
@@ -391,11 +399,11 @@ public class DashBoardViewModel extends BaseViewModel {
                             filterQuery2 = filterQuery1 + " and (indexof(" + woSelectedCategory2 + ", '" + item2.getId() + "') ne -1)";
                         else if (woSelectedCategory2.equalsIgnoreCase("CreatedBy")) {
                             if (item2.getId().equalsIgnoreCase("EnteredBy"))
-                                filterQuery1 = "?$filter=" + item2.getId() + " eq '" + ZAppSettings.strUser + "'";
+                                filterQuery2 = "?$filter=" + item2.getId() + " eq '" + ZAppSettings.strUser + "'";
                             else if (item2.getId().equalsIgnoreCase("PersonResponsible"))
-                                filterQuery1 = "?$filter=" + item2.getId() + " eq '" + UserTable.getUserPersonnelNumber() + "'";
+                                filterQuery2 = "?$filter=" + item2.getId() + " eq '" + UserTable.getUserPersonnelNumber() + "'";
                             if (item2.getId().equalsIgnoreCase("MainWorkCtr"))
-                                filterQuery1 = "?$filter=" + item2.getId() + " eq '" + UserTable.getUserWorkCenter() + "'";
+                                filterQuery2 = "?$filter=" + item2.getId() + " eq '" + UserTable.getUserWorkCenter() + "'";
                         } else {
                             filterQuery2 = filterQuery1 + " and (" + woSelectedCategory2 + " eq '" + item2.getId() + "')";
                         }
@@ -430,7 +438,7 @@ public class DashBoardViewModel extends BaseViewModel {
         return pieData;
     }
 
-    private String getWorkOrderDateFilterQuery(String selectedDateFilterValue){
+    private String getWorkOrderDateFilterQuery(String selectedDateFilterValue) {
         String filterQuery = "";
         GregorianCalendar currDate = ZCommon.getDeviceDateTime();
         GregorianCalendar date = ZCommon.getDeviceDateTime();
@@ -454,14 +462,14 @@ public class DashBoardViewModel extends BaseViewModel {
             currDate.add(Calendar.DAY_OF_MONTH, 1);
             formattedDate = dateFormat.format(new Date(date.getTimeInMillis()));
             filterQuery = "(BasicFnshDate gt datetime'" + formattedDate + "' and BasicFnshDate lt datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
-        } else if("5".equals(selectedDateFilterValue)){
+        } else if ("5".equals(selectedDateFilterValue)) {
             currDate.add(Calendar.DAY_OF_MONTH, 1);
             filterQuery = "(BasicFnshDate lt datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
         }
         return filterQuery;
     }
 
-    private String getNotificationDateFilterQuery(String selectedDateFilterValue){
+    private String getNotificationDateFilterQuery(String selectedDateFilterValue) {
         String filterQuery = "";
         GregorianCalendar currDate = ZCommon.getDeviceDateTime();
         GregorianCalendar date = ZCommon.getDeviceDateTime();
@@ -485,24 +493,36 @@ public class DashBoardViewModel extends BaseViewModel {
             currDate.add(Calendar.DAY_OF_MONTH, 1);
             formattedDate = dateFormat.format(new Date(date.getTimeInMillis()));
             filterQuery = "(RequiredEndDate gt datetime'" + formattedDate + "' and RequiredEndDate lt datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
-        } else if("5".equals(selectedDateFilterValue)) {
+        } else if ("5".equals(selectedDateFilterValue)) {
             currDate.add(Calendar.DAY_OF_MONTH, 1);
             filterQuery = "(RequiredEndDate lt datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
         }
         return filterQuery;
     }
 
-    private String getNotificationWOCreatedFilterQuery(String selectedValue){
+    private String getNotificationWOCreatedFilterQuery(String selectedValue) {
         String filterQuery = "";
-        if("0".equals(selectedValue)){
+        if ("0".equals(selectedValue)) {
             filterQuery = "(WorkOrderNum ne '')";
-        } else if("1".equals(selectedValue)){
+        } else if ("1".equals(selectedValue)) {
             filterQuery = "(WorkOrderNum eq '')";
         }
         return filterQuery;
     }
 
-    private List<SliceValue> getSupervisorsData(){
+
+    /*private String getWOInspFilterQuery(String selectedValue){
+        String filterQuery="";
+        if(ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.OperationLevel.getAssignmentTypeText())){
+            if("0".equalsIgnoreCase(selectedValue))
+                filterQuery="(InspectionLot ne '' and MobileObjStatus eq 'COMP')";
+            else if("1".equalsIgnoreCase(selectedValue))
+                filterQuery="(InspectionLot ne '' and MobileObjStatus ne 'COMP')";
+        }
+
+       return filterQuery;
+    }*/
+    private List<SliceValue> getSupervisorsData() {
         pieData = new ArrayList<SliceValue>();
         int supOrderCount;
         int count = 0;
@@ -517,6 +537,7 @@ public class DashBoardViewModel extends BaseViewModel {
         }
         return pieData;
     }
+
     public MutableLiveData<ArrayList<WorkOrder>> getOnlineWoList() {
         return onlineWoList;
     }
@@ -537,20 +558,20 @@ public class DashBoardViewModel extends BaseViewModel {
     public void fetchOnlineData(String filterQuery, Boolean isWoSearch) {
         String entitySetName;
         if (isWoSearch)
-            entitySetName= "WoHeaderSet";
-           //filterQuery = "?$filter=(OnlineSearch eq 'X' and Unassigned eq '' and CreatedOn eq datetime'2020-02-20T00:00:00' and ChangeDtForOrderMaster eq datetime'2020-03-05T00:00:00' and Plant eq 'OD01' and MainWorkCtr eq '0DEE0001')&$expand=NAVOPERA";
+            entitySetName = "WoHeaderSet";
+            //filterQuery = "?$filter=(OnlineSearch eq 'X' and Unassigned eq '' and CreatedOn eq datetime'2020-02-20T00:00:00' and ChangeDtForOrderMaster eq datetime'2020-03-05T00:00:00' and Plant eq 'OD01' and MainWorkCtr eq '0DEE0001')&$expand=NAVOPERA";
 
         else
-            entitySetName= "NotificationHeaderSet";
+            entitySetName = "NotificationHeaderSet";
 
         //filterQueryWo="?$filter=(OnlineSearch eq 'X' and CreatedOn eq datetime'2020-01-21T00:00:00' and ChangeDtForOrderMaster eq datetime'2020-01-22T00:00:00')&$expand=NAVOPERA";
-        String resPath=entitySetName+filterQuery;
-        try{
-            new AsyncTask<Void,Void, ResponseObject>(){
+        String resPath = entitySetName + filterQuery;
+        try {
+            new AsyncTask<Void, Void, ResponseObject>() {
 
                 @Override
                 protected ResponseObject doInBackground(Void... voids) {
-                    ResponseObject result= DataHelper.getInstance().getEntitiesOnline(resPath,entitySetName, TableConfigSet.getStore(entitySetName));
+                    ResponseObject result = DataHelper.getInstance().getEntitiesOnline(resPath, entitySetName, TableConfigSet.getStore(entitySetName));
                     return result;
                 }
 
@@ -559,7 +580,7 @@ public class DashBoardViewModel extends BaseViewModel {
                     super.onPostExecute(responseObject);
 
                     try {
-                        if(isWoSearch)
+                        if (isWoSearch)
                             getWorkOrdersList(responseObject);
                         else
                             getNotificationsList(responseObject);
@@ -569,56 +590,53 @@ public class DashBoardViewModel extends BaseViewModel {
                     //updateUI(onlineworkorders);
 
 
-
                 }
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        }
-        catch (Exception e){
-            Log.e(TAG, "fetchOnlineData: Exception"+e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, "fetchOnlineData: Exception" + e.getMessage());
         }
 
     }
 
     private void getWorkOrdersList(ResponseObject responseObject) {
-       if(!responseObject.isError()){
-           operations.clear();
+        if (!responseObject.isError()) {
+            operations.clear();
             workOrders.clear();
-        EntityValueList entityList = (EntityValueList) responseObject.Content();
-        EntityValueList oprEntityList;
-        ArrayList<WorkOrder> onlineworkOrders = new ArrayList<>();
-        ArrayList<Operation> workOrderOperations;
-        for(EntityValue entityValue : entityList){
+            EntityValueList entityList = (EntityValueList) responseObject.Content();
+            EntityValueList oprEntityList;
+            ArrayList<WorkOrder> onlineworkOrders = new ArrayList<>();
+            ArrayList<Operation> workOrderOperations;
+            for (EntityValue entityValue : entityList) {
 
-            WorkOrder order = new WorkOrder(entityValue);
-            oprEntityList= entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue);
+                WorkOrder order = new WorkOrder(entityValue);
+                oprEntityList = entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue);
 
-            workOrderOperations = new ArrayList<>();
-            for (EntityValue oprEntity : oprEntityList) {
-                workOrderOperations.add(new Operation(oprEntity));
-                operations.add(new Operation(oprEntity));
+                workOrderOperations = new ArrayList<>();
+                for (EntityValue oprEntity : oprEntityList) {
+                    workOrderOperations.add(new Operation(oprEntity));
+                    operations.add(new Operation(oprEntity));
+                }
+                order.setWorkOrderOperations(workOrderOperations);
+                onlineworkOrders.add(order);
+                //oprEntityValueList.add( entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue));
             }
-            order.setWorkOrderOperations(workOrderOperations);
-            onlineworkOrders.add(order);
-            //oprEntityValueList.add( entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue));
+            workOrders.addAll(onlineworkOrders);
+            OnlineDataList.getInstance().setOnlineWorkOrderList(workOrders);
+            OnlineDataList.getInstance().setWorkOrdersOperationsList(operations);
+        } else {
+            setError(responseObject.getMessage());
+            Log.d(TAG, "onPostExecute: " + responseObject.getMessage());
         }
-           workOrders.addAll(onlineworkOrders);
-           OnlineDataList.getInstance().setOnlineWorkOrderList(workOrders);
-           OnlineDataList.getInstance().setWorkOrdersOperationsList(operations);
-       }
-       else{
-           setError(responseObject.getMessage());
-           Log.d(TAG, "onPostExecute: " + responseObject.getMessage());
-       }
 
-       if(ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
-           onlineOprList.setValue(operations);
-       else
-           onlineWoList.setValue(workOrders);
+        if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
+            onlineOprList.setValue(operations);
+        else
+            onlineWoList.setValue(workOrders);
     }
 
-    private void getNotificationsList(ResponseObject responseObject){
-        if(!responseObject.isError()){
+    private void getNotificationsList(ResponseObject responseObject) {
+        if (!responseObject.isError()) {
             onlineItemsList.clear();
             onlineNotifications.clear();
 
@@ -626,13 +644,13 @@ public class DashBoardViewModel extends BaseViewModel {
             EntityValueList oprEntityList;
             ArrayList<Notification> notifications = new ArrayList<>();
             ArrayList<NotificationItem> notificationItems;
-            for(EntityValue entityValue : entityList){
+            for (EntityValue entityValue : entityList) {
 
                 Notification notification = new Notification(entityValue);
-                oprEntityList= entityValue.getEntityType().getProperty("NavNOItem").getEntityList(entityValue);
+                oprEntityList = entityValue.getEntityType().getProperty("NavNOItem").getEntityList(entityValue);
 
                 notificationItems = new ArrayList<>();
-                for(EntityValue oprEntity : oprEntityList){
+                for (EntityValue oprEntity : oprEntityList) {
                     notificationItems.add(new NotificationItem(oprEntity));
                     onlineItemsList.add(new NotificationItem(oprEntity));
                     Log.d(TAG, "onPostExecute: Notification items" + notification.getNotification() + " item num");
@@ -646,8 +664,7 @@ public class DashBoardViewModel extends BaseViewModel {
             onlineNotifications.addAll(notifications);
             OnlineDataList.getInstance().setOnLineNotifications(notifications);
             OnlineDataList.getInstance().setOnlineNotificationItems(onlineItemsList);
-        }
-        else{
+        } else {
             setError(responseObject.getMessage() != null ? responseObject.getMessage() : responseObject.Content().toString());
             Log.d(TAG, "onPostExecute: " + responseObject.getMessage());
         }
@@ -655,58 +672,58 @@ public class DashBoardViewModel extends BaseViewModel {
     }
 
     public ArrayList<SpinnerItem> getStatuses() {
-        if(!isWorkOrder) {
+        if (!isWorkOrder) {
             if (noStatuses.size() == 0)
                 noStatuses = Notification.getSpinnerStatuses();
             return noStatuses;
         } else {
-            if(woStatuses.size() == 0)
+            if (woStatuses.size() == 0)
                 woStatuses = WorkOrder.getSpinnerStatuses();
             return woStatuses;
         }
     }
 
     public ArrayList<SpinnerItem> getPriorities() {
-        if(!isWorkOrder) {
+        if (!isWorkOrder) {
             if (noPriorities.size() == 0)
                 noPriorities = Notification.getSpinnerPriorities();
             return noPriorities;
         } else {
-            if(woPriorities.size() == 0)
+            if (woPriorities.size() == 0)
                 woPriorities = WorkOrder.getSpinnerPriorities();
             return woPriorities;
         }
     }
 
     public ArrayList<SpinnerItem> getWorkCenters() {
-        if(!isWorkOrder) {
+        if (!isWorkOrder) {
             if (noWorkCenters.size() == 0)
                 noWorkCenters = Notification.getSpinnerWorkCenters();
             return noWorkCenters;
         } else {
-            if(woWorkCenters.size() == 0)
+            if (woWorkCenters.size() == 0)
                 woWorkCenters = WorkOrder.getSpinnerWorkCenters();
             return woWorkCenters;
         }
     }
 
     public ArrayList<SpinnerItem> getWoMaintActivityTypes() {
-        if(woMaintActivityTypes.size() == 0)
+        if (woMaintActivityTypes.size() == 0)
             woMaintActivityTypes = WorkOrder.getSpinnerPMActivityTypes();
         return woMaintActivityTypes;
     }
 
     public ArrayList<SpinnerItem> getWoUserStatuses() {
-        if(woUserStatuses.size() == 0)
+        if (woUserStatuses.size() == 0)
             woUserStatuses = WorkOrder.getSpinnerUserStatuses();
         return woUserStatuses;
     }
 
     public ArrayList<SpinnerItem> getWoTechnicians() {
-        if(woTechnicians.size() == 0){
-            if(ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.OperationLevel.getAssignmentTypeText())){
+        if (woTechnicians.size() == 0) {
+            if (ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.OperationLevel.getAssignmentTypeText())) {
                 woTechnicians = WorkOrder.getSpinnerOperationTechnicians();
-            } else if(ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.WorkOrderLevel.getAssignmentTypeText())){
+            } else if (ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.WorkOrderLevel.getAssignmentTypeText())) {
                 woTechnicians = WorkOrder.getSpinnerWorkOrderTechnicians();
             }
         }
@@ -714,8 +731,20 @@ public class DashBoardViewModel extends BaseViewModel {
     }
 
     public ArrayList<SpinnerItem> getNoWOConversion() {
-        noWOConversion.add(new SpinnerItem("0","Order Created"));
-        noWOConversion.add(new SpinnerItem("1","Order Not Created"));
+        noWOConversion.add(new SpinnerItem("0", "Order Created"));
+        noWOConversion.add(new SpinnerItem("1", "Order Not Created"));
         return noWOConversion;
+    }
+
+    public ArrayList<SpinnerItem> getWoInspLotSpinnerItems() {
+        woInspLotSpinnerItems.add(new SpinnerItem("0", "Inspection Complete"));
+        woInspLotSpinnerItems.add(new SpinnerItem("1", "Inspection InComplete"));
+        return woInspLotSpinnerItems;
+    }
+
+    public ArrayList<SpinnerItem> getWOSysStatus() {
+        if (woSysStatusSpinnerItems.size() == 0)
+            woSysStatusSpinnerItems = WorkOrder.getSpinnerSysStatuses();
+        return woSysStatusSpinnerItems;
     }
 }

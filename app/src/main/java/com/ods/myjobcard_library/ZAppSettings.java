@@ -5,7 +5,6 @@ import android.content.Context;
 import com.ods.ods_sdk.AppSettings;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class ZAppSettings extends AppSettings {
     // public static String App_Name = "com.ods.myJobCard"; //"com.sap.wmUpd";

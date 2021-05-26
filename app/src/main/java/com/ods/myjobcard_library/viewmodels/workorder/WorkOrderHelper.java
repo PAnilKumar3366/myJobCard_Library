@@ -74,10 +74,6 @@ public class WorkOrderHelper {
                 WoFilterQuery.append("Unassigned eq'").append(queryMap.get("Unassigned")).append("' and ");
             if (queryMap.containsKey("Priority"))
                 WoFilterQuery.append("Priority eq '").append(queryMap.get("Priority")).append("' and ");
-            if (queryMap.containsKey("From"))
-                WoFilterQuery.append("CreatedOn eq datetime'").append(queryMap.get("From")).append("' and ");
-            if (queryMap.containsKey("To"))
-                WoFilterQuery.append("ChangeDtForOrderMaster eq datetime'").append(queryMap.get("To")).append("' and ");
             if (queryMap.containsKey("Plant"))
                 WoFilterQuery.append("Plant eq '").append(queryMap.get("Plant")).append("' and ");
             if (queryMap.containsKey("EquipNum"))
@@ -86,6 +82,13 @@ public class WorkOrderHelper {
                 WoFilterQuery.append("FuncLocation eq '").append(queryMap.get("FuncLocation")).append("' and ");
             if (queryMap.containsKey("MainWorkCtr"))
                 WoFilterQuery.append("MainWorkCtr eq '").append(queryMap.get("MainWorkCtr")).append("' and ");
+            if (queryMap.containsKey("EnteredBy"))
+                WoFilterQuery.append("EnteredBy eq '").append(queryMap.get("EnteredBy")).append("' and ");
+            if (queryMap.containsKey("From"))
+                WoFilterQuery.append("CreatedOn eq datetime'").append(queryMap.get("From")).append("' and ");
+            if (queryMap.containsKey("To"))
+                WoFilterQuery.append("ChangeDtForOrderMaster eq datetime'").append(queryMap.get("To")).append("' and ");
+
             String finalQuery = " " + WoFilterQuery.toString();
             WoFilterQuery.delete(finalQuery.length() - 6, WoFilterQuery.length());
             if (fetchOpr)
@@ -99,17 +102,11 @@ public class WorkOrderHelper {
         }
         return WoFilterQuery.toString();
     }
-
     public String getOnlineQuery(Map<String, String> mapQuery) {
         return getQuery(mapQuery);
     }
 
-    /**
-     * Fetching the online Work Orders as ZODataEntity List and set the LiveData
-     *
-     * @param filterQuery which is the final query and pass the final query to the OnlineAsyncHelper.
-     */
-    /**/
+
     public void getWorkOrderOnline(String filterQuery) {
         getEntitiesOnline(filterQuery);
     }

@@ -257,6 +257,24 @@ public class FormAssignmentSetModel extends ZBaseEntity {
             return new ResponseObject(ZConfigManager.Status.Error);
     }
 
+    /*public static ArrayList<FormAssignmentSetModel> getAllForms(){
+        ArrayList<FormAssignmentSetModel> allForms= null;
+        try {
+            allForms = new ArrayList<>();
+            String entitySetName = ZCollections.FORM_ASSIGNMENT_COLLECTION;
+            //ControlKey eq '" + controlKey + "' and OrderType eq '" + orderType + "'
+            String strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION;
+            ResponseObject result = getObjectsFromEntity(entitySetName, strResPath);
+            if (!result.isError())
+                allForms= (ArrayList<FormAssignmentSetModel>) result.Content();
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(FormAssignmentSetModel.class.getClass(), AppSettings.LogLevel.Error,e.getMessage());
+            return allForms;
+        }
+        return allForms;
+
+    }*/
     public String getFormID() {
         return FormID;
     }

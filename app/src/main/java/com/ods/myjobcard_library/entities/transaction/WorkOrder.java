@@ -168,6 +168,126 @@ public class WorkOrder extends ZBaseEntity {
     private String OnlineSearch;
     private String SuperiorOrder;
 
+    private String TechID;
+
+    public static ResponseObject getWorkOrders(ZAppSettings.FetchLevel woFetchLevel, String OrderNum, String OrderByCriteria) {
+
+        ResponseObject result = null;
+        ResponseObject resultAddress = null;
+        String resourcePath = null;
+        boolean fetchAddress = false;
+        ArrayList<PartnerAddress> partnerAddresses = null;
+        String strOrderBy = "&$orderby=";
+        String strOrderByURI = null;
+        String strEntitySet = null;
+        String filterStart = "$filter=(";
+        String filterQuery = null;
+        String filterClose = ")";
+        String filterQueryURI = null;
+        try {
+            if (OrderByCriteria == null || OrderByCriteria.isEmpty())
+                OrderByCriteria = "BasicFnshDate, Priority, WorkOrderNum";
+            strOrderByURI = strOrderBy + OrderByCriteria;
+            strEntitySet = ZCollections.WO_COLLECTION;
+            /*filterQuery = "MobileObjStatus ne '" + ZAppSettings.MobileStatus.COMPLETE.getMobileStatusCode() + "' and MobileObjStatus ne '" + ZAppSettings.MobileStatus.SUSPEND.getMobileStatusCode() + "'" +
+                    " and MobileObjStatus ne '" + ZAppSettings.MobileStatus.TRANSFER.getMobileStatusCode() + "'";
+            filterQueryURI = filterStart + filterQuery + filterClose;*/
+            switch (woFetchLevel) {
+                case ListMap:
+                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible,EnteredBy,MaintPlant,ResponsiblPlannerGrp,SuperiorOrder" + strOrderByURI;
+                    fetchAddress = true;
+                    break;
+                case List:
+                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,EnteredBy,PersonResponsible,EnteredBy,MaintPlant,ResponsiblPlannerGrp,SuperiorOrder" + strOrderByURI;
+                    fetchAddress = true;
+                    break;
+                case ListSpinner:
+                    filterQuery = "TempID eq ''";
+                    filterQueryURI = filterStart + filterQuery + filterClose;
+                    //resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType&$expand=NAVOPERA";
+                    resourcePath = strEntitySet + "?" + filterQueryURI + "&$select=WorkOrderNum,OrderType,EnteredBy";
+                    break;
+                case Header:
+                    resourcePath = strEntitySet;
+                    break;
+                case Single:
+                    if (OrderNum != null && OrderNum.length() > 0) {
+                        resourcePath = strEntitySet + "?$filter=(WorkOrderNum eq '" + OrderNum + "')";
+                        fetchAddress = !OrderNum.startsWith(ZCollections.TEMP_ID_PREFIX);
+                        /*if (OrderNum.startsWith(ZCollections.TEMP_ID_PREFIX)) {
+//                            resourcePath = strEntitySet + "?$filter=(TempID%20eq%20%27" + OrderNum + "%27)&$expand=NAVOPERA/OPERATOPRT";
+                              resourcePath = strEntitySet + "?$filter=(TempID eq '" + OrderNum + "' or WorkOrderNum eq '"+ OrderNum +"')";
+                        } else {
+//                            resourcePath = strEntitySet + "?$filter=(WorkOrderNum%20eq%20%27" + OrderNum + "%27)&$expand=NAVOPERA/OPERATOPRT";
+                            resourcePath = strEntitySet + "?$filter=(WorkOrderNum%20eq%20%27" + OrderNum + "%27)";
+                        }*/
+                    }
+                    break;
+                case All:
+//                    resourcePath = strEntitySet + "?$expand=NAVOPERA/OPERATOPRT";
+                    resourcePath = strEntitySet;
+                    fetchAddress = true;
+                    break;
+                default:
+//                    resourcePath = strEntitySet + "?$expand=NAVOPERA/OPERATOPRT";
+                    resourcePath = strEntitySet;
+                    fetchAddress = true;
+                    break;
+            }
+            result = DataHelper.getInstance().getEntities(strEntitySet, resourcePath);
+            if (result != null && !result.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
+                result = FromEntity(entities, fetchAddress, woFetchLevel);
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+            return new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
+        }
+        return result;
+    }
+
+    public static ResponseObject getFilteredWorkOrders(@NonNull String filterQuery, ZAppSettings.FetchLevel fetchLevel, String OrderByCriteria) {
+        ResponseObject result = null;
+        String entitySetName = ZCollections.WO_COLLECTION;
+        String resPath = entitySetName;
+        String orderByUrl = "$orderby=";
+        boolean fetchAddress = false;
+        try {
+            if (OrderByCriteria == null || OrderByCriteria.isEmpty())
+                OrderByCriteria = "BasicFnshDate, Priority, WorkOrderNum";
+            orderByUrl += OrderByCriteria;
+            if (!filterQuery.isEmpty()) {
+                if (fetchLevel == ZAppSettings.FetchLevel.Count)
+                    resPath += "/$count" + filterQuery;
+                else
+                    resPath += filterQuery + "&";
+            } else
+                resPath += "?";
+            switch (fetchLevel) {
+                case List:
+                case ListWithStatusAllowed:
+                    resPath += "$select=WorkOrderNum,SysStatus,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,PersonResponsible,SuperiorOrder,EnteredBy,MaintPlant,ResponsiblPlannerGrp" + "&" + orderByUrl;
+                    break;
+                case ListMap:
+                    resPath += "$select=WorkOrderNum,SysStatus,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible,SuperiorOrder,EnteredBy,MaintPlant,ResponsiblPlannerGrp" + "&" + orderByUrl;
+                    fetchAddress = true;
+                    break;
+            }
+            result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                if (fetchLevel != ZAppSettings.FetchLevel.Count) {
+                    List<ODataEntity> entities = (List<ODataEntity>) result.Content();
+                    result = FromEntity(entities, fetchAddress, fetchLevel);
+                } else
+                    return result;
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+            result = new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
+        }
+        return result;
+    }
+
     public WorkOrder(String orderId) {
         super();
         partnerAddresses = new ArrayList<PartnerAddress>();
@@ -261,80 +381,8 @@ public class WorkOrder extends ZBaseEntity {
         return searchedWOs;
     }
 
-    public static ResponseObject getWorkOrders(ZAppSettings.FetchLevel woFetchLevel, String OrderNum, String OrderByCriteria) {
-
-        ResponseObject result = null;
-        ResponseObject resultAddress = null;
-        String resourcePath = null;
-        boolean fetchAddress = false;
-        ArrayList<PartnerAddress> partnerAddresses = null;
-        String strOrderBy = "&$orderby=";
-        String strOrderByURI = null;
-        String strEntitySet = null;
-        String filterStart = "$filter=(";
-        String filterQuery = null;
-        String filterClose = ")";
-        String filterQueryURI = null;
-        try {
-            if (OrderByCriteria == null || OrderByCriteria.isEmpty())
-                OrderByCriteria = "BasicFnshDate, Priority, WorkOrderNum";
-            strOrderByURI = strOrderBy + OrderByCriteria;
-            strEntitySet = ZCollections.WO_COLLECTION;
-            /*filterQuery = "MobileObjStatus ne '" + ZAppSettings.MobileStatus.COMPLETE.getMobileStatusCode() + "' and MobileObjStatus ne '" + ZAppSettings.MobileStatus.SUSPEND.getMobileStatusCode() + "'" +
-                    " and MobileObjStatus ne '" + ZAppSettings.MobileStatus.TRANSFER.getMobileStatusCode() + "'";
-            filterQueryURI = filterStart + filterQuery + filterClose;*/
-            switch (woFetchLevel) {
-                case ListMap:
-                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible,SuperiorOrder" + strOrderByURI;
-                    fetchAddress = true;
-                    break;
-                case List:
-                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,PersonResponsible,SuperiorOrder" + strOrderByURI;
-                    fetchAddress = true;
-                    break;
-                case ListSpinner:
-                    filterQuery = "TempID eq ''";
-                    filterQueryURI = filterStart + filterQuery + filterClose;
-                    //resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType&$expand=NAVOPERA";
-                    resourcePath = strEntitySet + "?" + filterQueryURI + "&$select=WorkOrderNum,OrderType";
-                    break;
-                case Header:
-                    resourcePath = strEntitySet;
-                    break;
-                case Single:
-                    if (OrderNum != null && OrderNum.length() > 0) {
-                        resourcePath = strEntitySet + "?$filter=(WorkOrderNum eq '" + OrderNum + "')";
-                        fetchAddress = !OrderNum.startsWith(ZCollections.TEMP_ID_PREFIX);
-                        /*if (OrderNum.startsWith(ZCollections.TEMP_ID_PREFIX)) {
-//                            resourcePath = strEntitySet + "?$filter=(TempID%20eq%20%27" + OrderNum + "%27)&$expand=NAVOPERA/OPERATOPRT";
-                              resourcePath = strEntitySet + "?$filter=(TempID eq '" + OrderNum + "' or WorkOrderNum eq '"+ OrderNum +"')";
-                        } else {
-//                            resourcePath = strEntitySet + "?$filter=(WorkOrderNum%20eq%20%27" + OrderNum + "%27)&$expand=NAVOPERA/OPERATOPRT";
-                            resourcePath = strEntitySet + "?$filter=(WorkOrderNum%20eq%20%27" + OrderNum + "%27)";
-                        }*/
-                    }
-                    break;
-                case All:
-//                    resourcePath = strEntitySet + "?$expand=NAVOPERA/OPERATOPRT";
-                    resourcePath = strEntitySet;
-                    fetchAddress = true;
-                    break;
-                default:
-//                    resourcePath = strEntitySet + "?$expand=NAVOPERA/OPERATOPRT";
-                    resourcePath = strEntitySet;
-                    fetchAddress = true;
-                    break;
-            }
-            result = DataHelper.getInstance().getEntities(strEntitySet, resourcePath);
-            if (result != null && !result.isError()) {
-                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
-                result = FromEntity(entities, fetchAddress, woFetchLevel);
-            }
-        } catch (Exception e) {
-            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
-            return new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
-        }
-        return result;
+    public String getTechID() {
+        return TechID;
     }
 
     public static int getWorkOrdersCountByPriority(String priority) {
@@ -379,46 +427,8 @@ public class WorkOrder extends ZBaseEntity {
         return 0;
     }
 
-    public static ResponseObject getFilteredWorkOrders(@NonNull String filterQuery, ZAppSettings.FetchLevel fetchLevel, String OrderByCriteria) {
-        ResponseObject result = null;
-        String entitySetName = ZCollections.WO_COLLECTION;
-        String resPath = entitySetName;
-        String orderByUrl = "$orderby=";
-        boolean fetchAddress = false;
-        try {
-            if (OrderByCriteria == null || OrderByCriteria.isEmpty())
-                OrderByCriteria = "BasicFnshDate, Priority, WorkOrderNum";
-            orderByUrl += OrderByCriteria;
-            if (!filterQuery.isEmpty()) {
-                if (fetchLevel == ZAppSettings.FetchLevel.Count)
-                    resPath += "/$count" + filterQuery;
-                else
-                    resPath += filterQuery + "&";
-            } else
-                resPath += "?";
-            switch (fetchLevel) {
-                case List:
-                case ListWithStatusAllowed:
-                    resPath += "$select=WorkOrderNum,SysStatus,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,PersonResponsible,SuperiorOrder" + "&" + orderByUrl;
-                    break;
-                case ListMap:
-                    resPath += "$select=WorkOrderNum,SysStatus,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible,SuperiorOrder" + "&" + orderByUrl;
-                    fetchAddress = true;
-                    break;
-            }
-            result = DataHelper.getInstance().getEntities(entitySetName, resPath);
-            if (result != null && !result.isError()) {
-                if (fetchLevel != ZAppSettings.FetchLevel.Count) {
-                    List<ODataEntity> entities = (List<ODataEntity>) result.Content();
-                    result = FromEntity(entities, fetchAddress, fetchLevel);
-                } else
-                    return result;
-            }
-        } catch (Exception e) {
-            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
-            result = new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
-        }
-        return result;
+    public void setTechID(String techID) {
+        TechID = techID;
     }
 
     private static ResponseObject FromEntity(List<ODataEntity> entities, boolean fetchAddress, ZAppSettings.FetchLevel fetchLevel) {
@@ -574,6 +584,19 @@ public class WorkOrder extends ZBaseEntity {
     public static ArrayList<SpinnerItem> getSpinnerUserStatuses() {
         ArrayList<SpinnerItem> spinnerStatuses = new ArrayList<>();
         ArrayList<String> statuses = getAllDistinctUserStatuses();
+        for (String status : statuses) {
+            if (!status.isEmpty())
+                spinnerStatuses.add(new SpinnerItem(status, status));
+        }
+        return spinnerStatuses;
+    }
+
+    /**
+     * @return ArrayList of SpinnerItem of all distinct systemStatus among all workorders
+     */
+    public static ArrayList<SpinnerItem> getSpinnerSysStatuses() {
+        ArrayList<SpinnerItem> spinnerStatuses = new ArrayList<>();
+        ArrayList<String> statuses = getAllDistinctSysStatus();
         for (String status : statuses) {
             if (!status.isEmpty())
                 spinnerStatuses.add(new SpinnerItem(status, status));
@@ -811,6 +834,39 @@ public class WorkOrder extends ZBaseEntity {
             }
         }
         return spinnerTechnicians;
+    }
+
+    /**
+     * @return ArrayList of all distinct System Status among all workorder operations
+     */
+    public static ArrayList<String> getAllDistinctSysStatus() {
+        ArrayList<String> statuses = new ArrayList<>();
+        try {
+            String resPath = ZCollections.WO_COLLECTION + "?$select=SysStatus";
+            ResponseObject response = DataHelper.getInstance().getEntities(ZCollections.WO_COLLECTION, resPath);
+            if (response != null && !response.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) response.Content();
+                if (entities != null && entities.size() > 0) {
+                    for (ODataEntity entity : entities) {
+                        String userStatus = String.valueOf(entity.getProperties().get("SysStatus").getValue());
+                        String[] userStatuses;
+                        if (userStatus.contains(" ")) {
+                            userStatuses = userStatus.split(" ");
+                            if (userStatuses.length > 0) {
+                                statuses.addAll(Arrays.asList(userStatuses));
+                            }
+                        } else
+                            statuses.add(userStatus);
+                    }
+                    Set<String> strings = new HashSet<String>(statuses);
+                    statuses.clear();
+                    statuses.addAll(strings);
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return statuses;
     }
 
     @Override

@@ -73,43 +73,49 @@ public class OnlineNotifiListViewModel extends BaseViewModel {
         ArrayList<Notification> filterList = new ArrayList<>();
         filterList.addAll(onlineNotificationsList);
         try {
-            for (Notification order : onlineNotificationsList) {
+            for (Notification notification : onlineNotificationsList) {
                 if (filterHashmap.containsKey("Priority")) {
-                    if (!filterHashmap.get("Priority").contains(order.getPriority())) {
-                        filterList.remove(order);
+                    if (!filterHashmap.get("Priority").contains(notification.getPriority())) {
+                        filterList.remove(notification);
                         continue;
                     }
                 }
                 if (filterHashmap.containsKey("NotificationType")) {
-                    if (!filterHashmap.get("NotificationType").contains(order.getNotificationType())) {
-                        filterList.remove(order);
+                    if (!filterHashmap.get("NotificationType").contains(notification.getNotificationType())) {
+                        filterList.remove(notification);
                         continue;
                     }
                 }
                 if (filterHashmap.containsKey("Status")) {
-                    if (!filterHashmap.get("Status").contains(order.getUserStatus())) {
-                        filterList.remove(order);
+                    if (!filterHashmap.get("Status").contains(notification.getUserStatus())) {
+                        filterList.remove(notification);
                         continue;
                     }
                 }
                 if (filterHashmap.containsKey("MainWorkCenter")) {
-                    if (!filterHashmap.get("MainWorkCenter").contains(order.getWorkCenter())) {
-                        filterList.remove(order);
+                    if (!filterHashmap.get("MainWorkCenter").contains(notification.getWorkCenter())) {
+                        filterList.remove(notification);
                         continue;
                     }
                 }
 
                 if (filterHashmap.containsKey("TechId")) {
                     ArrayList<String> techID = filterHashmap.get("TechId");
-                    if (!isTwoNumericStringValuesEqual(techID.get(0), order.getPartner())) {
-                        filterList.remove(order);
+                    if (!isTwoNumericStringValuesEqual(techID.get(0), notification.getPartner())) {
+                        filterList.remove(notification);
+                        continue;
                     }
                 }
-
+                if (filterHashmap.containsKey("CreatedByMe")) {                           //Newley Added by Anil.
+                    ArrayList<String> createdBy = filterHashmap.get("CreatedByMe");
+                    if (createdBy.get(0).contains(notification.getEnteredBy().toUpperCase()))
+                        filterList.remove(notification);
+                }
             }
             filterNotifications.setValue(filterList);
         } catch (Exception e) {
             e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
         }
 
     }

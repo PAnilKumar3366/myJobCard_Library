@@ -65,10 +65,6 @@ public class NotificationHelper {
             NoFilterQuery.append("?$filter=(OnlineSearch eq 'X' and ");
             if (queryMap.containsKey("Priority"))
                 NoFilterQuery.append("Priority eq '").append(queryMap.get("Priority")).append("' and ");
-            if (queryMap.containsKey("From"))
-                NoFilterQuery.append("CreatedOn eq datetime'").append(queryMap.get("From")).append("' and ");
-            if (queryMap.containsKey("To"))
-                NoFilterQuery.append("ChangedOn eq datetime'").append(queryMap.get("To")).append("' and ");
             if (queryMap.containsKey("Plant"))
                 NoFilterQuery.append("PlanningPlant eq '").append(queryMap.get("Plant")).append("' and ");
             if (queryMap.containsKey("EquipNum"))
@@ -77,6 +73,13 @@ public class NotificationHelper {
                 NoFilterQuery.append("FunctionalLoc eq '").append(queryMap.get("FuncLocation")).append("' and ");
             if (queryMap.containsKey("MainWorkCtr"))
                 NoFilterQuery.append("WorkCenter eq '").append(queryMap.get("MainWorkCtr")).append("' and ");
+            if (queryMap.containsKey("EnteredBy"))
+                NoFilterQuery.append("EnteredBy eq '").append(queryMap.get("EnteredBy")).append("' and ");
+            if (queryMap.containsKey("From"))
+                NoFilterQuery.append("CreatedOn eq datetime'").append(queryMap.get("From")).append("' and ");
+            if (queryMap.containsKey("To"))
+                NoFilterQuery.append("ChangedOn eq datetime'").append(queryMap.get("To")).append("' and ");
+
             String finalQuery = " " + NoFilterQuery.toString();
             NoFilterQuery.delete(finalQuery.length() - 6, NoFilterQuery.length());
             if (fetchNOItems)
