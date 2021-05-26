@@ -79,11 +79,27 @@ public class DisplayFormsViewModel extends ViewModel {
             controlKey = "";*/
             list=FormAssignmentSetModel.getFormAssignmentData_OrderType(orderType);
         } else if (type.equals(ZAppSettings.FormAssignmentType.OperationLevel.Value)) {
-            controlKey = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? workOrder.getCurrentOperation().getControlKey() : "";
+            /*controlKey = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? workOrder.getCurrentOperation().getControlKey() : "";
             orderType = workOrder.getOrderType();
-            /*equipmentCat = "";
-            funcLocCat = "";*/
-            list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);
+            *//*equipmentCat = "";
+            funcLocCat = "";*//*
+            list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);*/
+            if(!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED){
+                list.clear();
+                ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
+                ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
+                for (Operation operation : totalOperations) {
+                    controlKey = operation.getControlKey();
+                    orderType = operation.getOrderType();
+                    list.addAll(FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey));
+                    //list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);
+                }
+            }
+            else {
+                orderType = workOrder.getOrderType();
+                controlKey = workOrder.getCurrentOperation().getControlKey();
+                list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);
+            }
         } else if (type.equals(ZAppSettings.FormAssignmentType.Equipment.Value)) {
             //funcLocCat = "";
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)

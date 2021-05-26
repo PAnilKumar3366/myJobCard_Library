@@ -70,6 +70,11 @@ public class ZAppSettings extends AppSettings {
         Equipment("3"),
         FuncLoc("4"),
         TaskListType("5"),
+        ManualAssignmentWO("6"),
+        ManualAssignmentOPR("7"),
+        ManualAssignmentEquip("8"),
+        ManualAssignmentFuncLoc("9"),
+        TaskListWithManualAssignOPR("10"),
         None("");
 
         public final String Value;
@@ -441,10 +446,10 @@ public class ZAppSettings extends AppSettings {
 
     public enum ObjectEntity {
 
-        Notification("NotificationHeaderSet", "com.ods.myjobcard.types.Notification", "NotificationHeaderSet"),
-        User("User", "com.ods.myjobcard.types.ctentities.UserTable", "AppUserTableSet"),
-        WorkOrder("WorkOrder", "com.ods.myjobcard.types.WorkOrder", "WoHeaderSet"),
-        Operation("Operation", "com.ods.myjobcard.types.Operation", "WOOperationCollection"),
+        Notification("NotificationHeaderSet", "com.ods.myjobcard_library.entities.transaction.Notification", "NotificationHeaderSet"),
+        User("User", "com.ods.myjobcard_library.entities.ctentities.UserTable", "AppUserTableSet"),
+        WorkOrder("WorkOrder", "com.ods.myjobcard_library.entities.transaction.WorkOrder", "WoHeaderSet"),
+        Operation("Operation", "com.ods.myjobcard_library.entities.transaction.Operation", "WOOperationCollection"),
         ;
 
         String key;
