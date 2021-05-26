@@ -112,6 +112,7 @@ public class OnlineListViewModel extends BaseViewModel {
     public void fetchWorkOrdersOnline(HashMap<String, String> mapQuery) {
         try {
             workOrderHelper = new WorkOrderHelper();
+            workOrderHelper.setFetchOpr(fetchOpr);
             String finalQuery = workOrderHelper.getOnlineQuery(mapQuery);
             if (!finalQuery.isEmpty())
                 workOrderHelper.getWorkOrderOnline(finalQuery);
@@ -172,6 +173,7 @@ public class OnlineListViewModel extends BaseViewModel {
     public void fetchNotificationsOnline(HashMap<String, String> mapQuery) {
         try {
             notificationHelper = new NotificationHelper();
+            notificationHelper.setFetchNOItems(fetchNoItems);
             OnlineNoResult = notificationHelper.getOnlineNoEntity();
             NotificationObserver = new Observer<ResponseObject>() {
                 @Override

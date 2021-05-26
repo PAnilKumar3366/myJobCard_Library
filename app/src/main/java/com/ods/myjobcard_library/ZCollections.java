@@ -381,6 +381,10 @@ public class ZCollections extends Collections {
 	public static final String SEARCH_ITEM_PLANT = "Plant";
 	public static final String SEARCH_ITEM_STORAGE = "Storage Location";
 	public static final String INVALID_SERVICE_URL = "Invalid";
+	public static final String SEARCH_VERSION_ID = "Version";
+	public static final String SEARCH_FORM_NAME = "Form Name";
+	public static final String SEARCH_FORM_CATEGORY = "Category";
+
 	//public static final String INVALID_STORE_ID = "Invalid";
 	public static final boolean ENABLE_BG_SYNC = true;
 	public static final String SUPERVISOR_USER_COLLECTIONS = "UserSet";
@@ -423,11 +427,17 @@ public class ZCollections extends Collections {
 		return options;
 	}
 
-	public static ArrayList<String> getResourceSearchOptions(){
+	public static ArrayList<String> getResourceSearchOptions() {
 		ArrayList<String> options = new ArrayList<>();
 		options.add(SEARCH_OPTION_ID);
 		options.add(SEARCH_OPTION_NAME);
 		return options;
 	}
 
+	public static ArrayList<String> getCheckListSearchOptions() {
+		ArrayList<String> options = new ArrayList<>();
+		options.add(SEARCH_FORM_NAME);
+		options.add(SEARCH_FORM_CATEGORY);
+		return options;
+	}
 }

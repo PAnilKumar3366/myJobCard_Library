@@ -1,5 +1,7 @@
 package com.ods.myjobcard_library.entities.forms;
 
+import android.util.Log;
+
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
@@ -65,6 +67,45 @@ public class FormSetModel extends ZBaseEntity {
             DliteLogger.WriteLog(FormSetModel.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return formSetModels;
+    }
+
+    public static ArrayList<FormSetModel> getMasterChecklists(int skipValue, int numRecords, boolean inStockAvail) {
+        DataHelper dataHelper = null;
+        ResponseObject result = null;
+        String entitySetName = "FormMasterSet?$skip=" + skipValue + " &$top=" + numRecords;
+        String filterQuery = "";
+        filterQuery = "&$filter=";
+        String resPath = "";
+        ArrayList<FormSetModel> allCheckList = new ArrayList<>();
+        try {
+            /*if (plant != null && !plant.isEmpty()) {
+                resPath = resPath + "Plant eq '" + plant + "'";
+            }
+
+            if (storeId != null && !storeId.isEmpty()) {
+                resPath = resPath + (!resPath.isEmpty() ? " and " : "") + "MaterialStorageLocation eq '" + storeId + "'";
+            }
+
+            if (material != null && !material.isEmpty()) {
+                resPath = resPath + (!resPath.isEmpty() ? " and " : "") + "Material eq '" + material + "'";
+            }
+
+            if (inStockAvail) {
+                resPath = resPath + (!resPath.isEmpty() ? " and " : "") + "Stock gt 0";
+            }*/
+
+            resPath = entitySetName + resPath;
+            dataHelper = DataHelper.getInstance();
+            result = dataHelper.getEntities("FormMasterSet", resPath);
+            result = FromEntity((List) result.Content());
+            allCheckList = (ArrayList<FormSetModel>) result.Content();
+        } catch (Exception var12) {
+            Log.e(FormSetModel.class.getName(), "getMasterChecklists: " + var12.getMessage());
+            DliteLogger.WriteLog(FormSetModel.class, ZAppSettings.LogLevel.Error, var12.getMessage());
+            return allCheckList;
+        }
+
+        return allCheckList;
     }
 
     private static ResponseObject FromEntity(List<ODataEntity> entities) {
