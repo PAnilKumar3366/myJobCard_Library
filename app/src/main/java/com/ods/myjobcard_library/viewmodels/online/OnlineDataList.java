@@ -21,7 +21,7 @@ public class OnlineDataList implements Serializable {
 
         //Prevent form the reflection api.
         if (sSoleInstance != null) {
-            throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
+                throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
         }
     }
 

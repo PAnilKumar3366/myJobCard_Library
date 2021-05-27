@@ -37,10 +37,12 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
     private String OprNum;
 
 
-    public ManualFormAssignmentSetModel(String FormVersion, String FormName, String Mandatory) {
+    public ManualFormAssignmentSetModel(String FormVersion, String FormName, String Mandatory, String MultipleSub, String Occur) {
         this.Version = FormVersion;
         this.FormID = FormName;
         this.Mandatory = Mandatory;
+        this.Occur = Occur;
+        this.MultipleSub = MultipleSub;
     }
 
     public ManualFormAssignmentSetModel(ODataEntity entity) {

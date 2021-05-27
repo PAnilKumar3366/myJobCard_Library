@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.entities.forms.FormListObject;
 import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
+import com.ods.myjobcard_library.utils.ManualCheckSheetData;
 import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.util.ArrayList;
@@ -16,43 +17,33 @@ public class ManualFormAssListViewModel extends BaseViewModel {
 
     private MutableLiveData<ArrayList<ManualFormAssignmentSetModel>> manualListLiveData;
     private MutableLiveData<ArrayList<FormListObject>> manualFormList = new MutableLiveData<>();
+    ManualCheckSheetData manualCheckSheetData;
+    private MutableLiveData<ArrayList<ManualFormAssignmentSetModel>> newCheckSheetsLiveData = new MutableLiveData<>();
+    private ArrayList<ManualFormAssignmentSetModel> dummyList = new ArrayList<>();
 
     public ManualFormAssListViewModel(@NonNull @org.jetbrains.annotations.NotNull Application application) {
         super(application);
         manualListLiveData = new MutableLiveData<>();
+        // manualCheckSheetData=ManualCheckSheetData.getInstance();
     }
 
-    public void setManualFormList() {
-
-        ArrayList<FormListObject> formListObjects = new ArrayList<>();
-        String[] FormName = {"CreateNotification", "InspectionForm", "Covid-Form"};
-        String[] Version = {"1.0", "2.0", "3.0"};
-        String[] Mandatory = {"X", "X", ""};
-        String[] MultipleSub = {"X", "X", ""};
-        int[] Occur = {4, 5, 3};
-        int[] filledForm = {2, 2, 2};
-        for (int i = 0; i < 3; i++)
-            formListObjects.add(new FormListObject(FormName[i], "", Version[i], Mandatory[i], Occur[i], MultipleSub[i], filledForm[i], "", false));
-        manualFormList.setValue(formListObjects);
-    }
-
-    public MutableLiveData<ArrayList<FormListObject>> getManualFormList() {
-        return manualFormList;
-    }
-
-    public void setManualFormList(ArrayList<FormListObject> listObjects) {
-        manualFormList.setValue(listObjects);
-    }
-
-    public void setManualListLiveData() {
+    public void setManualListLiveData(ArrayList<ManualFormAssignmentSetModel> existedList) {
         try {
-
-            String[] FormName = {"CreateNotification", "InspectionForm", "Covid-Form"};
-            String[] Version = {"1.0", "2.0", "3.0"};
-            String[] Mandatory = {"Yes", "Yes", "No"};
-            ArrayList<ManualFormAssignmentSetModel> dummyList = new ArrayList<>();
-            for (int i = 0; i < 3; i++)
-                dummyList.add(new ManualFormAssignmentSetModel(Version[i], FormName[i], Mandatory[i]));
+            if (existedList.size() > 0) {
+                dummyList.clear();
+                ManualCheckSheetData.getInstance().getManualCheckSheetList().clear();
+            }
+            dummyList.addAll(existedList);
+            if (dummyList.size() == 0) {
+                String[] FormName = {"CreateNotification", "InspectionForm", "Covid-Form"};
+                String[] Version = {"1.0", "2.0", "3.0"};
+                String[] Mandatory = {"X", "X", ""};
+                String[] MultipleSub = {"X", "X", "X"};
+                String[] Occur = {"4", "5", "3"};
+                for (int i = 0; i < 3; i++)
+                    dummyList.add(new ManualFormAssignmentSetModel(Version[i], FormName[i], Mandatory[i], MultipleSub[i], Occur[i]));
+            }
+            ManualCheckSheetData.getInstance().setManualCheckSheetList(dummyList);
             manualListLiveData.setValue(dummyList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,7 +56,19 @@ public class ManualFormAssListViewModel extends BaseViewModel {
         return manualListLiveData;
     }
 
-    public void setManualListLiveData(ArrayList<ManualFormAssignmentSetModel> selectedList) {
+    public MutableLiveData<ArrayList<ManualFormAssignmentSetModel>> getNewCheckSheetsLiveData() {
+        return newCheckSheetsLiveData;
+    }
+
+    public void setNewCheckSheetsLiveData(ArrayList<ManualFormAssignmentSetModel> selectedList) {
+        dummyList.addAll(selectedList);
+        ManualCheckSheetData.getInstance().setManualCheckSheetList(selectedList);
         manualListLiveData.setValue(selectedList);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        dummyList.clear();
     }
 }
