@@ -1,10 +1,11 @@
 package com.ods.myjobcard_library.viewmodels.workorder;
 
+import android.app.Application;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZConfigManager;
@@ -12,22 +13,28 @@ import com.ods.myjobcard_library.entities.ResponseMasterModel;
 import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
 import com.ods.myjobcard_library.entities.forms.FormListObject;
 import com.ods.myjobcard_library.entities.forms.FormSetModel;
+import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
 import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
+import com.ods.myjobcard_library.utils.ManualCheckSheetData;
+import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DisplayFormsViewModel extends ViewModel {
+public class DisplayFormsViewModel extends BaseViewModel {
 
     private boolean isTaskType = false;
     private final MutableLiveData<ArrayList<FormListObject>> formItems = new MutableLiveData<ArrayList<FormListObject>>();
     private final MutableLiveData<ArrayList<FormListObject>> formFilledItems = new MutableLiveData<ArrayList<FormListObject>>();
     private final MutableLiveData<ArrayList<FormListObject>> generalFormItems = new MutableLiveData<ArrayList<FormListObject>>();
+    private MutableLiveData<ArrayList<ManualFormAssignmentSetModel>> manualCheckSheetLiveData = new MutableLiveData<>();
 
     String orderType, wo_Number, opr_Num, equipmentCat, funcLocCat, controlKey, taskListType, group, groupCounter, internalCounter;
     List<FormListObject> responseMasterModel = new ArrayList<>();
@@ -37,6 +44,10 @@ public class DisplayFormsViewModel extends ViewModel {
     private ArrayList<FormListObject> formItemsList = new ArrayList<>();
     private ArrayList<FormListObject> generalFormItemsList = new ArrayList<>();
     private ArrayList<FormListObject> formFilledItemsList = new ArrayList<>();
+
+    public DisplayFormsViewModel(@NonNull @NotNull Application application) {
+        super(application);
+    }
 
     public LiveData<ArrayList<FormListObject>> getFormItems() {
         return formItems;
@@ -71,13 +82,18 @@ public class DisplayFormsViewModel extends ViewModel {
         getGeneralFormItemsList();
     }
 
+    public MutableLiveData<ArrayList<ManualFormAssignmentSetModel>> getManualCheckSheetLiveData() {
+        manualCheckSheetLiveData.setValue(ManualCheckSheetData.getInstance().getManualCheckSheetList());
+        return manualCheckSheetLiveData;
+    }
+
     protected void getOrderType(WorkOrder workOrder, String type) {
         if (type.equals(ZAppSettings.FormAssignmentType.WorkOrderLevel.Value)) {
             orderType = workOrder.getOrderType();
            /* equipmentCat = "";
             funcLocCat = "";
             controlKey = "";*/
-            list=FormAssignmentSetModel.getFormAssignmentData_OrderType(orderType);
+            list = FormAssignmentSetModel.getFormAssignmentData_OrderType(orderType);
         } else if (type.equals(ZAppSettings.FormAssignmentType.OperationLevel.Value)) {
             /*controlKey = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? workOrder.getCurrentOperation().getControlKey() : "";
             orderType = workOrder.getOrderType();
