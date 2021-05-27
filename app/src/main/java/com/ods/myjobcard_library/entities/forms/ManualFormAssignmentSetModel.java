@@ -1,6 +1,7 @@
 package com.ods.myjobcard_library.entities.forms;
 
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
 import java.util.GregorianCalendar;
@@ -44,6 +45,10 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
     }
 
     public ManualFormAssignmentSetModel(ODataEntity entity) {
+        create(entity);
+    }
+
+    public ManualFormAssignmentSetModel(ZODataEntity entity) {
         create(entity);
     }
 
