@@ -24,8 +24,6 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
     private GregorianCalendar ModifiedOn;
     private String ModifiedBy;
     private String Theme;
-    private String EquipCategory;
-    private String FuncLocCategory;
     private String Stylesheet;
 
     private String TaskListType;
@@ -173,24 +171,6 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
     public boolean isGridTheme() {
         return getTheme().toLowerCase().contains("grid");
     }
-    // this method is reading the data from offline store
-
-    public String getEquipCategory() {
-        return EquipCategory;
-    }
-
-    public void setEquipCategory(String equipCategory) {
-        EquipCategory = equipCategory;
-    }
-
-    public String getFuncLocCategory() {
-        return FuncLocCategory;
-    }
-
-    public void setFuncLocCategory(String funcLocCategory) {
-        FuncLocCategory = funcLocCategory;
-    }
-
     public boolean isGeneralForm() {
         return getCategory() != null && getCategory().equalsIgnoreCase("NonObject");
     }
