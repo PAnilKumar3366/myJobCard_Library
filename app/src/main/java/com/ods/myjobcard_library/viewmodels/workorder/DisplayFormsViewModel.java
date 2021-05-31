@@ -21,8 +21,6 @@ import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,7 +43,7 @@ public class DisplayFormsViewModel extends BaseViewModel {
     private ArrayList<FormListObject> generalFormItemsList = new ArrayList<>();
     private ArrayList<FormListObject> formFilledItemsList = new ArrayList<>();
     private ArrayList<ManualFormAssignmentSetModel> dummyList = new ArrayList<>();
-    public DisplayFormsViewModel(@NonNull @NotNull Application application) {
+    public DisplayFormsViewModel(@NonNull Application application) {
         super(application);
     }
 
