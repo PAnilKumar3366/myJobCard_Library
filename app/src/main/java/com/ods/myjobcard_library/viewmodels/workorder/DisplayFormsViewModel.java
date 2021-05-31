@@ -44,7 +44,7 @@ public class DisplayFormsViewModel extends BaseViewModel {
     private ArrayList<FormListObject> formItemsList = new ArrayList<>();
     private ArrayList<FormListObject> generalFormItemsList = new ArrayList<>();
     private ArrayList<FormListObject> formFilledItemsList = new ArrayList<>();
-
+    private ArrayList<ManualFormAssignmentSetModel> dummyList = new ArrayList<>();
     public DisplayFormsViewModel(@NonNull @NotNull Application application) {
         super(application);
     }
@@ -280,4 +280,35 @@ public class DisplayFormsViewModel extends BaseViewModel {
         }
         formFilledItems.setValue(formFilledItemsList);
     }
+
+    /**
+     * this is method prepares the dummy data.
+     *
+     * @param existedList newly added list from Add new CheckSheet
+     */
+    public void setManualListLiveData(ArrayList<ManualFormAssignmentSetModel> existedList) {
+        try {
+            if (existedList.size() > 0) {
+                dummyList.clear();
+                ManualCheckSheetData.getInstance().getManualCheckSheetList().clear();
+            }
+            dummyList.addAll(existedList);
+            if (dummyList.size() == 0) {
+                String[] FormName = {"CreateNotification", "InspectionForm", "Covid-Form"};
+                String[] Version = {"1.0", "2.0", "3.0"};
+                String[] Mandatory = {"X", "X", ""};
+                String[] MultipleSub = {"X", "X", "X"};
+                String[] Occur = {"4", "5", "3"};
+                for (int i = 0; i < 3; i++)
+                    dummyList.add(new ManualFormAssignmentSetModel(Version[i], FormName[i], Mandatory[i], MultipleSub[i], Occur[i]));
+            }
+            ManualCheckSheetData.getInstance().setManualCheckSheetList(dummyList);
+            manualCheckSheetLiveData.setValue(dummyList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            manualCheckSheetLiveData.setValue(new ArrayList<ManualFormAssignmentSetModel>());
+        }
+    }
+
 }
