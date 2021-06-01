@@ -258,6 +258,11 @@ public class ZCollections extends Collections {
     public static final String BREAKDOWN_REPORT_ENTITY_TYPE="BreakdownReport";
 	public static final String BREAKDOWN_REPORT_ENTITY_COLLECTION="BreakdownReportSet";
 
+	public static final String CAPACITY_LEVEL_ENTITY_TYPE="";
+	public static final String CAPACITY_LEVEL_ENTITY_COLLECTION="";
+
+	public static final String MANUAL_FORM_ASSIGNMENT_COLLECTION = "ManualFormAssingmentSet";
+
 	public static final String ADDR_ENTITY_TYPE =  Service_Name + "Address";
 	public static final String WO_NO_TASK_ENTITY_TYPE = "NavTask";
 	public static final String WO_NO_ACTIVITY_ENTITY_TYPE = "NavAct";

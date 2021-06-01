@@ -21,8 +21,6 @@ import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,7 +43,7 @@ public class DisplayFormsViewModel extends BaseViewModel {
     private ArrayList<FormListObject> generalFormItemsList = new ArrayList<>();
     private ArrayList<FormListObject> formFilledItemsList = new ArrayList<>();
     private ArrayList<ManualFormAssignmentSetModel> dummyList = new ArrayList<>();
-    public DisplayFormsViewModel(@NonNull @NotNull Application application) {
+    public DisplayFormsViewModel(@NonNull Application application) {
         super(application);
     }
 
@@ -95,24 +93,27 @@ public class DisplayFormsViewModel extends BaseViewModel {
             controlKey = "";*/
             list = FormAssignmentSetModel.getFormAssignmentData_OrderType(orderType);
         } else if (type.equals(ZAppSettings.FormAssignmentType.OperationLevel.Value)) {
-            if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
-                controlKey = workOrder.getCurrentOperation().getControlKey();
-                orderType = workOrder.getOrderType();
-                list = FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType, controlKey);
-            } else {
+            /*controlKey = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? workOrder.getCurrentOperation().getControlKey() : "";
+            orderType = workOrder.getOrderType();
+            *//*equipmentCat = "";
+            funcLocCat = "";*//*
+            list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);*/
+            if(!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED){
+                list.clear();
                 ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
                 ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                 for (Operation operation : totalOperations) {
-                    orderType = operation.getOrderType();
                     controlKey = operation.getControlKey();
-                    list.addAll(FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType, controlKey));
+                    orderType = operation.getOrderType();
+                    list.addAll(FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey));
+                    //list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);
                 }
             }
-            //controlKey = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? workOrder.getCurrentOperation().getControlKey() : "";
-
-            /*equipmentCat = "";
-            funcLocCat = "";*/
-
+            else {
+                orderType = workOrder.getOrderType();
+                controlKey = workOrder.getCurrentOperation().getControlKey();
+                list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);
+            }
         } else if (type.equals(ZAppSettings.FormAssignmentType.Equipment.Value)) {
             //funcLocCat = "";
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
