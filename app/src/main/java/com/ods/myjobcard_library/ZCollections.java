@@ -415,6 +415,17 @@ public class ZCollections extends Collections {
 	public static UUID OneTimeRequestId;
 	public static final String GenericNetworkError = "Unknown Network Error";
 
+	public static final String FORM_MASTER_METADATA_ENTITY_SET = "FormMasterMetadataSet";
+	public static final String FORM_MASTER_METADATA_ENTITY_TYPE = "FormMasterMetadata";
+	public static final String FROM_APPROVER_ENTITY_SET = "FormApproverSet";
+	public static final String FORM_APPROVER_ENTITY_TYPE = "FormApprover";
+	public static final String APPROVER_MASTER_DATA_ENTITY_SET = "ApproverMasterDataSet";
+	public static final String APPROVER_MASTER_DATA_ENTITY_TYPE = "ApproverMasterData";
+	public static final String DEPT_MASTER_DATA_ENTITY_SET = "DeptMasterDataSet";
+	public static final String DEPT_MASTER_DATA_ENTITY_TYPE = "ApproverMasterData";
+	public static final String FORM_INSTANCE_STATUS_ENTITY_SET = "FormInstanceStatus";
+	public static final String FORM_INSTANCE_STATUS_ENTITY_TYPE = "FormInstanceStatusSet";
+
 	public static String getEditResourcePath(String collection, String key) {
 		return String.format("%s('%s')", collection, key);
 
