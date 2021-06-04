@@ -6,44 +6,57 @@ import com.sap.smp.client.odata.ODataEntity;
 
 public class ApproverMasterData extends ZBaseEntity {
 
-    private String UserID;
-    private String UserPersonnelNum;
-    private boolean EmailID;
+    private String UserSystemID;
+    private String PersonnelNum;
+    private String EmailID;
     private boolean Active;
     private String FirstName;
     private String LastName;
     private String Contact;
     private String DepartmentID;
-    private String Role;
+    private String ApproverRole;
+    private String ApproverLevel;
     private String Plant;
+
+    public String getEmailID() {
+        return EmailID;
+    }
+
+    public void setEmailID(String emailID) {
+        EmailID = emailID;
+    }
+
+    public String getApproverLevel() {
+        return ApproverLevel;
+    }
 
     public ApproverMasterData(ODataEntity entity) {
         create(entity);
         initializeEntityProperties();
     }
 
-    public String getUserID() {
-        return UserID;
+    public void setApproverLevel(String approverLevel) {
+        ApproverLevel = approverLevel;
     }
 
-    public void setUserID(String userID) {
-        UserID = userID;
+    public String getUserSystemID() {
+        return UserSystemID;
     }
 
-    public String getUserPersonnelNum() {
-        return UserPersonnelNum;
+    public void setUserSystemID(String userSystemID) {
+        UserSystemID = userSystemID;
     }
 
-    public void setUserPersonnelNum(String userPersonnelNum) {
-        UserPersonnelNum = userPersonnelNum;
+    public String getPersonnelNum() {
+        return PersonnelNum;
     }
 
-    public boolean isEmailID() {
+    public void setPersonnelNum(String personnelNum) {
+        PersonnelNum = personnelNum;
+    }
+
+    public String isEmailID() {
         return EmailID;
-    }
-
-    public void setEmailID(boolean emailID) {
-        EmailID = emailID;
     }
 
     public boolean isActive() {
@@ -86,12 +99,12 @@ public class ApproverMasterData extends ZBaseEntity {
         DepartmentID = departmentID;
     }
 
-    public String getRole() {
-        return Role;
+    public String getApproverRole() {
+        return ApproverRole;
     }
 
-    public void setRole(String role) {
-        Role = role;
+    public void setApproverRole(String approverRole) {
+        ApproverRole = approverRole;
     }
 
     public String getPlant() {
@@ -105,8 +118,8 @@ public class ApproverMasterData extends ZBaseEntity {
     private void initializeEntityProperties() {
         this.setEntitySetName(ZCollections.APPROVER_MASTER_DATA_ENTITY_SET);
         this.setEntityType(ZCollections.APPROVER_MASTER_DATA_ENTITY_TYPE);
-        this.addKeyFieldNames("UserID");
-        this.addKeyFieldNames("UserPersonnelNum");
+        this.addKeyFieldNames("UserSystemID");
+        this.addKeyFieldNames("PersonnelNum");
         this.addKeyFieldNames("EmailID");
     }
 

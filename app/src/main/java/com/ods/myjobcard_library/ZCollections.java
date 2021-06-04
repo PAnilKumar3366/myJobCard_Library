@@ -428,8 +428,10 @@ public class ZCollections extends Collections {
 	public static final String APPROVER_MASTER_DATA_ENTITY_TYPE = "ApproverMasterData";
 	public static final String DEPT_MASTER_DATA_ENTITY_SET = "DeptMasterDataSet";
 	public static final String DEPT_MASTER_DATA_ENTITY_TYPE = "ApproverMasterData";
-	public static final String FORM_INSTANCE_STATUS_ENTITY_SET = "FormInstanceStatus";
-	public static final String FORM_INSTANCE_STATUS_ENTITY_TYPE = "FormInstanceStatusSet";
+	public static final String FORM_INSTANCE_STATUS_ENTITY_SET = "FormInstanceStatusSet";
+	public static final String FORM_INSTANCE_STATUS_ENTITY_TYPE = "FormInstanceStatus";
+	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_SET = "FormManualAssignmentSet";
+	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_TYPE = "FormManualAssignment";
 
 	public static String getEditResourcePath(String collection, String key) {
 		return String.format("%s('%s')", collection, key);

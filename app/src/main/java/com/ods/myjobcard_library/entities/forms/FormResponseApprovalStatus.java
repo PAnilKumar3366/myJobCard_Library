@@ -6,21 +6,39 @@ import com.sap.smp.client.odata.ODataEntity;
 
 import java.util.GregorianCalendar;
 
-public class FormInstanceStatus extends ZBaseEntity {
+public class FormResponseApprovalStatus extends ZBaseEntity {
 
     private String FormID;
-    private String FormVersion;
+    private String Version;
     private String FormInstanceID;
     private String ApproverID;
     private String FormSubmittedBy;
-    private String FormContentStatus;
+    private String FormInstanceStatus;
     private String Remarks;
     private GregorianCalendar CreatedDate;
     private GregorianCalendar CreatedTime;
+    private String Counter;
+    private String FormName;
 
-    public FormInstanceStatus(ODataEntity entity) {
+    public FormResponseApprovalStatus(ODataEntity entity) {
         create(entity);
         initializeEntityProperties();
+    }
+
+    public String getCounter() {
+        return Counter;
+    }
+
+    public void setCounter(String counter) {
+        Counter = counter;
+    }
+
+    public String getFormName() {
+        return FormName;
+    }
+
+    public void setFormName(String formName) {
+        FormName = formName;
     }
 
     public String getFormID() {
@@ -31,12 +49,12 @@ public class FormInstanceStatus extends ZBaseEntity {
         FormID = formID;
     }
 
-    public String getFormVersion() {
-        return FormVersion;
+    public String getVersion() {
+        return Version;
     }
 
-    public void setFormVersion(String formVersion) {
-        FormVersion = formVersion;
+    public void setVersion(String version) {
+        Version = version;
     }
 
     public String getFormInstanceID() {
@@ -63,12 +81,12 @@ public class FormInstanceStatus extends ZBaseEntity {
         FormSubmittedBy = formSubmittedBy;
     }
 
-    public String getFormContentStatus() {
-        return FormContentStatus;
+    public String getFormInstanceStatus() {
+        return FormInstanceStatus;
     }
 
-    public void setFormContentStatus(String formContentStatus) {
-        FormContentStatus = formContentStatus;
+    public void setFormInstanceStatus(String formInstanceStatus) {
+        FormInstanceStatus = formInstanceStatus;
     }
 
     public String getRemarks() {

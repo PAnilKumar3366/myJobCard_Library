@@ -1,5 +1,6 @@
 package com.ods.myjobcard_library.entities.forms;
 
+import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.sap.smp.client.odata.ODataEntity;
@@ -13,27 +14,33 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
 
     private String FormID;
     private String Version;
-    private String JobType;
+    private String FormAssignmentType;
+    private String WorkOrderNum;
+    private String OprNum;
+    private String NotificationNum;
+    private String ItemNum;
+    private String TaskNum;
+    private String Equipment;
+    private String FunctionalLocation;
     private String Mandatory;
-    private String FlowSequence;
-    private String Category;
     private String MultipleSub;
     private String Occur;
-    private GregorianCalendar CreatedOn;
-    private String CreatedBy;
-    private GregorianCalendar ModifiedOn;
-    private String ModifiedBy;
+    private String FormCategory;
+    private boolean PostNotification;
     private String Theme;
     private String Stylesheet;
-
+    private GregorianCalendar AssignedDate;
+    private GregorianCalendar AssignedTime;
+    private String AssignedBy;
+    private String JobType;
+    private String FlowSequence;
+    private String ModifiedBy;
+    private String FormName;
     private String TaskListType;
     private String Group;
     private String GroupCounter;
     private String InternalCounter;
-
-    private String ObjectCategory;
     private String ObjectNum;
-    private String OprNum;
 
 
     public ManualFormAssignmentSetModel(String FormVersion, String FormName, String Mandatory, String MultipleSub, String Occur) {
@@ -46,11 +53,102 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
 
     public ManualFormAssignmentSetModel(ODataEntity entity) {
         create(entity);
+        initializeEntityProperties();
     }
 
     public ManualFormAssignmentSetModel(ZODataEntity entity) {
         create(entity);
+        initializeEntityProperties();
     }
+
+    private void initializeEntityProperties() {
+        this.setEntitySetName(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET);
+        this.setEntityType(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_TYPE);
+        this.addKeyFieldNames("FormID");
+        this.addKeyFieldNames("Version");
+        this.addKeyFieldNames("FormAssignmentType");
+        this.addKeyFieldNames("WorkOrderNum");
+        this.addKeyFieldNames("OprNum");
+        this.addKeyFieldNames("Notification");
+        this.addKeyFieldNames("NotificationItem");
+        this.addKeyFieldNames("NotificationTask");
+        this.addKeyFieldNames("Equipment");
+        this.addKeyFieldNames("FunctionalLocation");
+
+    }
+
+    public String getFormAssignmentType() {
+        return FormAssignmentType;
+    }
+
+    public void setFormAssignmentType(String formAssignmentType) {
+        FormAssignmentType = formAssignmentType;
+    }
+
+    public String getWorkOrderNum() {
+        return WorkOrderNum;
+    }
+
+    public void setWorkOrderNum(String workOrderNum) {
+        WorkOrderNum = workOrderNum;
+    }
+
+    public String getNotificationNum() {
+        return NotificationNum;
+    }
+
+    public void setNotificationNum(String notificationNum) {
+        NotificationNum = notificationNum;
+    }
+
+    public String getItemNum() {
+        return ItemNum;
+    }
+
+    public void setItemNum(String itemNum) {
+        ItemNum = itemNum;
+    }
+
+    public String getTaskNum() {
+        return TaskNum;
+    }
+
+    public void setTaskNum(String taskNum) {
+        TaskNum = taskNum;
+    }
+
+    public String getEquipment() {
+        return Equipment;
+    }
+
+    public void setEquipment(String equipment) {
+        Equipment = equipment;
+    }
+
+    public String getFunctionalLocation() {
+        return FunctionalLocation;
+    }
+
+    public void setFunctionalLocation(String functionalLocation) {
+        FunctionalLocation = functionalLocation;
+    }
+
+    public boolean isPostNotification() {
+        return PostNotification;
+    }
+
+    public void setPostNotification(boolean postNotification) {
+        PostNotification = postNotification;
+    }
+
+    public String getFormName() {
+        return FormName;
+    }
+
+    public void setFormName(String formName) {
+        FormName = formName;
+    }
+
 
     public String getFormID() {
         return FormID;
@@ -92,28 +190,28 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
         Stylesheet = stylesheet;
     }
 
-    public GregorianCalendar getCreatedOn() {
-        return CreatedOn;
+    public GregorianCalendar getAssignedDate() {
+        return AssignedDate;
     }
 
-    public void setCreatedOn(GregorianCalendar createdOn) {
-        CreatedOn = createdOn;
+    public void setAssignedDate(GregorianCalendar assignedDate) {
+        AssignedDate = assignedDate;
     }
 
-    public String getCreatedBy() {
-        return CreatedBy;
+    public String getAssignedBy() {
+        return AssignedBy;
     }
 
-    public void setCreatedBy(String createdBy) {
-        CreatedBy = createdBy;
+    public void setAssignedBy(String assignedBy) {
+        AssignedBy = assignedBy;
     }
 
-    public GregorianCalendar getModifiedOn() {
-        return ModifiedOn;
+    public GregorianCalendar getAssignedTime() {
+        return AssignedTime;
     }
 
-    public void setModifiedOn(GregorianCalendar modifiedOn) {
-        ModifiedOn = modifiedOn;
+    public void setAssignedTime(GregorianCalendar assignedTime) {
+        AssignedTime = assignedTime;
     }
 
     public String getModifiedBy() {
@@ -152,12 +250,12 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
         return Integer.parseInt(Occur);
     }
 
-    public String getCategory() {
-        return Category;
+    public String getFormCategory() {
+        return FormCategory;
     }
 
-    public void setCategory(String category) {
-        Category = category;
+    public void setFormCategory(String formCategory) {
+        FormCategory = formCategory;
     }
 
     public String getTheme() {
@@ -172,7 +270,7 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
         return getTheme().toLowerCase().contains("grid");
     }
     public boolean isGeneralForm() {
-        return getCategory() != null && getCategory().equalsIgnoreCase("NonObject");
+        return getFormCategory() != null && getFormCategory().equalsIgnoreCase("NonObject");
     }
 
     public String getTaskListType() {
@@ -207,13 +305,6 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
         InternalCounter = internalCounter;
     }
 
-    public String getObjectCategory() {
-        return ObjectCategory;
-    }
-
-    public void setObjectCategory(String objectCategory) {
-        ObjectCategory = objectCategory;
-    }
 
     public String getObjectNum() {
         return ObjectNum;

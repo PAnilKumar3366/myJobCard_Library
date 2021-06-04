@@ -24,7 +24,7 @@ public class FormMasterMetadata extends ZBaseEntity {
     private void initializeEntityProperties() {
         this.setEntitySetName(ZCollections.FORM_MASTER_METADATA_ENTITY_SET);
         this.setEntityType("FormMasterMetadata");
-        this.setEntityResourcePath(ZCollections.FORM_MASTER_METADATA_ENTITY_SET);
+        //this.setEntityResourcePath(ZCollections.FORM_MASTER_METADATA_ENTITY_SET);
         this.addKeyFieldNames("FormID");
         this.addKeyFieldNames("Version");
     }
