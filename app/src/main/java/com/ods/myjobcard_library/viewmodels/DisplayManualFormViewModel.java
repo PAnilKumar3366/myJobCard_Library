@@ -28,7 +28,7 @@ public class DisplayManualFormViewModel extends AndroidViewModel
     private ArrayList<FormSetModel> masterFormList = new ArrayList<>();
     private ArrayList<FormListObject> formItemsList = new ArrayList<>();
     private ManualFormAssignmentHelper manualFormAssignmentHelper;
-    String woNum,oprNum;
+    String woNum,oprNum,notification,notificationItem,notificationTask,equipment,functionalLocation;
 
     public DisplayManualFormViewModel(@NonNull Application application) {
         super(application);
@@ -46,6 +46,11 @@ public class DisplayManualFormViewModel extends AndroidViewModel
             {
                 woNum=workOrder.getWorkOrderNum();
                 oprNum="";
+                /*notification="";
+                notificationItem="";
+                notificationTask="";
+                equipment="";
+                functionalLocation="";*/
                 ArrayList<ZODataEntity> zoDataEntityArrayList=manualFormAssignmentHelper.getManualFormAssignmentData(woNum,oprNum);
                 manualFormArraylist=onFetchManualFormEntities(zoDataEntityArrayList);
             }

@@ -34,7 +34,7 @@ public class CapacityLevelHelper
         try {
             String entitySetName = ZCollections.CAPACITY_LEVEL_ENTITY_COLLECTION;
             String resPath = entitySetName;
-            resPath += "?$filter=WorkOrderNum eq '" + woNum + "' and OperationNumber eq '" + oprNum + "'&$orderby=GeneralCounterForOrder";
+            resPath += "?$filter=WoNum eq '" + woNum + "' and Operation eq '" + oprNum + "'&$orderby=OprCounter";
             result = DataHelper.getInstance().getEntities(entitySetName, resPath);
             zoDatacapacitylevelEntities=new ArrayList<>();
             if(result!=null&&!result.isError()){

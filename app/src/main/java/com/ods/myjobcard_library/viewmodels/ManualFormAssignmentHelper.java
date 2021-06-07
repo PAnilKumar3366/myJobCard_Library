@@ -27,20 +27,20 @@ public class ManualFormAssignmentHelper
     private ArrayList<FormListObject> formItemsList = new ArrayList<>();
     private ArrayList<FormSetModel> formMasterList = new ArrayList<>();
 
-    /** getting the manual form assignment data by filtered with object number and Operation number
-     * @param objNum
+    /** getting the manual form assignment data by filtered with wo number and Operation number
+     * @param woNum
      * @param oprNum
      * @return
      */
-    protected ArrayList<ZODataEntity> getManualFormAssignmentData(String objNum,String oprNum){
+    protected ArrayList<ZODataEntity> getManualFormAssignmentData(String woNum,String oprNum){
         ResponseObject result = null;
         try {
             String entitySetName = ZCollections.MANUAL_FORM_ASSIGNMENT_COLLECTION;
             String resPath = entitySetName;
             if(oprNum!=null&&oprNum.isEmpty())
-                resPath += "?$filter= (ObjectNum eq '" + objNum + "')&$orderby=FlowSequence asc,Mandatory desc";
+                resPath += "?$filter= (WorkOrderNum eq '" + woNum + "')&$orderby=FlowSequence asc,Mandatory desc";
             else
-                resPath += "?$filter= (ObjectNum eq '" + objNum + "' and OprNum eq eq '" + oprNum + "')&$orderby=FlowSequence asc,Mandatory desc";
+                resPath += "?$filter= (WorkOrderNum eq '" + woNum + "' and OprNum eq eq '" + oprNum + "')&$orderby=FlowSequence asc,Mandatory desc";
             result = DataHelper.getInstance().getEntities(entitySetName, resPath);
             zoDataManualFormAssignmentEntities=new ArrayList<>();
             if(result!=null&&!result.isError()){
