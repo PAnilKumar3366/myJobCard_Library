@@ -1,29 +1,25 @@
-package com.ods.myjobcard_library.viewmodels.workorder;
+package com.ods.myjobcard_library.entities.forms;
 
-import android.app.Application;
+import android.os.Build;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
-import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
-import com.ods.myjobcard_library.entities.forms.FormListObject;
-import com.ods.myjobcard_library.entities.forms.FormSetModel;
-import com.ods.myjobcard_library.entities.forms.FormsHelper;
-import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
+import com.ods.myjobcard_library.ZAppSettings;
+import com.ods.myjobcard_library.ZConfigManager;
+import com.ods.myjobcard_library.entities.ResponseMasterModel;
+import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
-import com.ods.myjobcard_library.viewmodels.BaseViewModel;
+import com.ods.myjobcard_library.utils.ManualCheckSheetData;
+import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class DisplayFormsViewModel extends BaseViewModel {
-
-    private boolean isTaskType = false;
-    private final MutableLiveData<ArrayList<FormListObject>> formItems = new MutableLiveData<ArrayList<FormListObject>>();
-    private final MutableLiveData<ArrayList<FormListObject>> formFilledItems = new MutableLiveData<ArrayList<FormListObject>>();
-    private final MutableLiveData<ArrayList<FormListObject>> generalFormItems = new MutableLiveData<ArrayList<FormListObject>>();
-    private MutableLiveData<ArrayList<ManualFormAssignmentSetModel>> manualCheckSheetLiveData = new MutableLiveData<>();
+/**
+ * This class helps to fetch the Pre-Defined CheckSheets and Manual CheckSheet based on the FormAssignmentSet Type Flag.
+ */
+public class FormsHelper {
 
     String orderType, wo_Number, opr_Num, equipmentCat, funcLocCat, controlKey, taskListType, group, groupCounter, internalCounter;
     List<FormListObject> responseMasterModel = new ArrayList<>();
@@ -34,87 +30,56 @@ public class DisplayFormsViewModel extends BaseViewModel {
     private ArrayList<FormListObject> generalFormItemsList = new ArrayList<>();
     private ArrayList<FormListObject> formFilledItemsList = new ArrayList<>();
     private ArrayList<ManualFormAssignmentSetModel> dummyList = new ArrayList<>();
-    FormsHelper formsHelper;
-    public DisplayFormsViewModel(@NonNull Application application) {
-        super(application);
-        formsHelper = new FormsHelper();
-    }
 
-    public LiveData<ArrayList<FormListObject>> getFormItems() {
-        return formItems;
-    }
-
-    public LiveData<ArrayList<FormListObject>> getFilledFormItems() {
-        return formFilledItems;
-    }
-
-    public LiveData<ArrayList<FormListObject>> getGeneralFormItems() {
-        return generalFormItems;
-    }
-
-    public void setOrderType(WorkOrder workOrder, String typeValue) {
+    public ArrayList<FormListObject> fetchForms(WorkOrder workOrder, String typeValue) {
         /*taskListType = "";
         group = "";
         groupCounter = "";
         internalCounter = "";*/
-        /*wo_Number = workOrder.getWorkOrderNum();
+        wo_Number = workOrder.getWorkOrderNum();
         if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
             opr_Num = workOrder.getCurrentOperation().getOperationNum();
         } else {
             opr_Num = "";
         }
         getOrderType(workOrder, typeValue);
-        *//*if (!isTaskType)*//*
-        getFormItemsList(list);*/
-        formItemsList = formsHelper.fetchForms(workOrder, typeValue);
-        formItems.setValue(formItemsList);
+        /*if (!isTaskType)*/
+        getFormItemsList(list);
+        return formItemsList;
+        //formItems.setValue(formItemsList);
     }
 
     public void setGeneralFormType() {
-        generalFormItemsList = formsHelper.getGeneralFormItemsList();
-        generalFormItems.setValue(generalFormItemsList);
+        getGeneralFormItemsList();
     }
 
-    public MutableLiveData<ArrayList<ManualFormAssignmentSetModel>> getManualCheckSheetLiveData() {
-        //manualCheckSheetLiveData.setValue(ManualCheckSheetData.getInstance().getManualCheckSheetList());
-        return manualCheckSheetLiveData;
-    }
-
-    public void setFilledFormlist(ArrayList<FormListObject> formlist) {
-        formFilledItems.setValue(formsHelper.setFilledFormlist(formlist));
-    }
-
-    public void setManualListLiveData(ArrayList<ManualFormAssignmentSetModel> existedList) {
-        manualCheckSheetLiveData.setValue(formsHelper.setManualListLiveData(existedList));
-    }
-    /*protected void getOrderType(WorkOrder workOrder, String type) {
+    protected void getOrderType(WorkOrder workOrder, String type) {
         if (type.equals(ZAppSettings.FormAssignmentType.WorkOrderLevel.Value)) {
             orderType = workOrder.getOrderType();
-           *//* equipmentCat = "";
+           /* equipmentCat = "";
             funcLocCat = "";
-            controlKey = "";*//*
+            controlKey = "";*/
             list = FormAssignmentSetModel.getFormAssignmentData_OrderType(orderType);
         } else if (type.equals(ZAppSettings.FormAssignmentType.OperationLevel.Value)) {
-            *//*controlKey = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? workOrder.getCurrentOperation().getControlKey() : "";
+            /*controlKey = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? workOrder.getCurrentOperation().getControlKey() : "";
             orderType = workOrder.getOrderType();
-            *//**//*equipmentCat = "";
-            funcLocCat = "";*//**//*
-            list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);*//*
-            if(!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED){
+            *//*equipmentCat = "";
+            funcLocCat = "";*//*
+            list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);*/
+            if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
                 list.clear();
                 ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
                 ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                 for (Operation operation : totalOperations) {
                     controlKey = operation.getControlKey();
                     orderType = operation.getOrderType();
-                    list.addAll(FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey));
+                    list.addAll(FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType, controlKey));
                     //list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);
                 }
-            }
-            else {
+            } else {
                 orderType = workOrder.getOrderType();
                 controlKey = workOrder.getCurrentOperation().getControlKey();
-                list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);
+                list = FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType, controlKey);
             }
         } else if (type.equals(ZAppSettings.FormAssignmentType.Equipment.Value)) {
             //funcLocCat = "";
@@ -122,19 +87,19 @@ public class DisplayFormsViewModel extends BaseViewModel {
                 equipmentCat = workOrder.getEquipCategory();
             else
                 equipmentCat = workOrder.getCurrentOperation().getEquipCategory().isEmpty() ? workOrder.getEquipCategory() : workOrder.getCurrentOperation().getEquipCategory();
-            list=FormAssignmentSetModel.getFormAssignmentData_EquipmentType(equipmentCat);
+            list = FormAssignmentSetModel.getFormAssignmentData_EquipmentType(equipmentCat);
         } else if (type.equals(ZAppSettings.FormAssignmentType.FuncLoc.Value)) {
-           // equipmentCat = "";
+            // equipmentCat = "";
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
                 funcLocCat = workOrder.getFuncLocCategory();
             else
                 funcLocCat = workOrder.getCurrentOperation().getFuncLocCategory().isEmpty() ? workOrder.getFuncLocCategory() : workOrder.getCurrentOperation().getFuncLocCategory();
-            list=FormAssignmentSetModel.getFormAssignmentData_FunctionalLocType(funcLocCat);
+            list = FormAssignmentSetModel.getFormAssignmentData_FunctionalLocType(funcLocCat);
         } else if (type.equals(ZAppSettings.FormAssignmentType.TaskListType.Value)) {
-            *//*equipmentCat = "";
-            funcLocCat = "";*//*
+            /*equipmentCat = "";
+            funcLocCat = "";*/
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
-               // isTaskType = true;
+                // isTaskType = true;
                 ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
                 ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                 for (Operation operation : totalOperations) {
@@ -144,7 +109,7 @@ public class DisplayFormsViewModel extends BaseViewModel {
                     group = operation.getGroup();
                     groupCounter = operation.getGroupCounter();
                     internalCounter = operation.getInternalCounter();
-                    list=FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType,controlKey,taskListType,group,groupCounter,internalCounter);
+                    list = FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter);
                 }
             } else {
                 orderType = workOrder.getCurrentOperation().getOrderType();
@@ -153,17 +118,17 @@ public class DisplayFormsViewModel extends BaseViewModel {
                 group = workOrder.getCurrentOperation().getGroup();
                 groupCounter = workOrder.getCurrentOperation().getGroupCounter();
                 internalCounter = workOrder.getCurrentOperation().getInternalCounter();
-                list=FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType,controlKey,taskListType,group,groupCounter,internalCounter);
+                list = FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter);
             }
         } else if (type.equals(ZAppSettings.FormAssignmentType.None.Value)) {
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
-                list=FormAssignmentSetModel.getFormAssignmentData_OrderType(workOrder.getOrderType());
+                list = FormAssignmentSetModel.getFormAssignmentData_OrderType(workOrder.getOrderType());
             else
-                list=FormAssignmentSetModel.getFormAssignmentData_OperationType(workOrder.getOrderType(),workOrder.getCurrentOperation().getControlKey());
+                list = FormAssignmentSetModel.getFormAssignmentData_OperationType(workOrder.getOrderType(), workOrder.getCurrentOperation().getControlKey());
         }
-    }*/
+    }
 
-    /*private void getFormItemsList(ArrayList<FormAssignmentSetModel> list) {
+    private void getFormItemsList(ArrayList<FormAssignmentSetModel> list) {
         //list = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat, taskListType, group, groupCounter, internalCounter);
 
         Iterator<FormAssignmentSetModel> it1 = list.iterator();
@@ -188,9 +153,9 @@ public class DisplayFormsViewModel extends BaseViewModel {
                         instanceId = res.getInstanceID();
                         isDraft = res.getIsDraft();
                     }
-                    *//*if ((res.getFormID().equals(f1.getFormID()) && res.getVersion().equals(f1.getVersion())) && res.getWoNum().equals(workOrderNum)) {
+                    /*if ((res.getFormID().equals(f1.getFormID()) && res.getVersion().equals(f1.getVersion())) && res.getWoNum().equals(workOrderNum)) {
                         filledForms++;
-                    }*//*
+                    }*/
                 }
                 filledForms = response.size();
             }
@@ -209,7 +174,7 @@ public class DisplayFormsViewModel extends BaseViewModel {
         }
     }
 
-    private void getGeneralFormItemsList() {
+    public ArrayList<FormListObject> getGeneralFormItemsList() {
         try {
             list = FormAssignmentSetModel.getGeneralFormAssignmentData();
             Iterator<FormAssignmentSetModel> it1 = list.iterator();
@@ -234,10 +199,10 @@ public class DisplayFormsViewModel extends BaseViewModel {
         } catch (Exception e) {
             DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
         }
-        generalFormItems.setValue(generalFormItemsList);
+        return generalFormItemsList;
     }
 
-    public void setFilledFormlist(ArrayList<FormListObject> formlist) {
+    private ArrayList<FormListObject> getFilledFormsList(ArrayList<FormListObject> formlist) {
         Iterator<FormListObject> formListIterator = formlist.iterator();
         int totGeneralFormResponseCount;
         try {
@@ -275,20 +240,54 @@ public class DisplayFormsViewModel extends BaseViewModel {
 
                     } catch (Exception e) {
                         DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+                        return formFilledItemsList;
                     }
                 }
             }
         } catch (Exception e) {
             DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            return formFilledItemsList;
         }
-        formFilledItems.setValue(formFilledItemsList);
-    }*/
+        return formFilledItemsList;
+    }
+
+    public ArrayList<FormListObject> setFilledFormlist(ArrayList<FormListObject> formlist) {
+        return getFilledFormsList(formlist);
+    }
+
+    public ArrayList<ManualFormAssignmentSetModel> setManualListLiveData(ArrayList<ManualFormAssignmentSetModel> existedList) {
+        return fetchManualCheckSheetList(existedList);
+    }
 
     /**
      * this is method prepares the dummy data.
      *
      * @param existedList newly added list from Add new CheckSheet
      */
-
-
+    private ArrayList<ManualFormAssignmentSetModel> fetchManualCheckSheetList(ArrayList<ManualFormAssignmentSetModel> existedList) {
+        try {
+            if (existedList.size() > 0) {
+                dummyList.clear();
+                ManualCheckSheetData.getInstance().getManualCheckSheetList().clear();
+            }
+            dummyList.addAll(existedList);
+            if (dummyList.size() == 0) {
+                String[] FormName = {"CreateNotification", "InspectionForm", "Covid-Form"};
+                String[] Version = {"1.0", "2.0", "3.0"};
+                String[] Mandatory = {"X", "X", ""};
+                String[] MultipleSub = {"X", "X", "X"};
+                String[] Occur = {"4", "5", "3"};
+                for (int i = 0; i < 3; i++)
+                    dummyList.add(new ManualFormAssignmentSetModel(Version[i], FormName[i], Mandatory[i], MultipleSub[i], Occur[i]));
+            }
+            ManualCheckSheetData.getInstance().setManualCheckSheetList(dummyList);
+            //manualCheckSheetLiveData.setValue(dummyList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            return new ArrayList<>();
+            //manualCheckSheetLiveData.setValue(new ArrayList<ManualFormAssignmentSetModel>());
+        }
+        return dummyList;
+    }
 }
