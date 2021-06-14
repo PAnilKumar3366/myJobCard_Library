@@ -2,6 +2,7 @@ package com.ods.myjobcard_library.entities.forms;
 
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
 public class DeptMasterData extends ZBaseEntity {
@@ -11,6 +12,11 @@ public class DeptMasterData extends ZBaseEntity {
     private boolean Active;
 
     public DeptMasterData(ODataEntity entity) {
+        create(entity);
+        initializeEntityProperties();
+    }
+
+    public DeptMasterData(ZODataEntity entity) {
         create(entity);
         initializeEntityProperties();
     }

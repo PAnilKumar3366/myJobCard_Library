@@ -2,6 +2,8 @@ package com.ods.myjobcard_library.entities.forms;
 
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.myjobcard_library.viewmodels.DeptHelper;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
 public class ApproverMasterData extends ZBaseEntity {
@@ -14,6 +16,7 @@ public class ApproverMasterData extends ZBaseEntity {
     private String LastName;
     private String Contact;
     private String DepartmentID;
+    private String DepartmentName;
     private String ApproverRole;
     private String ApproverLevel;
     private String Plant;
@@ -30,7 +33,19 @@ public class ApproverMasterData extends ZBaseEntity {
         return ApproverLevel;
     }
 
+    public ApproverMasterData(String UserId, String FirstName, String LastName, String Department) {
+        this.UserSystemID = UserId;
+        this.FirstName = FirstName;
+        this.LastName = LastName;
+        this.DepartmentID = Department;
+    }
+
     public ApproverMasterData(ODataEntity entity) {
+        create(entity);
+        initializeEntityProperties();
+    }
+
+    public ApproverMasterData(ZODataEntity entity) {
         create(entity);
         initializeEntityProperties();
     }
@@ -123,5 +138,23 @@ public class ApproverMasterData extends ZBaseEntity {
         this.addKeyFieldNames("EmailID");
     }
 
+    public String getUserName() {
+        return this.FirstName + this.LastName;
+    }
 
+    public String getDeptName() {
+        DeptHelper deptHelper = new DeptHelper();
+        DeptMasterData deptMasterData = deptHelper.getDeptMasterData(this.DepartmentID);
+        if (deptMasterData != null && deptMasterData.getDepartmentName() != null)
+            return deptMasterData.getDepartmentName();
+        return "";
+    }
+
+    public String getDepartmentName() {
+        return DepartmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        DepartmentName = departmentName;
+    }
 }

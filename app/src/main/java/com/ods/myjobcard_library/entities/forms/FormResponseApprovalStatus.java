@@ -2,8 +2,11 @@ package com.ods.myjobcard_library.entities.forms;
 
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.myjobcard_library.viewmodels.ApproverMasterHelper;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
+import java.sql.Time;
 import java.util.GregorianCalendar;
 
 public class FormResponseApprovalStatus extends ZBaseEntity {
@@ -16,13 +19,27 @@ public class FormResponseApprovalStatus extends ZBaseEntity {
     private String FormInstanceStatus;
     private String Remarks;
     private GregorianCalendar CreatedDate;
-    private GregorianCalendar CreatedTime;
+    private Time CreatedTime;
     private String Counter;
     private String FormName;
 
     public FormResponseApprovalStatus(ODataEntity entity) {
         create(entity);
         initializeEntityProperties();
+    }
+
+    public FormResponseApprovalStatus(ZODataEntity entity) {
+        create(entity);
+        initializeEntityProperties();
+    }
+
+    public FormResponseApprovalStatus(String FormID, String Version, String FormInstanceID, String FormSubmittedBy, String ApproverID) {
+        this.FormID = FormID;
+        this.Version = Version;
+        this.FormInstanceID = FormInstanceID;
+        this.FormSubmittedBy = FormSubmittedBy;
+        this.ApproverID = ApproverID;
+
     }
 
     public String getCounter() {
@@ -105,11 +122,11 @@ public class FormResponseApprovalStatus extends ZBaseEntity {
         CreatedDate = createdDate;
     }
 
-    public GregorianCalendar getCreatedTime() {
+    public Time getCreatedTime() {
         return CreatedTime;
     }
 
-    public void setCreatedTime(GregorianCalendar createdTime) {
+    public void setCreatedTime(Time createdTime) {
         CreatedTime = createdTime;
     }
 
@@ -123,5 +140,12 @@ public class FormResponseApprovalStatus extends ZBaseEntity {
         this.addKeyFieldNames("FormSubmittedBy");
     }
 
-
+    public String getApproverName() {
+        ApproverMasterHelper helper = new ApproverMasterHelper();
+        ApproverMasterData approver = helper.fetchApproverName(this.ApproverID);
+        if (approver != null) {
+            return approver.getFirstName() + approver.getLastName();
+        }
+        return "";
+    }
 }
