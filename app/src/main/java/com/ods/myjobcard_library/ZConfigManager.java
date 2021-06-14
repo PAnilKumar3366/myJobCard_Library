@@ -192,6 +192,10 @@ public class ZConfigManager extends ConfigManager {
     public static String DEFAULT_NOTIFICATION_STATUS_TO_SEND = "CRTD";//Added By Anil.
 
     public static String USER_ROLE = "TECH";
+    public static int DASHBOARD_FILTER_WO_CREATED_IN_LAST_DAYS = 30;
+    public static int DASHBOARD_FILTER_WO_OVERDUE_FOR_LAST_DAYS = 2;
+    public static int DASHBOARD_FILTER_NO_CREATED_IN_LAST_DAYS = 30;
+    public static int DASHBOARD_FILTER_NO_OVERDUE_FOR_LAST_DAYS = 2;
 
     /*Added new config flag for set the network Contriants to execute the workers
     * */

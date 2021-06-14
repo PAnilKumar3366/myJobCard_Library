@@ -17,6 +17,7 @@ import com.ods.myjobcard_library.entities.ctentities.OrderTypeFeature;
 import com.ods.myjobcard_library.entities.ctentities.SpinnerItem;
 import com.ods.myjobcard_library.entities.ctentities.UserTable;
 import com.ods.myjobcard_library.entities.ctentities.WorkOrderStatus;
+import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
@@ -27,6 +28,7 @@ import com.sap.smp.client.odata.ODataEntity;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -539,6 +541,136 @@ public class Notification extends ZBaseEntity {
                 spinnerTypes.add(new SpinnerItem(type, type));
         }
         return spinnerTypes;
+    }
+
+    /**
+     * @return ArrayList of all distinct user statuses among all notifications
+     */
+    public static ArrayList<String> getAllDistinctUserStatuses() {
+        ArrayList<String> statuses = new ArrayList<>();
+        try {
+            String resPath = ZCollections.NOTIFICATION_COLLECTION + "?$select=UserStatus";
+            ResponseObject response = DataHelper.getInstance().getEntities(ZCollections.NOTIFICATION_COLLECTION, resPath);
+            if (response != null && !response.isError()) {
+                List<ODataEntity> entities = BaseEntity.setODataEntityList(response.Content());
+                if (entities != null && entities.size() > 0) {
+                    for (ODataEntity entity : entities) {
+                        String userStatus = String.valueOf(entity.getProperties().get("UserStatus").getValue());
+                        String[] userStatuses;
+                        if (userStatus.contains(" ")) {
+                            userStatuses = userStatus.split(" ");
+                            if (userStatuses.length > 0) {
+                                statuses.addAll(Arrays.asList(userStatuses));
+                            }
+                        } else
+                            statuses.add(userStatus);
+                    }
+                    Set<String> strings = new HashSet<String>(statuses);
+                    statuses.clear();
+                    statuses.addAll(strings);
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(Notification.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return statuses;
+    }
+
+    /**
+     * @return ArrayList of SpinnerItem of all distinct user statuses among all notifications
+     */
+    public static ArrayList<SpinnerItem> getSpinnerUserStatuses() {
+        ArrayList<SpinnerItem> spinnerStatuses = new ArrayList<>();
+        ArrayList<String> statuses = getAllDistinctUserStatuses();
+        for (String status : statuses) {
+            if (!status.isEmpty())
+                spinnerStatuses.add(new SpinnerItem(status, status));
+        }
+        return spinnerStatuses;
+    }
+
+    /**
+     * @return ArrayList of all distinct System Status among all notifications
+     */
+    public static ArrayList<String> getAllDistinctSysStatus() {
+        ArrayList<String> statuses = new ArrayList<>();
+        try {
+            String resPath = ZCollections.NOTIFICATION_COLLECTION + "?$select=SystemStatus";
+            ResponseObject response = DataHelper.getInstance().getEntities(ZCollections.NOTIFICATION_COLLECTION, resPath);
+            if (response != null && !response.isError()) {
+                List<ODataEntity> entities = BaseEntity.setODataEntityList(response.Content());
+                if (entities != null && entities.size() > 0) {
+                    for (ODataEntity entity : entities) {
+                        String userStatus = String.valueOf(entity.getProperties().get("SystemStatus").getValue());
+                        String[] userStatuses;
+                        if (userStatus.contains(" ")) {
+                            userStatuses = userStatus.split(" ");
+                            if (userStatuses.length > 0) {
+                                statuses.addAll(Arrays.asList(userStatuses));
+                            }
+                        } else
+                            statuses.add(userStatus);
+                    }
+                    Set<String> strings = new HashSet<String>(statuses);
+                    statuses.clear();
+                    statuses.addAll(strings);
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return statuses;
+    }
+
+    /**
+     * @return ArrayList of SpinnerItem of all distinct systemStatus among all notifications
+     */
+    public static ArrayList<SpinnerItem> getSpinnerSysStatuses() {
+        ArrayList<SpinnerItem> spinnerStatuses = new ArrayList<>();
+        ArrayList<String> statuses = getAllDistinctSysStatus();
+        for (String status : statuses) {
+            if (!status.isEmpty())
+                spinnerStatuses.add(new SpinnerItem(status, status));
+        }
+        return spinnerStatuses;
+    }
+
+    /**
+     * @return ArrayList of all distinct Locations among all notifications
+     */
+    public static ArrayList<String> getAllDistinctLocations() {
+        ArrayList<String> types = new ArrayList<>();
+        try {
+            String resPath = ZCollections.NOTIFICATION_COLLECTION + "?$select=Location";
+            ResponseObject response = DataHelper.getInstance().getEntities(ZCollections.NOTIFICATION_COLLECTION, resPath);
+            if (response != null && !response.isError()) {
+                List<ODataEntity> entities = BaseEntity.setODataEntityList(response.Content());
+                if (entities != null && entities.size() > 0) {
+                    for (ODataEntity entity : entities) {
+                        types.add(String.valueOf(entity.getProperties().get("Location").getValue()));
+                    }
+                    Set<String> strings = new HashSet<String>(types);
+                    types.clear();
+                    types.addAll(strings);
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return types;
+    }
+
+    /**
+     * @return ArrayList of SpinnerItem of all distinct Locations among all notifications
+     */
+    public static ArrayList<SpinnerItem> getSpinnerLocations() {
+        ArrayList<SpinnerItem> spinnerLocations = new ArrayList<>();
+        ArrayList<String> locations = getAllDistinctLocations();
+        for (String location : locations) {
+            if (!location.isEmpty())
+                spinnerLocations.add(new SpinnerItem(location, location));
+        }
+        return spinnerLocations;
     }
 
     @Override

@@ -23,6 +23,7 @@ import com.ods.myjobcard_library.entities.ctentities.OrderTypeFeature;
 import com.ods.myjobcard_library.entities.ctentities.SpinnerItem;
 import com.ods.myjobcard_library.entities.ctentities.WorkOrderStatus;
 import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
+import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
@@ -867,6 +868,44 @@ public class WorkOrder extends ZBaseEntity {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return statuses;
+    }
+
+    /**
+     * @return ArrayList of all distinct Locations among all workorders
+     */
+    public static ArrayList<String> getAllDistinctLocations() {
+        ArrayList<String> types = new ArrayList<>();
+        try {
+            String resPath = ZCollections.WO_COLLECTION + "?$select=Location";
+            ResponseObject response = DataHelper.getInstance().getEntities(ZCollections.WO_COLLECTION, resPath);
+            if (response != null && !response.isError()) {
+                List<ODataEntity> entities = BaseEntity.setODataEntityList(response.Content());
+                if (entities != null && entities.size() > 0) {
+                    for (ODataEntity entity : entities) {
+                        types.add(String.valueOf(entity.getProperties().get("Location").getValue()));
+                    }
+                    Set<String> strings = new HashSet<String>(types);
+                    types.clear();
+                    types.addAll(strings);
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return types;
+    }
+
+    /**
+     * @return ArrayList of SpinnerItem of all distinct Locations among all workorders
+     */
+    public static ArrayList<SpinnerItem> getSpinnerLocations() {
+        ArrayList<SpinnerItem> spinnerLocations = new ArrayList<>();
+        ArrayList<String> locations = getAllDistinctLocations();
+        for (String location : locations) {
+            if (!location.isEmpty())
+                spinnerLocations.add(new SpinnerItem(location, location));
+        }
+        return spinnerLocations;
     }
 
     @Override
