@@ -1,10 +1,14 @@
-package com.ods.myjobcard_library.entities.forms;
+package com.ods.myjobcard_library.viewmodels;
 
 import android.os.Build;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ResponseMasterModel;
+import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
+import com.ods.myjobcard_library.entities.forms.FormListObject;
+import com.ods.myjobcard_library.entities.forms.FormSetModel;
+import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
 import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
 import com.ods.myjobcard_library.utils.ManualCheckSheetData;

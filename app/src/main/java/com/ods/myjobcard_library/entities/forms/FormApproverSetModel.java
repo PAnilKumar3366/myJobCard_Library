@@ -2,11 +2,13 @@ package com.ods.myjobcard_library.entities.forms;
 
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
+import java.sql.Time;
 import java.util.GregorianCalendar;
 
-public class FormApprover extends ZBaseEntity {
+public class FormApproverSetModel extends ZBaseEntity {
 
     private String FormID;
     private String Version;
@@ -15,13 +17,22 @@ public class FormApprover extends ZBaseEntity {
     private String ApproverID;
     private String FormStatus;
     private GregorianCalendar AssignedDate;
-    private GregorianCalendar AssignedTime;
+    private Time AssignedTime;
     private String NotificationItem;
     private String NotificationTask;
     private String Equipment;
     private String FunctionalLocation;
     private String FormName;
     private String Notification;
+
+    public FormApproverSetModel() {
+        this.initializeEntityProperties();
+    }
+
+    public FormApproverSetModel(ZODataEntity entity) {
+        create(entity);
+        this.initializeEntityProperties();
+    }
 
     public String getNotificationItem() {
         return NotificationItem;
@@ -65,7 +76,7 @@ public class FormApprover extends ZBaseEntity {
 
     private String AssignedBy;
 
-    public FormApprover(ODataEntity entity) {
+    public FormApproverSetModel(ODataEntity entity) {
         create(entity);
         initializeEntityProperties();
     }
@@ -73,6 +84,7 @@ public class FormApprover extends ZBaseEntity {
     private void initializeEntityProperties() {
         this.setEntitySetName(ZCollections.FROM_APPROVER_ENTITY_SET);
         this.setEntityType(ZCollections.FORM_APPROVER_ENTITY_TYPE);
+        //this.setEntityResourcePath(ZCollections.FROM_APPROVER_ENTITY_SET);
         this.addKeyFieldNames("FormID");
         this.addKeyFieldNames("Version");
         this.addKeyFieldNames("WorkOrderNum");
@@ -149,11 +161,11 @@ public class FormApprover extends ZBaseEntity {
         AssignedDate = assignedDate;
     }
 
-    public GregorianCalendar getAssignedTime() {
+    public Time getAssignedTime() {
         return AssignedTime;
     }
 
-    public void setAssignedTime(GregorianCalendar assignedTime) {
+    public void setAssignedTime(Time assignedTime) {
         AssignedTime = assignedTime;
     }
 

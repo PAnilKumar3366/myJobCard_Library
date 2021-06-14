@@ -387,7 +387,7 @@ public class ZCollections extends Collections {
 	public static final String SEARCH_VERSION_ID = "Version";
 	public static final String SEARCH_FORM_NAME = "Form Name";
 	public static final String SEARCH_FORM_CATEGORY = "Category";
-
+	public static final String SEARCH_APPROVER_DEPT = "Department";
 	//public static final String INVALID_STORE_ID = "Invalid";
 	public static final boolean ENABLE_BG_SYNC = true;
 	public static final String SUPERVISOR_USER_COLLECTIONS = "UserSet";
@@ -421,13 +421,13 @@ public class ZCollections extends Collections {
 	public static final String FORM_MASTER_METADATA_ENTITY_SET = "FormMasterMetadataSet";
 	public static final String FORM_MASTER_METADATA_ENTITY_TYPE = "FormMasterMetadata";
 	public static final String FROM_APPROVER_ENTITY_SET = "FormApproverSet";
-	public static final String FORM_APPROVER_ENTITY_TYPE = "FormApprover";
+	public static final String FORM_APPROVER_ENTITY_TYPE = getFormsEngineServiceName() + "FormApprover";
 	public static final String APPROVER_MASTER_DATA_ENTITY_SET = "ApproverMasterDataSet";
 	public static final String APPROVER_MASTER_DATA_ENTITY_TYPE = "ApproverMasterData";
 	public static final String DEPT_MASTER_DATA_ENTITY_SET = "DeptMasterDataSet";
 	public static final String DEPT_MASTER_DATA_ENTITY_TYPE = "ApproverMasterData";
 	public static final String FORM_INSTANCE_STATUS_ENTITY_SET = "FormInstanceStatusSet";
-	public static final String FORM_INSTANCE_STATUS_ENTITY_TYPE = "FormInstanceStatus";
+	public static final String FORM_INSTANCE_STATUS_ENTITY_TYPE = getFormsEngineServiceName() + "FormInstanceStatus";
 	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_SET = "FormManualAssignmentSet";
 	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_TYPE = getFormsEngineServiceName()+"FormManualAssignment";
 
@@ -447,6 +447,14 @@ public class ZCollections extends Collections {
 		ArrayList<String> options = new ArrayList<>();
 		options.add(SEARCH_OPTION_ID);
 		options.add(SEARCH_OPTION_NAME);
+		return options;
+	}
+
+	public static ArrayList<String> getApproversSearchOptions() {
+		ArrayList<String> options = new ArrayList<>();
+		options.add(SEARCH_OPTION_ID);
+		options.add(SEARCH_OPTION_NAME);
+		options.add(SEARCH_APPROVER_DEPT);
 		return options;
 	}
 
