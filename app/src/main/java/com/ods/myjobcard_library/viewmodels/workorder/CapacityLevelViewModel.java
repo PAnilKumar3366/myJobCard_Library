@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class CapacityLevelViewModel extends AndroidViewModel
 {
     private MutableLiveData<ArrayList<CapacityLevelData>> capacitylistLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> postCapacityData=new MutableLiveData<>();
     private CapacityLevelHelper capacityLevelHelper;
     private ArrayList<CapacityLevelData> CapacityLevelArrayList;
 
@@ -60,5 +61,24 @@ public class CapacityLevelViewModel extends AndroidViewModel
      */
     public MutableLiveData<ArrayList<CapacityLevelData>> getCapacitylistLiveData() {
         return capacitylistLiveData;
+    }
+
+    /** saving the capacity data including all CURD operations
+     * @param capacityData
+     * @param autoFlush
+     */
+    public void setPostCapacityData(CapacityLevelData capacityData,boolean autoFlush) {
+        try {
+            postCapacityData.setValue(capacityLevelHelper.postCapacityData(capacityData,autoFlush));
+        } catch (Exception e) {
+            DliteLogger.WriteLog(CapacityLevelHelper.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+    }
+
+    /**getting the saved capacity data response
+     * @return
+     */
+    public MutableLiveData<Boolean> getPostCapacityData() {
+        return postCapacityData;
     }
 }

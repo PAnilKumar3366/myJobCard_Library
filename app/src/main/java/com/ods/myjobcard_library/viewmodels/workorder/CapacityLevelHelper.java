@@ -3,6 +3,7 @@ package com.ods.myjobcard_library.viewmodels.workorder;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.myjobcard_library.entities.transaction.CapacityLevelData;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
@@ -52,4 +53,14 @@ public class CapacityLevelHelper
     }
 
 
+    public Boolean postCapacityData(CapacityLevelData capacityData, boolean autoFlush) {
+        boolean result = false;
+        try {
+            ResponseObject response = capacityData.SaveToStore(autoFlush);
+            result = response != null && !response.isError();
+        } catch (Exception e) {
+            DliteLogger.WriteLog(CapacityLevelHelper.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return result;
+    }
 }

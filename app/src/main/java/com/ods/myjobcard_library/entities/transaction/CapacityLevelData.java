@@ -11,15 +11,6 @@ import java.util.GregorianCalendar;
 
 public class CapacityLevelData extends ZBaseEntity
 {
-    private String WorkOrderNum;
-    private String OperationNumber;
-    private String GeneralCounterForOrder;
-    private String PersonnelNumber;
-    private Double WorkInvolvedInTheActivity;
-    private String UnitForWork;
-    private Double NormalDurationOfTheActivity;
-    private String NormalDurationOrUnit;
-
     private String CapRecordId;
     private String IntCounter;
     private String CapReqCnt;
@@ -36,18 +27,13 @@ public class CapacityLevelData extends ZBaseEntity
     private String WorkUOM;
     private BigDecimal NormalDuration;
     private String NormalDurationUnit;
-    private GregorianCalendar Date;
-    private Time Time;
+    private GregorianCalendar StartDate;
+    private Time StartTime;
+    private GregorianCalendar EndDate;
+    private Time EndTime;
     private String EnteredBy;
+    private String Action;
 
-
-
-    public CapacityLevelData(String personnelNumber,String workDuration,String normalDuration)
-    {
-        PersonnelNumber=personnelNumber;
-        WorkInvolvedInTheActivity=Double.parseDouble(workDuration);
-        NormalDurationOfTheActivity=Double.parseDouble(normalDuration);
-    }
 
     /**
      * Constructor  to create or map the new instance with the given ZODataEntity Object.
@@ -63,76 +49,17 @@ public class CapacityLevelData extends ZBaseEntity
         create(entity);
         initializeEntityProperties();
     }
+    public CapacityLevelData(){
+        initializeEntityProperties();
+    }
     private void initializeEntityProperties() {
         this.setEntitySetName(ZCollections.CAPACITY_LEVEL_ENTITY_COLLECTION);
         this.setEntityType(ZCollections.CAPACITY_LEVEL_ENTITY_TYPE);
         this.addKeyFieldNames("CapRecordId");
         this.addKeyFieldNames("IntCounter");
         this.addKeyFieldNames("CapReqCnt");
-    }
-
-    public String getWorkOrderNum() {
-        return WorkOrderNum;
-    }
-
-    public void setWorkOrderNum(String workOrderNum) {
-        WorkOrderNum = workOrderNum;
-    }
-
-    public String getOperationNumber() {
-        return OperationNumber;
-    }
-
-    public void setOperationNumber(String operationNumber) {
-        OperationNumber = operationNumber;
-    }
-
-    public String getGeneralCounterForOrder() {
-        return GeneralCounterForOrder;
-    }
-
-    public void setGeneralCounterForOrder(String generalCounterForOrder) {
-        GeneralCounterForOrder = generalCounterForOrder;
-    }
-
-    public String getPersonnelNumber() {
-        return PersonnelNumber;
-    }
-
-    public void setPersonnelNumber(String personnelNumber) {
-        PersonnelNumber = personnelNumber;
-    }
-
-    public Double getWorkInvolvedInTheActivity() {
-        return WorkInvolvedInTheActivity;
-    }
-
-    public void setWorkInvolvedInTheActivity(Double workInvolvedInTheActivity) {
-        WorkInvolvedInTheActivity = workInvolvedInTheActivity;
-    }
-
-    public String getUnitForWork() {
-        return UnitForWork;
-    }
-
-    public void setUnitForWork(String unitForWork) {
-        UnitForWork = unitForWork;
-    }
-
-    public Double getNormalDurationOfTheActivity() {
-        return NormalDurationOfTheActivity;
-    }
-
-    public void setNormalDurationOfTheActivity(Double normalDurationOfTheActivity) {
-        NormalDurationOfTheActivity = normalDurationOfTheActivity;
-    }
-
-    public String getNormalDurationOrUnit() {
-        return NormalDurationOrUnit;
-    }
-
-    public void setNormalDurationOrUnit(String normalDurationOrUnit) {
-        NormalDurationOrUnit = normalDurationOrUnit;
+        this.addKeyFieldNames("WoNum");
+        this.addKeyFieldNames("Operation");
     }
 
     //Added service metadata
@@ -225,14 +152,6 @@ public class CapacityLevelData extends ZBaseEntity
         SplitNo = splitNo;
     }
 
-    public GregorianCalendar getDate() {
-        return Date;
-    }
-
-    public void setDate(GregorianCalendar date) {
-        Date = date;
-    }
-
     public String getOprCounter() {
         return OprCounter;
     }
@@ -273,19 +192,51 @@ public class CapacityLevelData extends ZBaseEntity
         WorkUOM = workUOM;
     }
 
-    public java.sql.Time getTime() {
-        return Time;
-    }
-
-    public void setTime(java.sql.Time time) {
-        Time = time;
-    }
-
     public String getEnteredBy() {
         return EnteredBy;
     }
 
     public void setEnteredBy(String enteredBy) {
         EnteredBy = enteredBy;
+    }
+
+    public GregorianCalendar getStartDate() {
+        return StartDate;
+    }
+
+    public void setStartDate(GregorianCalendar startDate) {
+        StartDate = startDate;
+    }
+
+    public Time getStartTime() {
+        return StartTime;
+    }
+
+    public void setStartTime(Time startTime) {
+        StartTime = startTime;
+    }
+
+    public GregorianCalendar getEndDate() {
+        return EndDate;
+    }
+
+    public void setEndDate(GregorianCalendar endDate) {
+        EndDate = endDate;
+    }
+
+    public Time getEndTime() {
+        return EndTime;
+    }
+
+    public void setEndTime(Time endTime) {
+        EndTime = endTime;
+    }
+
+    public String getAction() {
+        return Action;
+    }
+
+    public void setAction(String action) {
+        Action = action;
     }
 }
