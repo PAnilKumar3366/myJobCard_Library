@@ -56,10 +56,14 @@ public class DashBoardViewModel extends BaseViewModel {
     private ArrayList<SpinnerItem> noWorkCenters = new ArrayList<>();
     private ArrayList<SpinnerItem> woMaintActivityTypes = new ArrayList<>();
     private ArrayList<SpinnerItem> woUserStatuses = new ArrayList<>();
+    private ArrayList<SpinnerItem> noUserStatuses = new ArrayList<>();
     private ArrayList<SpinnerItem> woTechnicians = new ArrayList<>();
     private ArrayList<SpinnerItem> noWOConversion = new ArrayList<>();
     public ArrayList<SpinnerItem> filterCategories = new ArrayList<>();
     public ArrayList<SpinnerItem> woSysStatusSpinnerItems = new ArrayList<>();
+    public ArrayList<SpinnerItem> noSysStatusSpinnerItems = new ArrayList<>();
+    public ArrayList<SpinnerItem> woLocations = new ArrayList<>();
+    public ArrayList<SpinnerItem> noLocations = new ArrayList<>();
     public ArrayList<SpinnerItem> woInspLotSpinnerItems = new ArrayList<>();
     private boolean isWorkOrder = true;
     public String woSelectedCategory1 = "";
@@ -74,12 +78,6 @@ public class DashBoardViewModel extends BaseViewModel {
 
     public DashBoardViewModel(@NonNull Application application) {
         super(application);
-        dateFilterOptions.add(new SpinnerItem("0", "Select"));
-        dateFilterOptions.add(new SpinnerItem("1", "Planned for tomorrow"));
-        dateFilterOptions.add(new SpinnerItem("2", "Planned for next week"));
-        dateFilterOptions.add(new SpinnerItem("3", "Overdue for last 2 days"));
-        dateFilterOptions.add(new SpinnerItem("4", "Overdue for a week"));
-        dateFilterOptions.add(new SpinnerItem("5", "All overdue"));
         //Adding CreatedBy filter for work orders
         if (ZConfigManager.DOWNLOAD_CREATEDBY_WO.equalsIgnoreCase("X")) {
             createdByMeWo.add(new SpinnerItem("EnteredBy", "Created By Me"));
@@ -196,17 +194,27 @@ public class DashBoardViewModel extends BaseViewModel {
         this.filterCategories = new ArrayList<>();
         this.woSelectedValues1 = new ArrayList<>();
         this.woSelectedValues2 = new ArrayList<>();
-
+        this.dateFilterOptions = new ArrayList<>();
+        dateFilterOptions.add(new SpinnerItem("0", "Select"));
+        dateFilterOptions.add(new SpinnerItem("1", "Planned for tomorrow"));
+        dateFilterOptions.add(new SpinnerItem("2", "Planned for next week"));
         if (isWorkOrder) {
+            dateFilterOptions.add(new SpinnerItem("3", "Overdue for last "+ ZConfigManager.DASHBOARD_FILTER_WO_OVERDUE_FOR_LAST_DAYS +" days"));
+            dateFilterOptions.add(new SpinnerItem("4", "Overdue for a week"));
+            dateFilterOptions.add(new SpinnerItem("5", "All overdue"));
+            dateFilterOptions.add(new SpinnerItem("6", "Created in last "+ ZConfigManager.DASHBOARD_FILTER_WO_CREATED_IN_LAST_DAYS +" days"));
+            dateFilterOptions.add(new SpinnerItem("7", "Scheduling Compliant"));
+            dateFilterOptions.add(new SpinnerItem("8", "Scheduling Non-compliant"));
             filterCategories.add(new SpinnerItem("0", "Select"));
             filterCategories.add(new SpinnerItem("Priority", "Priority"));
             filterCategories.add(new SpinnerItem("MobileObjStatus", "Status"));
             filterCategories.add(new SpinnerItem("UserStatus", "User Status"));
+            filterCategories.add(new SpinnerItem("SysStatus", "System Status"));
             filterCategories.add(new SpinnerItem("MainWorkCtr", "WorkCenter"));
             filterCategories.add(new SpinnerItem("MaintActivityType", "Mant. Activity Type"));
-            filterCategories.add(new SpinnerItem("Date", "Date"));
             filterCategories.add(new SpinnerItem("FuncLocation", "Functional Location"));
-            filterCategories.add(new SpinnerItem("SysStatus", "System Status"));
+            filterCategories.add(new SpinnerItem("Location", "Location"));
+            filterCategories.add(new SpinnerItem("Date", "Date"));
             //filterCategories.add(new SpinnerItem("InspectionLot","InspectionLot"));
             ArrayList<SpinnerItem> woPriorities = getPriorities();
             ArrayList<SpinnerItem> woStatuses = getStatuses();
@@ -225,11 +233,18 @@ public class DashBoardViewModel extends BaseViewModel {
                 filterCategories.add(new SpinnerItem("PersonResponsible", "Technician"));
             }
         } else {
+            dateFilterOptions.add(new SpinnerItem("3", "Overdue for last "+ ZConfigManager.DASHBOARD_FILTER_NO_OVERDUE_FOR_LAST_DAYS +" days"));
+            dateFilterOptions.add(new SpinnerItem("4", "Overdue for a week"));
+            dateFilterOptions.add(new SpinnerItem("5", "All overdue"));
+            dateFilterOptions.add(new SpinnerItem("6", "Created in last "+ ZConfigManager.DASHBOARD_FILTER_NO_CREATED_IN_LAST_DAYS +" days"));
             filterCategories.add(new SpinnerItem("0", "Select"));
             filterCategories.add(new SpinnerItem("Priority", "Priority"));
             filterCategories.add(new SpinnerItem("MobileStatus", "Status"));
+            filterCategories.add(new SpinnerItem("NoUserStatus", "User Status"));
+            filterCategories.add(new SpinnerItem("NoSystemStatus", "System Status"));
             filterCategories.add(new SpinnerItem("WorkCenter", "WorkCenter"));
             filterCategories.add(new SpinnerItem("WOConversion", "Order Conversion"));
+            filterCategories.add(new SpinnerItem("Location", "Location"));
             filterCategories.add(new SpinnerItem("Date", "Date"));
             ArrayList<SpinnerItem> noPriorities = getPriorities();
             ArrayList<SpinnerItem> noStatuses = getStatuses();
@@ -281,7 +296,11 @@ public class DashBoardViewModel extends BaseViewModel {
         legendsMap = new ArrayList<>();
         for (SpinnerItem item1 : woSelectedValues1) {
             String filterQuery1 = "";
-            if (woSelectedCategory1.equalsIgnoreCase("WOConversion"))
+            if (woSelectedCategory1.equalsIgnoreCase("NoUserStatus"))
+                filterQuery1 = "?$filter=indexof(UserStatus,'" + item1.getId() + "') ne -1";
+            else if (woSelectedCategory1.equalsIgnoreCase("NoSystemStatus"))
+                filterQuery1 = "?$filter=indexof(SystemStatus,'" + item1.getId() + "') ne -1";
+            else if (woSelectedCategory1.equalsIgnoreCase("WOConversion"))
                 filterQuery1 = "?$filter=" + getNotificationWOCreatedFilterQuery(item1.getId());
             else if (woSelectedCategory1.equalsIgnoreCase("date"))
                 filterQuery1 = "?$filter=" + getNotificationDateFilterQuery(item1.getId());
@@ -297,7 +316,11 @@ public class DashBoardViewModel extends BaseViewModel {
             if (woSelectedValues2.size() > 0) {
                 for (SpinnerItem item2 : woSelectedValues2) {
                     String filterQuery2 = "";
-                    if (woSelectedCategory2.equalsIgnoreCase("WOConversion"))
+                    if (woSelectedCategory2.equalsIgnoreCase("NoUserStatus"))
+                        filterQuery2 = filterQuery1 + " and (indexof(UserStatus,'" + item2.getId() + "') ne -1)";
+                    else if (woSelectedCategory2.equalsIgnoreCase("NoSystemStatus"))
+                        filterQuery2 = filterQuery1 + " and (indexof(SystemStatus,'" + item2.getId() + "') ne -1)";
+                    else if (woSelectedCategory2.equalsIgnoreCase("WOConversion"))
                         filterQuery2 = filterQuery1 + " and " + getNotificationWOCreatedFilterQuery(item2.getId());
                     else if (woSelectedCategory2.equalsIgnoreCase("date"))
                         filterQuery2 = filterQuery1 + " and " + getNotificationDateFilterQuery(item2.getId());
@@ -388,7 +411,7 @@ public class DashBoardViewModel extends BaseViewModel {
                         if (woSelectedCategory2.equalsIgnoreCase("UserStatus"))
                             filterQuery2 = filterQuery1 + " and (indexof(" + woSelectedCategory2 + ",'" + item2.getId() + "') ne -1)";
                         else if (woSelectedCategory2.equalsIgnoreCase("SysStatus"))
-                            filterQuery2 = "?$filter=indexof(" + woSelectedCategory2 + ",'" + item2.getId() + "') ne -1";
+                            filterQuery2 = filterQuery1 + " and (indexof(" + woSelectedCategory2 + ",'" + item2.getId() + "') ne -1)";
                         /*else if(woSelectedCategory2.equalsIgnoreCase("InspectionLot"))
                             filterQuery1="?$filter="+getWOInspFilterQuery(item2.getId());*/
                         else if (woSelectedCategory2.equalsIgnoreCase("date"))
@@ -453,7 +476,7 @@ public class DashBoardViewModel extends BaseViewModel {
             formattedDate = dateFormat.format(new Date(date.getTimeInMillis()));
             filterQuery = "(BasicStrtDate lt datetime'" + formattedDate + "' and BasicStrtDate ge datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
         } else if ("3".equals(selectedDateFilterValue)) {
-            date.add(Calendar.DAY_OF_MONTH, -2);
+            date.add(Calendar.DAY_OF_MONTH, -ZConfigManager.DASHBOARD_FILTER_WO_OVERDUE_FOR_LAST_DAYS);
             currDate.add(Calendar.DAY_OF_MONTH, 1);
             formattedDate = dateFormat.format(new Date(date.getTimeInMillis()));
             filterQuery = "(BasicFnshDate gt datetime'" + formattedDate + "' and BasicFnshDate lt datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
@@ -465,6 +488,15 @@ public class DashBoardViewModel extends BaseViewModel {
         } else if ("5".equals(selectedDateFilterValue)) {
             currDate.add(Calendar.DAY_OF_MONTH, 1);
             filterQuery = "(BasicFnshDate lt datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
+        } else if ("6".equals(selectedDateFilterValue)) {
+            date.add(Calendar.DAY_OF_MONTH, -ZConfigManager.DASHBOARD_FILTER_WO_CREATED_IN_LAST_DAYS);
+            currDate.add(Calendar.DAY_OF_MONTH, 1);
+            formattedDate = dateFormat.format(new Date(date.getTimeInMillis()));
+            filterQuery = "(CreatedOn gt datetime'" + formattedDate + "' and CreatedOn lt datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
+        } else if("7".equalsIgnoreCase(selectedDateFilterValue)){
+            filterQuery = "(ActlFnshDate le BasicFnshDate)";
+        } else if("8".equalsIgnoreCase(selectedDateFilterValue)){
+            filterQuery = "(ActlFnshDate gt BasicFnshDate)";
         }
         return filterQuery;
     }
@@ -484,7 +516,7 @@ public class DashBoardViewModel extends BaseViewModel {
             formattedDate = dateFormat.format(new Date(date.getTimeInMillis()));
             filterQuery = "(RequiredStartDate lt datetime'" + formattedDate + "' and RequiredStartDate ge datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
         } else if ("3".equals(selectedDateFilterValue)) {
-            date.add(Calendar.DAY_OF_MONTH, -2);
+            date.add(Calendar.DAY_OF_MONTH, -ZConfigManager.DASHBOARD_FILTER_NO_OVERDUE_FOR_LAST_DAYS);
             currDate.add(Calendar.DAY_OF_MONTH, 1);
             formattedDate = dateFormat.format(new Date(date.getTimeInMillis()));
             filterQuery = "(RequiredEndDate gt datetime'" + formattedDate + "' and RequiredEndDate le datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
@@ -496,6 +528,11 @@ public class DashBoardViewModel extends BaseViewModel {
         } else if ("5".equals(selectedDateFilterValue)) {
             currDate.add(Calendar.DAY_OF_MONTH, 1);
             filterQuery = "(RequiredEndDate lt datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
+        } else if ("6".equals(selectedDateFilterValue)) {
+            date.add(Calendar.DAY_OF_MONTH, -ZConfigManager.DASHBOARD_FILTER_NO_CREATED_IN_LAST_DAYS);
+            currDate.add(Calendar.DAY_OF_MONTH, 1);
+            formattedDate = dateFormat.format(new Date(date.getTimeInMillis()));
+            filterQuery = "(CreatedOn gt datetime'" + formattedDate + "' and CreatedOn lt datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
         }
         return filterQuery;
     }
@@ -719,6 +756,15 @@ public class DashBoardViewModel extends BaseViewModel {
         return woUserStatuses;
     }
 
+    /**
+     * @return ArrayList of SpinnerItems for all distinct User Statuses in Notifications
+     */
+    public ArrayList<SpinnerItem> getNoUserStatuses(){
+        if (noUserStatuses.size() == 0)
+            noUserStatuses = Notification.getSpinnerUserStatuses();
+        return noUserStatuses;
+    }
+
     public ArrayList<SpinnerItem> getWoTechnicians() {
         if (woTechnicians.size() == 0) {
             if (ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.OperationLevel.getAssignmentTypeText())) {
@@ -746,5 +792,31 @@ public class DashBoardViewModel extends BaseViewModel {
         if (woSysStatusSpinnerItems.size() == 0)
             woSysStatusSpinnerItems = WorkOrder.getSpinnerSysStatuses();
         return woSysStatusSpinnerItems;
+    }
+
+    /**
+     * @return ArrayList of SpinnerItems for all distinct System Statuses in Notifications
+     */
+    public ArrayList<SpinnerItem> getNOSysStatus() {
+        if (noSysStatusSpinnerItems.size() == 0)
+            noSysStatusSpinnerItems = Notification.getSpinnerSysStatuses();
+        return noSysStatusSpinnerItems;
+    }
+
+    /**
+     * @return ArrayList of SpinnerItems for all distinct Locations in Work Orders or Notifications based on filter is being applied on
+     */
+    public ArrayList<SpinnerItem> getLocations() {
+        ArrayList<SpinnerItem> result;
+        if (!isWorkOrder) {
+            if (noLocations.size() == 0)
+                noLocations = Notification.getSpinnerLocations();
+            result = noLocations;
+        } else {
+            if (woLocations.size() == 0)
+                woLocations = WorkOrder.getSpinnerLocations();
+            result = woLocations;
+        }
+        return result;
     }
 }
