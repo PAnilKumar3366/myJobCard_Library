@@ -55,9 +55,12 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
         create(entity);
         initializeEntityProperties();
     }
+    public ManualFormAssignmentSetModel(){
+        initializeEntityProperties();
+    }
     private void initializeEntityProperties(){
-        this.setEntitySetName(ZCollections.MANUAL_FORM_ASSIGNMENT_COLLECTION);
-        this.setEntityType(ZCollections.MANUAL_FORM_ASSIGNMENT_ENTITY_TYPE);
+        this.setEntitySetName(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET);
+        this.setEntityType(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_TYPE);
         this.addKeyFieldNames("FormID");
         this.addKeyFieldNames("Version");
         this.addKeyFieldNames("FormAssignmentType");

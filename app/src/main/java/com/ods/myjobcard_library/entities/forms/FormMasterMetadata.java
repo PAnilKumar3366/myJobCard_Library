@@ -2,7 +2,10 @@ package com.ods.myjobcard_library.entities.forms;
 
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.sap.smp.client.odata.ODataEntity;
+
+import java.util.Collection;
 
 /**
  * This Model class reading the data from Service and contains the Actual data
@@ -15,16 +18,21 @@ public class FormMasterMetadata extends ZBaseEntity {
     private String Description;
     private boolean Active;
     private String CreatedBy;
+    private String FormCategory;
 
     public FormMasterMetadata(ODataEntity entity) {
         create(entity);
         initializeEntityProperties();
     }
 
+    public FormMasterMetadata(ZODataEntity entity) {
+        create(entity);
+        initializeEntityProperties();
+    }
+
     private void initializeEntityProperties() {
         this.setEntitySetName(ZCollections.FORM_MASTER_METADATA_ENTITY_SET);
-        this.setEntityType("FormMasterMetadata");
-        //this.setEntityResourcePath(ZCollections.FORM_MASTER_METADATA_ENTITY_SET);
+        this.setEntityType(ZCollections.FORM_MASTER_METADATA_ENTITY_TYPE);
         this.addKeyFieldNames("FormID");
         this.addKeyFieldNames("Version");
     }
@@ -77,4 +85,11 @@ public class FormMasterMetadata extends ZBaseEntity {
         CreatedBy = createdBy;
     }
 
+    public String getFormCategory() {
+        return FormCategory;
+    }
+
+    public void setFormCategory(String formCategory) {
+        FormCategory = formCategory;
+    }
 }

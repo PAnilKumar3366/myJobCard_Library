@@ -24,6 +24,7 @@ public class DisplayManualFormViewModel extends AndroidViewModel
 {
     private final MutableLiveData<ArrayList<FormListObject>> formItems = new MutableLiveData<ArrayList<FormListObject>>();
     private final MutableLiveData<ArrayList<FormListObject>> formFilledItems = new MutableLiveData<ArrayList<FormListObject>>();
+    private MutableLiveData<Boolean> postManualFormAssignment=new MutableLiveData<>();
     private ArrayList<ManualFormAssignmentSetModel> manualFormArraylist = new ArrayList<>();
     private ArrayList<FormSetModel> masterFormList = new ArrayList<>();
     private ArrayList<FormListObject> formItemsList = new ArrayList<>();
@@ -42,7 +43,7 @@ public class DisplayManualFormViewModel extends AndroidViewModel
      */
     public void onFetchManualFormAssignedList(WorkOrder workOrder, String formType){
         try {
-            if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentWO.Value))
+            if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentWO.Value)||formType.equals(ZAppSettings.FormAssignmentType.OrderTypeWithManualAssignWO.Value))
             {
                 woNum=workOrder.getWorkOrderNum();
                 oprNum="";
@@ -82,6 +83,10 @@ public class DisplayManualFormViewModel extends AndroidViewModel
         }
     }
 
+    public MutableLiveData<ArrayList<FormListObject>> getFormItems() {
+        return formItems;
+    }
+
     /** Converting the ZODataEntity list to ManualFormAssignment object
      * @param zODataEntities
      * @return
@@ -97,5 +102,17 @@ public class DisplayManualFormViewModel extends AndroidViewModel
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
         }
         return manualFormArraylist;
+    }
+
+    public void setPostManualFormAssignment(ArrayList<ManualFormAssignmentSetModel> manualFormAssignmentSetList){
+        try {
+            postManualFormAssignment.setValue(manualFormAssignmentHelper.postManualFormAssignment(manualFormAssignmentSetList,true));
+        } catch (Exception e) {
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+    }
+
+    public MutableLiveData<Boolean> getPostManualFormAssignment() {
+        return postManualFormAssignment;
     }
 }

@@ -5,6 +5,7 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ResponseMasterModel;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.forms.FormListObject;
+import com.ods.myjobcard_library.entities.forms.FormMasterMetadata;
 import com.ods.myjobcard_library.entities.forms.FormSetModel;
 import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
@@ -26,6 +27,7 @@ public class ManualFormAssignmentHelper
 
     private ArrayList<FormListObject> formItemsList = new ArrayList<>();
     private ArrayList<FormSetModel> formMasterList = new ArrayList<>();
+    private ManualFormAssignmentSetModel manualFormAssignmentSetModel;
 
     /** getting the manual form assignment data by filtered with wo number and Operation number
      * @param woNum
@@ -35,7 +37,7 @@ public class ManualFormAssignmentHelper
     protected ArrayList<ZODataEntity> getManualFormAssignmentData(String woNum,String oprNum){
         ResponseObject result = null;
         try {
-            String entitySetName = ZCollections.MANUAL_FORM_ASSIGNMENT_COLLECTION;
+            String entitySetName = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET;
             String resPath = entitySetName;
             if(oprNum!=null&&oprNum.isEmpty())
                 resPath += "?$filter= (WorkOrderNum eq '" + woNum + "')&$orderby=FlowSequence asc,Mandatory desc";
@@ -107,4 +109,19 @@ public class ManualFormAssignmentHelper
         }
         return formItemsList;
     }
+    protected boolean postManualFormAssignment(ArrayList<ManualFormAssignmentSetModel> manualFormAssignmentList,boolean autoFlush)
+    {
+        boolean result = false;
+        try {
+            for (ManualFormAssignmentSetModel formAssignmentSetModel:manualFormAssignmentList) {
+                ResponseObject response = formAssignmentSetModel.SaveToStore(autoFlush);
+                result = response != null && !response.isError();
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return result;
+
+    }
+
 }

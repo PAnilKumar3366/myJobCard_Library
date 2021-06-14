@@ -258,11 +258,8 @@ public class ZCollections extends Collections {
     public static final String BREAKDOWN_REPORT_ENTITY_TYPE="BreakdownReport";
 	public static final String BREAKDOWN_REPORT_ENTITY_COLLECTION="BreakdownReportSet";
 
-	public static final String CAPACITY_LEVEL_ENTITY_TYPE="WoCapacity";
+	public static final String CAPACITY_LEVEL_ENTITY_TYPE=Service_Name + "WoCapacity";
 	public static final String CAPACITY_LEVEL_ENTITY_COLLECTION="WoCapacitySet";
-
-	public static final String MANUAL_FORM_ASSIGNMENT_COLLECTION = "FormManualAssignment";
-	public static final String MANUAL_FORM_ASSIGNMENT_ENTITY_TYPE = "FormManualAssignmentSet";
 
 	public static final String ADDR_ENTITY_TYPE =  Service_Name + "Address";
 	public static final String WO_NO_TASK_ENTITY_TYPE = "NavTask";
@@ -432,7 +429,7 @@ public class ZCollections extends Collections {
 	public static final String FORM_INSTANCE_STATUS_ENTITY_SET = "FormInstanceStatusSet";
 	public static final String FORM_INSTANCE_STATUS_ENTITY_TYPE = "FormInstanceStatus";
 	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_SET = "FormManualAssignmentSet";
-	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_TYPE = "FormManualAssignment";
+	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_TYPE = getFormsEngineServiceName()+"FormManualAssignment";
 
 	public static String getEditResourcePath(String collection, String key) {
 		return String.format("%s('%s')", collection, key);

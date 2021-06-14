@@ -54,7 +54,7 @@ public class FormsHelper {
     }
 
     protected void getOrderType(WorkOrder workOrder, String type) {
-        if (type.equals(ZAppSettings.FormAssignmentType.WorkOrderLevel.Value)) {
+        if (type.equals(ZAppSettings.FormAssignmentType.WorkOrderLevel.Value)||!type.equals(ZAppSettings.FormAssignmentType.OrderTypeWithManualAssignWO.Value)) {
             orderType = workOrder.getOrderType();
            /* equipmentCat = "";
             funcLocCat = "";
