@@ -261,6 +261,9 @@ public class ZCollections extends Collections {
 	public static final String CAPACITY_LEVEL_ENTITY_TYPE=Service_Name + "WoCapacity";
 	public static final String CAPACITY_LEVEL_ENTITY_COLLECTION="WoCapacitySet";
 
+	public static final String WOHISTORY_COMPONENTS_ENTITY_TYPE="WOHistoryComponent";
+	public static final String WOHISTORY_COMPONENTS_COLLECTION="WOHistoryComponentSet";
+
 	public static final String ADDR_ENTITY_TYPE =  Service_Name + "Address";
 	public static final String WO_NO_TASK_ENTITY_TYPE = "NavTask";
 	public static final String WO_NO_ACTIVITY_ENTITY_TYPE = "NavAct";
