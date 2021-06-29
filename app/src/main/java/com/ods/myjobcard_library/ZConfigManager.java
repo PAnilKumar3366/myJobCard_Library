@@ -1,5 +1,6 @@
 package com.ods.myjobcard_library;
 
+import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.ConfigManager;
@@ -197,9 +198,20 @@ public class ZConfigManager extends ConfigManager {
     public static int DASHBOARD_FILTER_NO_CREATED_IN_LAST_DAYS = 30;
     public static int DASHBOARD_FILTER_NO_OVERDUE_FOR_LAST_DAYS = 2;
 
+    public static String CATALOGCODE_DAMAGE="C";
+    public static String CATALOGCODE_CAUSE="5";
+    public static String CATALOGCODE_PART="B";
+    public static String CATALOGCODE_ACTIVITY="A";
+    public static String CATALOGCODE_TASK="2";
+
     /*Added new config flag for set the network Contriants to execute the workers
     * */
     public static boolean NETWORK_CONSTRAINTS = true;
+
+    private boolean preDefinedForm;
+    private boolean manualForm;
+    private boolean woManulaFormAssigned;
+    private boolean oprManulaFormAssigned;
 
     public static GregorianCalendar getDefaultCalendarVal() {
         try {
@@ -318,6 +330,13 @@ public class ZConfigManager extends ConfigManager {
         catch (Exception e){
             DliteLogger.WriteLog(ZConfigManager.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
+    }
+
+    public static boolean isPredefined(String formAssignemntType){
+        boolean active = false;
+        if(formAssignemntType=="1"||formAssignemntType=="2"||formAssignemntType=="4"||formAssignemntType=="5"||formAssignemntType=="10")
+            active=true;
+        return active;
     }
 
 }

@@ -29,12 +29,15 @@ public class CatalogProfile extends ZBaseEntity {
     }
 
     //get methods
-    public static ResponseObject getCodeGroups(String catalogCode) {
+    public static ResponseObject getCodeGroups(String catalogCode,String catalogProfile) {
         ResponseObject result = null;
         try {
             String resPath = ZCollections.CATALOG_PROFILE_COLLECTION;
             if (catalogCode != null && !catalogCode.isEmpty())
-                resPath += "?$filter=(CatalogCode eq '" + catalogCode + "')";
+                resPath += "?$filter=(CatalogCode eq '" + catalogCode + "'";
+            if (catalogProfile != null && !catalogProfile.isEmpty())
+                resPath += " and CatalogProfile eq '" + catalogProfile + "'";
+            resPath += ")";
             result = getObjListFromStore(ZCollections.CATALOG_PROFILE_COLLECTION, resPath);
             if (!result.isError()) {
                 ArrayList<CatalogProfile> catalogProfiles = (ArrayList<CatalogProfile>) result.Content();
