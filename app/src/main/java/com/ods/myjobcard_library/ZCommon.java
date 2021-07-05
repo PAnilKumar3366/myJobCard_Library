@@ -631,4 +631,16 @@ public class ZCommon extends Common {
         void noNetworkError();
     }
 
+    public static boolean isPredefinedFormVisible(String formAssignemntType){
+        boolean active = false;
+        if(formAssignemntType=="1"||formAssignemntType=="2"||formAssignemntType=="4"||formAssignemntType=="5"||formAssignemntType=="10")
+            active=true;
+        return active;
+    }
+    public static boolean isManualAssignedFormsVisible(String formAssignemntType){
+        boolean active = false;
+        if(formAssignemntType=="6"||formAssignemntType=="7"||formAssignemntType=="8"||formAssignemntType=="9"||formAssignemntType=="10")
+            active=true;
+        return active;
+    }
 }

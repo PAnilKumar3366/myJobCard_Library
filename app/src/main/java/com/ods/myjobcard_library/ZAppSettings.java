@@ -327,6 +327,7 @@ public class ZAppSettings extends AppSettings {
         WOSuspendScreen("key_WO_SC_SUSP", "Screen"),
         WOCompleteScreen("key_WO_SC_COMP", "Screen"),
         WORejectScreen("key_WO_SC_REJC", "Screen"),
+        NORejectScreen("key_NO_SC_REJC", "Screen"),
         //Error Correction
 
         INSPResultPosting("key_INSP_NV", WorkFlowActionType.Navigation.getType()),

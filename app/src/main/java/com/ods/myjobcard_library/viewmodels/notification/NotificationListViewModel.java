@@ -9,8 +9,11 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.entities.transaction.Notification;
+import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
+import com.sap.smp.client.odata.ODataEntity;
 
 import java.util.ArrayList;
 
@@ -28,12 +31,16 @@ public class NotificationListViewModel extends NotificationBaseViewModel {
     private MutableLiveData<Notification> mCurrentNotification = new MutableLiveData<Notification>();
     //  public CurrentNotificationLiveData mLiveData;
     private NotificationRepository mRepository;
+    //private NotificationHelper notificationHelper;
+
+    private MutableLiveData<ArrayList<Notification>> notificationsListLiveData = new MutableLiveData<>();
 
     public NotificationListViewModel(@NonNull Application application) {
         super(application);
         // mLiveData=new CurrentNotificationLiveData(application);
         if (mRepository == null)
             mRepository = NotificationRepository.getInstance();
+        //notificationHelper=new NotificationHelper();
     }
 
     public MutableLiveData<Integer> getmTotalNotificationCount() {
@@ -136,4 +143,38 @@ public class NotificationListViewModel extends NotificationBaseViewModel {
     public void setCurrentNotification(String notificationNum,boolean isWoNo) {
         mRepository.setCurrentNotification(notificationNum,isWoNo);
     }*/
+
+    /** fetching all notification list based on fetch level and its filtered query
+     * @param fetchLevel
+     * @param filterQuery
+     * @param isWoNotif
+     * @param fetchAddress
+     */
+    protected void fetchNotificationList(ZAppSettings.FetchLevel fetchLevel,String filterQuery,boolean isWoNotif,boolean fetchAddress){
+        try {
+            ArrayList<ZODataEntity> zoDataEntityArrayList=new ArrayList<>();
+            if (filterQuery != null && !filterQuery.isEmpty()) {
+                zoDataEntityArrayList = notificationHelper.getFilteredNotifications(filterQuery, ZAppSettings.FetchLevel.List, orderByCriteria);
+            }else {
+                zoDataEntityArrayList = notificationHelper.getNotifications(fetchLevel, ZAppSettings.Hierarchy.HeaderOnly, null, orderByCriteria, isWoNotif);
+            }
+             notificationsListLiveData.setValue(onFetchNotificationListEntities(zoDataEntityArrayList,isWoNotif,fetchAddress));
+        } catch (Exception e) {
+            DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
+        }
+    }
+
+    /** Converting the ZODataEntity list to Notification object
+     * @param zoDataEntityArrayList
+     * @param isWoNotif
+     * @param fetchAddress
+     * @return
+     */
+    protected ArrayList<Notification> onFetchNotificationListEntities(ArrayList<ZODataEntity> zoDataEntityArrayList, boolean isWoNotif, boolean fetchAddress) {
+        notifications=new ArrayList<>();
+        for (ZODataEntity entity : zoDataEntityArrayList) {
+            notifications.add(new Notification(entity, isWoNotif, fetchAddress));
+        }
+        return notifications;
+    }
 }
