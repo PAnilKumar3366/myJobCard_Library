@@ -83,6 +83,26 @@ public class InspectionResultsGet extends ZBaseEntity {
         return inspResults;
     }
 
+    public static ArrayList<InspectionResultsGet> getInspCharResultGet(String inspLotNum, String inspOprNum, String inspPoint, String inspChar) {
+        ResponseObject result = null;
+        ArrayList<InspectionResultsGet> inspResults = new ArrayList<>();
+        try {
+            String entitySetName = ZCollections.WO_INSPECTIONLOT_RESULTGET_COLLECTION;
+            String resPath = entitySetName;
+            resPath += "?$filter=InspLot eq '" + inspLotNum + "' and InspOper eq '" + inspOprNum + "' and InspSample eq '" + inspPoint + "' and InspChar eq '" + inspChar + "'&$orderby=ResNo";
+            result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
+                result = FromEntity(entities, ZAppSettings.FetchLevel.All);
+                inspResults = (ArrayList<InspectionResultsGet>) result.Content();
+            }
+
+        } catch (Exception e) {
+            DliteLogger.WriteLog(InspectionLot.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return inspResults;
+    }
+
     private static ResponseObject FromEntity(List<ODataEntity> entities, ZAppSettings.FetchLevel fetchLevel) {
         ResponseObject result = null;
         try {
