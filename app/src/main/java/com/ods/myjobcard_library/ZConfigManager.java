@@ -177,7 +177,9 @@ public class ZConfigManager extends ConfigManager {
     public static boolean MasterData_BG_Refresh_Unit_In_Hours = true;
     public static boolean ENABLE_LOCAL_STATUS_CHANGE = true;
     public static boolean ENABLE_LOCAL_NO_TO_WO = true;
-
+    public static boolean EDIT_MANUAL_CHECKSHEET = true;
+    public static boolean DELETE_MANUAL_CHECKSHEET = true;
+    public static boolean CREATE_MANUAL_CHECKSHEET = true;
     public static long BG_SYNC_TIME_INTERVAL = 5;
     public static int BG_SYNC_RETRY_INTERVAL = 2;
     public static int BG_SYNC_RETRY_COUNT = 2;
