@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Base64OutputStream;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -728,5 +729,26 @@ public class DocsUtil {
         } catch (Exception e) {
             DliteLogger.WriteLog(DocsUtil.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
+    }
+
+    public static String resizeBase64Content(String base64image) {
+        byte[] encodeByte = Base64.decode(base64image.getBytes(), Base64.DEFAULT);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPurgeable = true;
+        Bitmap image = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length, options);
+
+
+        /*if(image.getHeight() <= 400 && image.getWidth() <= 400){
+            return base64image;
+        }
+        image = Bitmap.createScaledBitmap(image, IMG_WIDTH, IMG_HEIGHT, false);*/
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+
+        byte[] b = baos.toByteArray();
+        System.gc();
+        return Base64.encodeToString(b, Base64.NO_WRAP);
+
     }
 }

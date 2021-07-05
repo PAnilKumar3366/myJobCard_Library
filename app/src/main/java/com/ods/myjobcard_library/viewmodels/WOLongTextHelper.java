@@ -1,4 +1,4 @@
-package com.ods.myjobcard_library.viewmodels.workorder;
+package com.ods.myjobcard_library.viewmodels;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -17,7 +17,6 @@ import com.sap.client.odata.v4.EntityValueList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This Class contains all WorkOrderLongText related helpers methods  such as fetchOnlineLongText.
