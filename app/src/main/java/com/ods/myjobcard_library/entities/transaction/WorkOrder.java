@@ -195,11 +195,11 @@ public class WorkOrder extends ZBaseEntity {
             filterQueryURI = filterStart + filterQuery + filterClose;*/
             switch (woFetchLevel) {
                 case ListMap:
-                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible,EnteredBy,MaintPlant,ResponsiblPlannerGrp,SuperiorOrder" + strOrderByURI;
+                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible,EnteredBy,MaintPlant,ResponsiblPlannerGrp,SuperiorOrder,MaintPlanningPlant,TechID,MobileObjStatus" + strOrderByURI;
                     fetchAddress = true;
                     break;
                 case List:
-                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,EnteredBy,PersonResponsible,EnteredBy,MaintPlant,ResponsiblPlannerGrp,SuperiorOrder" + strOrderByURI;
+                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,EnteredBy,PersonResponsible,EnteredBy,MaintPlant,ResponsiblPlannerGrp,SuperiorOrder,MaintPlanningPlant,TechID,MobileObjStatus" + strOrderByURI;
                     fetchAddress = true;
                     break;
                 case ListSpinner:

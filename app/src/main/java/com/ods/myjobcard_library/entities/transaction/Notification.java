@@ -142,11 +142,11 @@ public class Notification extends ZBaseEntity {
             }
             switch (fetchLevel) {
                 case ListMap:
-                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,Partner,PlannerGroup,MaintPlant,PlanningPlant,EnteredBy,LocationAddress,RequiredStartDate,RequiredEndDate" + strOrderByURI;
+                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,Partner,PlannerGroup,MaintPlant,PlanningPlant,EnteredBy,LocationAddress,RequiredStartDate,RequiredEndDate,MainWorkCenter" + strOrderByURI;
                     fetchAddress = true;
                     break;
                 case List:
-                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,Partner,PlannerGroup,MaintPlant,PlanningPlant,EnteredBy,RequiredStartDate,RequiredEndDate" + strOrderByURI;
+                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,Partner,PlannerGroup,MaintPlant,PlanningPlant,EnteredBy,RequiredStartDate,RequiredEndDate,MainWorkCenter" + strOrderByURI;
                     break;
                 case Header:
                     resourcePath = strEntitySet;
