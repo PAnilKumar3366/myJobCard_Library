@@ -20,20 +20,28 @@ import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.util.ArrayList;
 
-public class DisplayManualFormViewModel extends AndroidViewModel
-{
+public class DisplayManualFormViewModel extends AndroidViewModel {
     private final MutableLiveData<ArrayList<FormListObject>> formItems = new MutableLiveData<ArrayList<FormListObject>>();
     private final MutableLiveData<ArrayList<FormListObject>> formFilledItems = new MutableLiveData<ArrayList<FormListObject>>();
-    private MutableLiveData<Boolean> postManualFormAssignment=new MutableLiveData<>();
+    private MutableLiveData<Boolean> postManualFormAssignment = new MutableLiveData<>();
     private ArrayList<ManualFormAssignmentSetModel> manualFormArraylist = new ArrayList<>();
     private ArrayList<FormSetModel> masterFormList = new ArrayList<>();
     private ArrayList<FormListObject> formItemsList = new ArrayList<>();
     private ManualFormAssignmentHelper manualFormAssignmentHelper;
-    String woNum,oprNum,notification,notificationItem,notificationTask,equipment,functionalLocation;
+    String woNum, oprNum, notification, notificationItem, notificationTask, equipment, functionalLocation;
+    private MutableLiveData<FormListObject> editFormItem = new MutableLiveData<>();
+
+    public MutableLiveData<FormListObject> getEditFormItem() {
+        return editFormItem;
+    }
+
+    public void setEditFormItem(FormListObject editFormItem) {
+        this.editFormItem.setValue(editFormItem);
+    }
 
     public DisplayManualFormViewModel(@NonNull Application application) {
         super(application);
-        manualFormAssignmentHelper=new ManualFormAssignmentHelper();
+        manualFormAssignmentHelper = new ManualFormAssignmentHelper();
     }
 
 

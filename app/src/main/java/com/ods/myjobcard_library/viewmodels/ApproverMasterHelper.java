@@ -34,7 +34,7 @@ public class ApproverMasterHelper {
             if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_OPTION_ID))
                 resPath += "?$filter=(indexof(UserSystemID, '" + searchText + "') ne -1)";
             else if (searchText.equalsIgnoreCase(ZCollections.SEARCH_OPTION_NAME))
-                resPath += "?$filter=(indexof(FirstName, '" + searchText + "') ne -1)";
+                resPath += "?$filter=(indexof(FirstName, '" + searchText + "') ne -1 or indexof(LastName, '" + searchText + "'))";
             else if (searchText.equalsIgnoreCase(ZCollections.SEARCH_APPROVER_DEPT))
                 resPath += "?$filter=(indexof(DepartmentID, '" + searchText + "') ne -1)";
 
