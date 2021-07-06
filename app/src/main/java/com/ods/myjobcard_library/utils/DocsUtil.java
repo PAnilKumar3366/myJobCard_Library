@@ -61,7 +61,7 @@ public class DocsUtil {
     public static final int MEDIA_TYPE_VIDEO = 2;
     public static final int MEDIA_TYPE_SIGN_IMG = 3;
     public static final int EDIT_IMAGE = 4;
-    public static final String IMAGE_DIRECTORY_NAME = "ODS File Upload";
+    public static final String IMAGE_DIRECTORY_NAME = "ODS_File_Upload";
     private static final int PICK_EDIT_IMAGE = 5;
     public static Uri fileUri; // file url to store image/video
     public static String filePath = null;
@@ -360,7 +360,8 @@ public class DocsUtil {
         try {
             // External sdcard location
             String TAG = DocsUtil.class.getSimpleName();
-            File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), IMAGE_DIRECTORY_NAME);
+            File mediaStorageDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+context.getCacheDir());
+//            mediaStorageDir.mkdirs();
 
             // Create the storage directory if it does not exist
             if (!mediaStorageDir.exists()) {
@@ -404,7 +405,7 @@ public class DocsUtil {
             // Get safe storage directory for photos
             // Use `getExternalFilesDir` on Context to access package-specific directories.
             // This way, we don't need to request external read/write runtime permissions.
-            File mediaStorageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File mediaStorageDir = context.getCacheDir();
 
             // Create the storage directory if it does not exist
             if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
@@ -699,7 +700,7 @@ public class DocsUtil {
                     uploadAttachment.setBINARY_FLG("N");
                     uploadAttachment.setMode(ZAppSettings.EntityMode.Update);
                     entitySetName = ZCollections.NO_ATTACHMENT_COLLECTION;
-                    String resPath = entitySetName + "/$count?$filter=(ObjectKey eq '" + uploadAttachment.getNotification() + "' or ObjectKey eq '" + uploadAttachment.getNotification() +uploadAttachment.getItem()+uploadAttachment.getTask() +"')  and " +
+                    String resPath = entitySetName + "/$count?$filter=(ObjectKey eq '" + uploadAttachment.getNotification() + "' or ObjectKey eq '" + uploadAttachment.getNotification() + uploadAttachment.getItem() + uploadAttachment.getTask() + "')  and " +
                             "(tolower(Extension) eq 'url' or tolower(CompID) eq '" + uploadAttachment.getFILE_NAME().toLowerCase() + "') and tolower(PropValue) eq '" + uploadAttachment.getDescription().toLowerCase() + "'";
                     result = DataHelper.getInstance().getEntities(entitySetName, resPath);
                     if (!result.isError()) {
