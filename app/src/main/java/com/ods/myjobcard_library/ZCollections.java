@@ -245,26 +245,32 @@ public class ZCollections extends Collections {
 	public static final String WO_NO_ATTACHMENT_CONTENT_COLLECTION = "WONOAttachContentDownloadSet";
 
 	public static final String WO_INSPECTIONLOT_ENTITY_TYPE="InspectionLot";
-	public static final String WO_INSPECTIONLOT_ENTITY_COLLECTION="InspectionLotSet";
-	public static final String WO_INSPECTIONLOT_OPERATION_ENTITY_TYPE="InspectionOper";
-	public static final String WO_INSPECTIONLOT_OPERATION_ENTITY_COLLECTION="InspectionOperSet";
-	public static final String WO_INSPECTIONLOT_POINT_ENTITY_TYPE="InspectionPoint";
-	public static final String WO_INSPECTIONLOT_POINT_ENTITY_COLLECTION="InspectionPointSet";
-	public static final String WO_INSPECTIONLOT_CHARACTERISTIC_ENTITY_TYPE="InspectionChar";
-	public static final String WO_INSPECTIONLOT_CHARACTERISTIC_ENTITY_COLLECTION="InspectionCharSet";
-    public static final String WO_INSPECTIONLOT_RESULTGET_ENTITY_TYPE = "ODS_PR_QM_CALIBRATION_SRV.InspectionResultsGet";
-    public static final String WO_INSPECTIONLOT_RESULTGET_COLLECTION = "InspectionResultsGetSet";
+	public static final String WO_INSPECTIONLOT_ENTITY_COLLECTION = "InspectionLotSet";
+	public static final String WO_INSPECTIONLOT_OPERATION_ENTITY_TYPE = "InspectionOper";
+	public static final String WO_INSPECTIONLOT_OPERATION_ENTITY_COLLECTION = "InspectionOperSet";
+	public static final String WO_INSPECTIONLOT_POINT_ENTITY_TYPE = "InspectionPoint";
+	public static final String WO_INSPECTIONLOT_POINT_ENTITY_COLLECTION = "InspectionPointSet";
+	public static final String WO_INSPECTIONLOT_CHARACTERISTIC_ENTITY_TYPE = "InspectionChar";
+	public static final String WO_INSPECTIONLOT_CHARACTERISTIC_ENTITY_COLLECTION = "InspectionCharSet";
+	public static final String WO_INSPECTIONLOT_RESULTGET_ENTITY_TYPE = "ODS_PR_QM_CALIBRATION_SRV.InspectionResultsGet";
+	public static final String WO_INSPECTIONLOT_RESULTGET_COLLECTION = "InspectionResultsGetSet";
 
-    public static final String BREAKDOWN_REPORT_ENTITY_TYPE="BreakdownReport";
-	public static final String BREAKDOWN_REPORT_ENTITY_COLLECTION="BreakdownReportSet";
+	public static final String WO_HISTORY_OPERATION_SET = "WoHistoryOperationSet";
+	public static final String WO_HISTORY_OPERATION_ENTITY_TYPE = "WoHistoryOperation";
 
-	public static final String CAPACITY_LEVEL_ENTITY_TYPE=Service_Name + "WoCapacity";
-	public static final String CAPACITY_LEVEL_ENTITY_COLLECTION="WoCapacitySet";
+	public static final String WO_HISTORY_OPERATION_LONG_TEXT_ENTITY_TYPE = "WOHistoryOpLongText";
+	public static final String WO_HISTORY_OPERATION_LONG_TEXT_ENTITY_SET = "WOHistoryOpLongTextSet";
 
-	public static final String WOHISTORY_COMPONENTS_ENTITY_TYPE="WOHistoryComponent";
-	public static final String WOHISTORY_COMPONENTS_COLLECTION="WOHistoryComponentSet";
+	public static final String BREAKDOWN_REPORT_ENTITY_TYPE = "BreakdownReport";
+	public static final String BREAKDOWN_REPORT_ENTITY_COLLECTION = "BreakdownReportSet";
 
-	public static final String ADDR_ENTITY_TYPE =  Service_Name + "Address";
+	public static final String CAPACITY_LEVEL_ENTITY_TYPE = Service_Name + "WoCapacity";
+	public static final String CAPACITY_LEVEL_ENTITY_COLLECTION = "WoCapacitySet";
+
+	public static final String WOHISTORY_COMPONENTS_ENTITY_TYPE = "WOHistoryComponent";
+	public static final String WOHISTORY_COMPONENTS_COLLECTION = "WOHistoryComponentSet";
+
+	public static final String ADDR_ENTITY_TYPE = Service_Name + "Address";
 	public static final String WO_NO_TASK_ENTITY_TYPE = "NavTask";
 	public static final String WO_NO_ACTIVITY_ENTITY_TYPE = "NavAct";
 	public static final String WO_NO_ITEM_ENTITY_TYPE = "NavItem";

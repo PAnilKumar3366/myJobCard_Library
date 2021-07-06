@@ -23,6 +23,7 @@ import com.ods.myjobcard_library.entities.ctentities.OrderTypeFeature;
 import com.ods.myjobcard_library.entities.ctentities.SpinnerItem;
 import com.ods.myjobcard_library.entities.ctentities.WorkOrderStatus;
 import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
+import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
 import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
@@ -195,11 +196,11 @@ public class WorkOrder extends ZBaseEntity {
             filterQueryURI = filterStart + filterQuery + filterClose;*/
             switch (woFetchLevel) {
                 case ListMap:
-                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible,EnteredBy,MaintPlant,ResponsiblPlannerGrp,SuperiorOrder" + strOrderByURI;
+                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,ObjectNumber,EquipNum,NotificationNum,FuncLocation,AddressNumber,WOAddressNumber,TempID,UserStatus,BasicFnshDate,ErrorEntity,PostalCode,MainWorkCtr,Address,LastChangedBy,PersonResponsible,EnteredBy,MaintPlant,ResponsiblPlannerGrp,SuperiorOrder,MaintPlanningPlant,TechID,MobileObjStatus" + strOrderByURI;
                     fetchAddress = true;
                     break;
                 case List:
-                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,EnteredBy,PersonResponsible,EnteredBy,MaintPlant,ResponsiblPlannerGrp,SuperiorOrder" + strOrderByURI;
+                    resourcePath = strEntitySet + "?$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,WOAddressNumber,AddressNumber,ObjectNumber,PostalCode,MainWorkCtr,LastChangedBy,EnteredBy,PersonResponsible,EnteredBy,MaintPlant,ResponsiblPlannerGrp,SuperiorOrder,MaintPlanningPlant,TechID,MobileObjStatus" + strOrderByURI;
                     fetchAddress = true;
                     break;
                 case ListSpinner:
@@ -2188,7 +2189,10 @@ public class WorkOrder extends ZBaseEntity {
                 }
                 //Forms
                 if (ZConfigManager.MANDATORY_FORMS_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.FORMS.getFeatureValue())) {
-                    if (getTotalNumUnSubmittedMandatoryForms() > 0)
+                    String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
+                    if(ZCommon.isPredefinedFormVisible(formType)&&getTotalNumUnSubmittedMandatoryForms() > 0)
+                        errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
+                    if (ZCommon.isManualAssignedFormsVisible(formType)&&getTotalNumUnSubmittedManualMandatoryForms(true) > 0)
                         errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
                 }
                 //Record Points
@@ -2608,6 +2612,73 @@ public class WorkOrder extends ZBaseEntity {
         responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
         return responseObject;
     }
+    /* get the count of the un-submitted Manula Manadatory forms based on Form Assignment type
+     * */
+    public int getTotalNumUnSubmittedManualMandatoryForms(boolean mandatoryFormChk) {
+        int unSubmittedFormsCount = 0;
+        ResponseObject responseObject = null;
+        String strResPath = "";
+        Object rawData = null;
+        try {
+            responseObject=getManualFormEntities(mandatoryFormChk);
+            if (!responseObject.isError()) {
+                rawData = responseObject.Content();
+                ArrayList<ManualFormAssignmentSetModel> forms = (ArrayList<ManualFormAssignmentSetModel>) rawData;
+                if (forms != null && forms.size() > 0) {
+                    unSubmittedFormsCount = forms.size();
+                    for (ManualFormAssignmentSetModel form : forms) {
+                        if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED && ZConfigManager.WO_OP_OBJS_DISPLAY.equalsIgnoreCase("x"))
+                            strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "' and OperationNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "')";
+                        else
+                            strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "')";
+                        responseObject = DataHelper.getInstance().getEntities(ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION, strResPath);
+                        if (!responseObject.isError()) {
+                            rawData = responseObject.Content();
+                            if (Integer.parseInt(rawData.toString()) > 0) {
+                                unSubmittedFormsCount--;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return unSubmittedFormsCount;
+    }
+    /* getting the forms data for  Manual manadatory check based on Form Assignment type
+     * */
+    private ResponseObject getManualFormEntities(boolean mandatoryFormChk) {
+        ResponseObject responseObject = null;
+        String formAssignType = ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
+        String strResPath = "";
+        String strMandatoryChk="";
+        Object rawData = null;
+        if (mandatoryFormChk)
+            strMandatoryChk = " eq 'x'";
+        else
+            strMandatoryChk = " ne 'x'";
+
+        switch (formAssignType) {
+            case "6":
+                strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '' and tolower(Mandatory)" + strMandatoryChk + ")";
+                break;
+            case "7":
+                strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
+                break;
+            case "8":
+                strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (Equipment eq '" + WorkOrder.getCurrWo().getEquipNum() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
+                break;
+            case "9":
+                strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (FunctionalLocation eq '" + WorkOrder.getCurrWo().getFuncLocation() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
+                break;
+            default:
+                strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '' and tolower(Mandatory)" + strMandatoryChk + ")";
+                break;
+        }
+        responseObject = ManualFormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
+        return responseObject;
+    }
     /* get the count of the un-submitted Optional forms based on Form Assignment type
      * */
     public int getTotalNumUnSubmittedOptionalForms() {
@@ -2901,4 +2972,5 @@ public class WorkOrder extends ZBaseEntity {
             statusDetail = new StatusCategory();
         return statusDetail;
     }
+
 }

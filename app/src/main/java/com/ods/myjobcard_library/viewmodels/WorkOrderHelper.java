@@ -1,4 +1,4 @@
-package com.ods.myjobcard_library.viewmodels.workorder;
+package com.ods.myjobcard_library.viewmodels;
 
 import android.os.AsyncTask;
 

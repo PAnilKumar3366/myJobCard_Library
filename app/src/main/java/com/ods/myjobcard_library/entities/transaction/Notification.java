@@ -142,11 +142,11 @@ public class Notification extends ZBaseEntity {
             }
             switch (fetchLevel) {
                 case ListMap:
-                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,Partner,PlannerGroup,MaintPlant,PlanningPlant,EnteredBy,LocationAddress,RequiredStartDate,RequiredEndDate" + strOrderByURI;
+                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,Partner,PlannerGroup,MaintPlant,PlanningPlant,EnteredBy,LocationAddress,RequiredStartDate,RequiredEndDate,MainWorkCenter" + strOrderByURI;
                     fetchAddress = true;
                     break;
                 case List:
-                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,Partner,PlannerGroup,MaintPlant,PlanningPlant,EnteredBy,RequiredStartDate,RequiredEndDate" + strOrderByURI;
+                    resourcePath = strEntitySet + "?$select=Notification,NotificationType,SystemStatus,Priority,ShortText,Breakdown,NotifDate,PostalCode,NotifTime,MobileStatus,Equipment,FunctionalLoc,TempID,Partner,PlannerGroup,MaintPlant,PlanningPlant,EnteredBy,RequiredStartDate,RequiredEndDate,MainWorkCenter" + strOrderByURI;
                     break;
                 case Header:
                     resourcePath = strEntitySet;
@@ -271,6 +271,10 @@ public class Notification extends ZBaseEntity {
     }
 
     public Notification(ODataEntity entity, boolean isWONotif, boolean fetchAddress) {
+        initializeEntityProperties(isWONotif);
+        create(entity, isWONotif, fetchAddress);
+    }
+    public Notification(ZODataEntity entity, boolean isWONotif, boolean fetchAddress) {
         initializeEntityProperties(isWONotif);
         create(entity, isWONotif, fetchAddress);
     }
@@ -1346,6 +1350,76 @@ public class Notification extends ZBaseEntity {
         }
         return result;
     }
+    public ResponseObject create(ZODataEntity entity, boolean isWONotif, boolean fetchAddress) {
+        ResponseObject result = null;
+        try {
+            super.create(entity);
+            ResponseObject resultAttachments = null;
+            try {
+                if (dataHelper == null) {
+                    DataHelper.getInstance();
+                }
+                String entitySetName = isWONotif ? ZCollections.WO_NO_ATTACHMENT_COLLECTION : ZCollections.NO_ATTACHMENT_COLLECTION;
+                String strResPath = entitySetName + "/$count?$filter=(endswith(ObjectKey, '" + getNotification() + "') eq true)";
+                resultAttachments = DataHelper.getInstance().getEntities(ZCollections.NO_ATTACHMENT_COLLECTION, strResPath);
+                if (!resultAttachments.isError()) {
+                    Object rawData = resultAttachments.Content();
+                    if (Integer.parseInt(rawData.toString()) > 0)
+                        isAttachmentAvailable = true;
+                }
+            } catch (Exception e) {
+                DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            }
+
+            try {
+                deriveNotificationStatus();
+            } catch (Exception e) {
+                DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            }
+
+            try {
+                if (fetchAddress) {
+                    //get Notification
+                    if (result != null && result.Content() != null) {
+                        String addrNum = "";
+                        if (getLocationAddress() != null && !getLocationAddress().isEmpty()) {
+                            addrNum = getLocationAddress();
+                        } else if (getAddressNumber() != null && !getAddressNumber().isEmpty()) {
+                            addrNum = getAddressNumber();
+                        }
+                        if (addrNum.isEmpty()) {
+                                /*resultAddress = getWOPartnerAddress(n.getObjectNumber());
+                                if(!resultAddress.isError())
+                                {
+                                    partnerAddresses = (ArrayList<PartnerAddress>) resultAddress.Content();
+                                    n.setPartnerAddresses(partnerAddresses);
+                                }*/
+                        } else {
+                            ResponseObject resultAddress = getDefaultAddress().getNotificationAddress(addrNum);
+                            if (!resultAddress.isError() && ((ArrayList) resultAddress.Content()).size() > 0) {
+                                Address address = ((ArrayList<Address>) resultAddress.Content()).get(0);
+                                setDefaultAddress(address);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            }
+
+            result = new ResponseObject(ZConfigManager.Status.Success, "", this);
+        }
+                /*catch(Exception e)
+                {
+                    result = new ResponseObject(ZConfigManager.Status.Error,e.getMessage(),null);
+                }
+            }
+        }*/ catch (Exception e) {
+            result = new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
+
+        }
+        return result;
+    }
 
     public boolean isComplete() {
         boolean result = false;
@@ -1514,7 +1588,7 @@ public class Notification extends ZBaseEntity {
         return orderNum;
     }
 
-    public boolean updateStatus(StatusCategory status, String notes, boolean autoFlush, Location deviceLocation) {
+    public boolean updateStatus(StatusCategory status, String notes, String StatusReason, boolean autoFlush, Location deviceLocation) {
         boolean result = false;
         DataHelper dbHelper = null;
         String deviceTime = " ";
@@ -1526,8 +1600,13 @@ public class Notification extends ZBaseEntity {
             setMobileStatus(status.getStatusCode());
             setMobileObjectType(status.getObjectType());
             String statusDesc = status.getStatusDescKey();
+
+            if (StatusReason != null && !StatusReason.isEmpty()) {
+                strReasonText = ZConfigManager.AUTO_NOTES_TEXT_LINE4 + " " + StatusReason;
+            }
             if (!ZConfigManager.AUTO_NOTES_ON_STATUS) {
-                strNotesText = (notes != null ? notes : "");
+                strNotesText = (strReasonText.isEmpty() ? "" : (strReasonText + "\n")) + (notes != null ? notes : "");
+                //strNotesText = (notes != null ? notes : "");
             } else {
                 Date timeStamp = ZCommon.getDeviceTime();
                 if (timeStamp != null) {
@@ -1539,7 +1618,7 @@ public class Notification extends ZBaseEntity {
                 if (ZConfigManager.ENABLE_POST_DEVICE_LOCATION_NOTES && deviceLocation != null) {
                     strStatusText = strStatusText + " at location Lat: " + deviceLocation.getLatitude() + "; Long: " + deviceLocation.getLongitude();
                 }
-                strNotesText = strStatusText + (notes != null ? notes : "");
+                strNotesText = strStatusText + (strReasonText.isEmpty() ? "" : ("\n" + strReasonText + "\n"))  + (notes != null ? notes : "");
             }
             //setNotes(strNotesText);
             //Update the WO to offlinestore

@@ -22,13 +22,16 @@ public class HoldRejectReason extends ZBaseEntity {
     private String Reason;
     private String Active;
     private String Language;
+    private String ObjectType;
+    private String ObjectCategory;
+    private String RoleID;
 
     public HoldRejectReason(ODataEntity entity) {
         create(entity);
     }
 
     //get methods
-    public static ResponseObject getReasons(ZAppSettings.ReasonCodeTypes ReasonType) {
+    public static ResponseObject getReasons(ZAppSettings.ReasonCodeTypes ReasonType,ZConfigManager.Fetch_Object_Type objectCategory) {
         DataHelper dataHelper = null;
         ResponseObject result = null;
         String strResPath = null;
@@ -36,11 +39,22 @@ public class HoldRejectReason extends ZBaseEntity {
         ArrayList<HoldRejectReason> reasons;
         ArrayList<SpinnerItem> items;
         try {
-            strResPath = ZCollections.REASON_CODE_COLLECTION + "?$filter=(Type eq '" + ReasonType.getResonCodeTypeDesc() + "')" + strOrderBy;
+            String objectStr = objectCategory.equals(ZConfigManager.Fetch_Object_Type.WorkOrder) ? ZAppSettings.StatusCategoryType.WorkOrderLevel.getStatusCategoryType()
+                    : objectCategory.equals(ZConfigManager.Fetch_Object_Type.Operation) ? ZAppSettings.StatusCategoryType.OperationLevel.getStatusCategoryType() :objectCategory.equals(ZConfigManager.Fetch_Object_Type.NotificationTasks)?ZAppSettings.StatusCategoryType.NotificationTaskLevel.getStatusCategoryType(): ZAppSettings.StatusCategoryType.NoticationLevel.getStatusCategoryType();
+
+          //  strResPath = ZCollections.REASON_CODE_COLLECTION + "?$filter=(Type eq '" + ReasonType.getResonCodeTypeDesc() + "' and ObjectType eq '" + objectType + "' and tolower(ObjectCategory) eq '" + objectStr.toLowerCase() + "')" + strOrderBy;
+            strResPath = ZCollections.REASON_CODE_COLLECTION + "?$filter=(Type eq '" + ReasonType.getResonCodeTypeDesc() + "' and tolower(ObjectCategory) eq '" + objectStr.toLowerCase() + "')" + strOrderBy;
             dataHelper = DataHelper.getInstance();
             result = dataHelper.getEntities(ZCollections.REASON_CODE_COLLECTION, strResPath);
-            if (!result.isError()) {
+            if (result != null && !result.isError()) {
                 result = FromEntity((List<ODataEntity>) result.Content());
+               /* if (result != null && ((List<ODataEntity>) result.Content()).size() == 0) {
+                    strResPath = ZCollections.REASON_CODE_COLLECTION + "?$filter=(Type eq '" + ReasonType.getResonCodeTypeDesc() + "' and tolower(ObjectType) eq 'x' and tolower(ObjectCategory) eq '" + objectStr.toLowerCase() + "')";
+                    result = DataHelper.getInstance().getEntities(ZCollections.REASON_CODE_COLLECTION, strResPath);
+                    if (result != null && !result.isError()) {
+                        result = FromEntity((List<ODataEntity>) result.Content());
+                    }
+                }*/
                 reasons = (ArrayList<HoldRejectReason>) result.Content();
                 if (reasons != null && reasons.size() > 0) {
                     items = new ArrayList<>();
@@ -123,4 +137,27 @@ public class HoldRejectReason extends ZBaseEntity {
         Active = active;
     }
 
+    public String getObjectType() {
+        return ObjectType;
+    }
+
+    public void setObjectType(String objectType) {
+        ObjectType = objectType;
+    }
+
+    public String getObjectCategory() {
+        return ObjectCategory;
+    }
+
+    public void setObjectCategory(String objectCategory) {
+        ObjectCategory = objectCategory;
+    }
+
+    public String getRoleID() {
+        return RoleID;
+    }
+
+    public void setRoleID(String roleID) {
+        RoleID = roleID;
+    }
 }

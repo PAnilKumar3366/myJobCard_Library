@@ -1,12 +1,17 @@
 package com.ods.myjobcard_library.entities.forms;
 
 import com.ods.myjobcard_library.ZCollections;
+import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.ods_sdk.StoreHelpers.DataHelper;
+import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * this model is reading the data from the ManualFormAssignmentSet service.
@@ -271,5 +276,36 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
 
     public void setActive(boolean active) {
         Active = active;
+    }
+
+    public static ResponseObject getObjectsFromEntity(String entitySetName, String resPath) {
+        ResponseObject result = null;
+        try {
+            result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (!result.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
+                ArrayList<ManualFormAssignmentSetModel> content = null;
+                ManualFormAssignmentSetModel manualFormAssignmentSetModel;
+                content = new ArrayList<ManualFormAssignmentSetModel>();
+                for (ODataEntity entity : entities) {
+                    manualFormAssignmentSetModel = new ManualFormAssignmentSetModel(entity);
+                    if (manualFormAssignmentSetModel != null) {
+                        content.add(manualFormAssignmentSetModel);
+                    } else {
+                    }
+                }
+                if (result == null) {
+                    result = new ResponseObject(ZConfigManager.Status.Success);
+                }
+                result.setMessage("");
+                result.setContent(content);
+            }
+        } catch (Exception e) {
+            return new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
+        }
+        if (result != null)
+            return result;
+        else
+            return new ResponseObject(ZConfigManager.Status.Error);
     }
 }

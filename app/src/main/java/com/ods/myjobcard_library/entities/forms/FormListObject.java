@@ -4,6 +4,19 @@ public class FormListObject {
 
     private String formname;
     private String formid;
+
+    public void setMandatory(String mandatory) {
+        this.mandatory = mandatory;
+    }
+
+    public void setOccur(int occur) {
+        this.occur = occur;
+    }
+
+    public void setMultipleSub(String multipleSub) {
+        this.multipleSub = multipleSub;
+    }
+
     private String version;
     private String mandatory;
     private int occur;

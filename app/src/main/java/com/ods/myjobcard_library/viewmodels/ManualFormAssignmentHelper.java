@@ -124,4 +124,24 @@ public class ManualFormAssignmentHelper
 
     }
 
+    protected ArrayList<ZODataEntity> getManualUnSubmittedMandatoryForm(String resPath){
+        ResponseObject result = null;
+        try {
+            String entitySetName = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET;
+            result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            zoDataManualFormAssignmentEntities=new ArrayList<>();
+            if(result!=null&&!result.isError()){
+                List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
+                for (ODataEntity entity : entities) {
+                    ZODataEntity zoDataEntity = new ZODataEntity(entity);
+                    zoDataManualFormAssignmentEntities.add(zoDataEntity);
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(ManualFormAssignmentHelper.class, ZAppSettings.LogLevel.Error, e.getMessage());
+            return new ArrayList<ZODataEntity>();
+        }
+        return zoDataManualFormAssignmentEntities;
+    }
+
 }
