@@ -47,7 +47,7 @@ public class NotificationBaseViewModel extends BaseViewModel {
      * @param notifiNum
      * @param isWONotifi
      */
-    protected void fetchSingleNotification(String notifiNum, boolean isWONotifi){
+    public void fetchSingleNotification(String notifiNum, boolean isWONotifi){
         try{
             ZODataEntity zoDataEntity=notificationHelper.getSingleNotification(notifiNum,isWONotifi);
             mCurrentNotification.setValue(onFetchSingleNotificationEntities(zoDataEntity,isWONotifi,true));
