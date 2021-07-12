@@ -202,9 +202,10 @@ public class ZConfigManager extends ConfigManager {
 
     public static String CATALOGCODE_DAMAGE="C";
     public static String CATALOGCODE_CAUSE="5";
-    public static String CATALOGCODE_PART="B";
+    public static String CATALOGCODE_ITEM="B";
     public static String CATALOGCODE_ACTIVITY="A";
     public static String CATALOGCODE_TASK="2";
+    public static String CATALOGCODE_SYMPTOM="D";
 
     /*Added new config flag for set the network Contriants to execute the workers
     * */
