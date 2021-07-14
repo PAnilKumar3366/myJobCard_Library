@@ -65,8 +65,10 @@ public class NotificationBaseViewModel extends BaseViewModel {
     protected Notification onFetchSingleNotificationEntities(ZODataEntity zoDataEntity,boolean isWONotifi,boolean fetchAddress){
         Notification notification = null;
         try {
-            if(zoDataEntity!=null)
+            if(zoDataEntity!=null){
             notification=new Notification(zoDataEntity, isWONotifi, fetchAddress);
+            Notification.setCurrNotification(notification);
+            }
         } catch (Exception e) {
             DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
         }
