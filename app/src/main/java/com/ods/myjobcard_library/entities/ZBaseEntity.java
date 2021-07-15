@@ -186,10 +186,15 @@ public class ZBaseEntity extends BaseEntity implements Parcelable {
     public void setObjFieldValue(String fieldName, Object fieldValue) {
         try {
             Class<?> cls = this.getClass();
-            Field field = cls.getDeclaredField(fieldName);
+            Field field;
+            try {
+                field = cls.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e){
+                field = cls.getSuperclass().getDeclaredField(fieldName);
+            }
             Class<?> type = field.getType();
             //set value for all fields
-            Method method = cls.getDeclaredMethod("set" + fieldName, field.getType());
+            Method method = cls.getMethod("set" + fieldName, field.getType());
             if (fieldValue != null) {
                 if (type == Time.class) {
                     //method.invoke(this, setTime((String.valueOf(pr.getValue()))));
