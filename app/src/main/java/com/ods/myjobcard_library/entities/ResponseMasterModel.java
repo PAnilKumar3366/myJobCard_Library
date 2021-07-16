@@ -40,6 +40,7 @@ public class ResponseMasterModel extends ZBaseEntity {
     private String Group;
     private String GroupCounter;
     private String InternalCounter;
+    private String Counter;
 
     public ResponseMasterModel(ODataEntity entity) {
         initializeEntityProperties();
@@ -104,7 +105,7 @@ public class ResponseMasterModel extends ZBaseEntity {
                 resourcePath += "?$filter=(InstanceID eq '" + instanceID + "')";
 
             if (!isResponseData)
-                resourcePath += "&$select=InstanceID,WoNum,OperationNum,FormID,Version,CreatedOn,IsDraft";
+                resourcePath += "&$select=InstanceID,WoNum,OperationNum,FormID,Version,CreatedOn,IsDraft,Counter";
 
             result = DataHelper.getInstance().getEntities(entitySetName, resourcePath);
             if (!result.isError()) {
@@ -141,7 +142,7 @@ public class ResponseMasterModel extends ZBaseEntity {
                 resourcePath += "?$filter=(tolower(FormID) eq '" + formID.toLowerCase() + "' and Version eq '" + version + "' and NonObjType eq 'X')";
 
             if (!isResponseData)
-                resourcePath += "&$select=InstanceID,FormID,Version,CreatedOn,IsDraft";
+                resourcePath += "&$select=InstanceID,FormID,Version,CreatedOn,IsDraft,Counter";
 
             result = DataHelper.getInstance().getEntities(entitySetName, resourcePath);
             if (!result.isError()) {
@@ -370,4 +371,11 @@ public class ResponseMasterModel extends ZBaseEntity {
         return this.getFormID() + "\n" + this.getVersion() + "\n" + this.getInstanceID() + "\n";
     }
 
+    public String getCounter() {
+        return Counter;
+    }
+
+    public void setCounter(String counter) {
+        Counter = counter;
+    }
 }

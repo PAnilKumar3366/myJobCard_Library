@@ -448,46 +448,6 @@ public class ZAppSettings extends AppSettings {
         }
     }
 
-    public enum ObjectEntity {
-
-        Notification("NotificationHeaderSet", "com.ods.myjobcard_library.entities.transaction.Notification", "NotificationHeaderSet"),
-        User("User", "com.ods.myjobcard_library.entities.ctentities.UserTable", "AppUserTableSet"),
-        WorkOrder("WorkOrder", "com.ods.myjobcard_library.entities.transaction.WorkOrder", "WoHeaderSet"),
-        Operation("Operation", "com.ods.myjobcard_library.entities.transaction.Operation", "WOOperationCollection"),
-        ;
-
-        String key;
-        String objectClass;
-        String entitySet;
-
-        ObjectEntity(String key, String objectClass, String entitySet) {
-            this.key = key;
-            this.objectClass = objectClass;
-            this.entitySet = entitySet;
-        }
-
-        public static ObjectEntity getByKey(String key) {
-            for (ObjectEntity entity : ObjectEntity.values()) {
-                if (entity.key.equalsIgnoreCase(key)) {
-                    return entity;
-                }
-            }
-            return null;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getObjectClass() {
-            return objectClass;
-        }
-
-        public String getEntitySet() {
-            return entitySet;
-        }
-    }
-
     public enum RecordPointMandatoryFlag {
 
         Single("S"),
