@@ -16,7 +16,7 @@ public class FormResponseApprovalStatus extends ZBaseEntity {
     private String FormInstanceID;
     private String ApproverID;
     private String FormSubmittedBy;
-    private String FormInstanceStatus;
+    private String FormContentStatus;
     private String Remarks;
     private GregorianCalendar CreatedDate;
     private Time CreatedTime;
@@ -33,13 +33,16 @@ public class FormResponseApprovalStatus extends ZBaseEntity {
         initializeEntityProperties();
     }
 
+    public FormResponseApprovalStatus() {
+    }
+
     public FormResponseApprovalStatus(String FormID, String Version, String FormInstanceID, String FormSubmittedBy, String ApproverID) {
         this.FormID = FormID;
         this.Version = Version;
         this.FormInstanceID = FormInstanceID;
         this.FormSubmittedBy = FormSubmittedBy;
         this.ApproverID = ApproverID;
-
+        initializeEntityProperties();
     }
 
     public String getCounter() {
@@ -98,12 +101,12 @@ public class FormResponseApprovalStatus extends ZBaseEntity {
         FormSubmittedBy = formSubmittedBy;
     }
 
-    public String getFormInstanceStatus() {
-        return FormInstanceStatus;
+    public String getFormContentStatus() {
+        return FormContentStatus;
     }
 
-    public void setFormInstanceStatus(String formInstanceStatus) {
-        FormInstanceStatus = formInstanceStatus;
+    public void setFormContentStatus(String formContentStatus) {
+        FormContentStatus = formContentStatus;
     }
 
     public String getRemarks() {
@@ -131,8 +134,8 @@ public class FormResponseApprovalStatus extends ZBaseEntity {
     }
 
     private void initializeEntityProperties() {
-        this.setEntitySetName(ZCollections.FORM_INSTANCE_STATUS_ENTITY_SET);
-        this.setEntityType(ZCollections.FORM_INSTANCE_STATUS_ENTITY_TYPE);
+        this.setEntitySetName(ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET);
+        this.setEntityType(ZCollections.FORM_RESPONSE_APPROVAL_ENTITY_TYPE);
         this.addKeyFieldNames("FormID");
         this.addKeyFieldNames("FormVersion");
         this.addKeyFieldNames("FormInstanceID");

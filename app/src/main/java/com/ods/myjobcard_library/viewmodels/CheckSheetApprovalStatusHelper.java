@@ -12,19 +12,26 @@ import com.sap.smp.client.odata.ODataEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResponseApprovalStatusHelper {
+public class CheckSheetApprovalStatusHelper {
 
-    public ArrayList<ZODataEntity> fetchFormApprovalStatus(String FormId, String InstanceID, String Version) {
+    public ArrayList<ZODataEntity> fetchFormApprovalStatus(String FormId, String InstanceID, String Version, String submittedBy, String counter) {
 
-        return getFormApprovalStatus(FormId, InstanceID, Version);
+        return getFormApprovalStatus(FormId, InstanceID, Version, submittedBy, counter);
     }
 
-    private ArrayList<ZODataEntity> getFormApprovalStatus(String formId, String instanceID, String version) {
+    private ArrayList<ZODataEntity> getFormApprovalStatus(String formId, String instanceID, String version, String submittedBy, String counter) {
         ResponseObject result = null;
         ArrayList<ZODataEntity> ZODataEntities = new ArrayList<>();
-        String respath = "";
-        String entitySetName = ZCollections.FORM_INSTANCE_STATUS_ENTITY_SET;
-        String filterQuery = "$filter=FormID eq '" + formId + "' FormVersion eq '" + version + "' FormInstanceID eq '" + instanceID + "'";
+        String entitySetName = ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET;
+        String filterQuery = "";
+        filterQuery = "$filter=FormID eq '" + formId + "' FormVersion eq '" + version + "' FormInstanceID eq '" + instanceID + "'";
+
+        if (!submittedBy.isEmpty())
+            filterQuery += " and FormSubmittedBy eq '" + submittedBy + "'";
+        if (!counter.isEmpty())
+            filterQuery += " and Counter eq '" + counter + "'";
+
+
         result = DataHelper.getInstance().getEntities(entitySetName, entitySetName + filterQuery);
         try {
             if (result != null && !result.isError()) {

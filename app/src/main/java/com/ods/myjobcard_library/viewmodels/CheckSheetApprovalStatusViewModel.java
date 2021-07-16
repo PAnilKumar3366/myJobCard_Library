@@ -14,18 +14,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class ApproverStatusViewModel extends BaseViewModel {
+public class CheckSheetApprovalStatusViewModel extends BaseViewModel {
 
     MutableLiveData<ArrayList<FormResponseApprovalStatus>> approvalStatusLiveData = new MutableLiveData<>();
-    ResponseApprovalStatusHelper helper;
+    CheckSheetApprovalStatusHelper helper;
 
-    public ApproverStatusViewModel(@NonNull @NotNull Application application) {
+    public CheckSheetApprovalStatusViewModel(@NonNull @NotNull Application application) {
         super(application);
-        helper = new ResponseApprovalStatusHelper();
+        helper = new CheckSheetApprovalStatusHelper();
     }
 
-    public void setApprovalStatusLiveData(String FormId, String FormVersion, String FormInstance) {
-        ArrayList<ZODataEntity> zoDataEntityArrayList = helper.fetchFormApprovalStatus(FormId, FormInstance, FormVersion);
+    public void setApprovalStatusLiveData(String FormId, String FormVersion, String FormInstance, String counter, String submittedBy) {
+        ArrayList<ZODataEntity> zoDataEntityArrayList = helper.fetchFormApprovalStatus(FormId, FormInstance, FormVersion, submittedBy, counter);
         approvalStatusLiveData.setValue(onFetchApproverEntities(zoDataEntityArrayList));
     }
 
