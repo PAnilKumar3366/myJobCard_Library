@@ -4,6 +4,7 @@ import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -53,18 +54,72 @@ public class StatusCategory extends ZBaseEntity {
         initializingEntityProperties();
     }
 
+    public static ArrayList<StatusCategory> getCheckSheetStatuDetails(String statusCode, String objectType) {
+        List<ODataEntity> entities = new ArrayList<>();
+        ArrayList<StatusCategory> statusCategories = new ArrayList<>();
+        String entitySetName = ZCollections.STATUS_CATEGORY_SET_COLLECTION;
+        String objectStr = ZAppSettings.StatusCategoryType.CheckSheetLevel.getStatusCategoryType();
+        String resPath = "";
+        try {
+            if (statusCode != null && !statusCode.isEmpty())
+                resPath = entitySetName + "?$filter=StatusCode eq '" + statusCode + "' and ObjectType eq '" + objectType + "' and tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
+            else
+                resPath = entitySetName + "?$filter=ObjectType eq '" + objectType + "' and tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
+
+            ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+
+            if (result != null && !result.isError()) {
+                entities = (List<ODataEntity>) result.Content();
+                if (entities != null && entities.size() == 0) {
+                    if (statusCode != null && !statusCode.isEmpty())
+                        resPath = entitySetName + "?$filter=tolower(StatusCode) eq '" + statusCode.toLowerCase() + "' and tolower(ObjectType) eq 'x' and tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
+                    else
+                        resPath = entitySetName + "?$filter=tolower(ObjectType) eq 'x' and tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
+
+                    result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+                   /* if (result != null && !result.isError()) {
+                        entities = (List<ODataEntity>) result.Content();
+                    }*/
+                }
+                if (result != null && !result.isError()) {
+                    entities = (List<ODataEntity>) result.Content();
+                }
+
+                for (ODataEntity entity : entities) {
+                    StatusCategory status = new StatusCategory(entity);
+                    statusCategories.add(status);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(StatusCategory.class, AppSettings.LogLevel.Error, e.getMessage());
+        }
+        return statusCategories;
+    }
     public static StatusCategory getStatusDetails(String statusCode, String objectType, ZConfigManager.Fetch_Object_Type object) {
         StatusCategory statusCategory = null;
         try {
             String objectStr = object.equals(ZConfigManager.Fetch_Object_Type.WorkOrder) ? ZAppSettings.StatusCategoryType.WorkOrderLevel.getStatusCategoryType()
-                    : object.equals(ZConfigManager.Fetch_Object_Type.Operation) ? ZAppSettings.StatusCategoryType.OperationLevel.getStatusCategoryType() :object.equals(ZConfigManager.Fetch_Object_Type.NotificationTasks)?ZAppSettings.StatusCategoryType.NotificationTaskLevel.getStatusCategoryType(): ZAppSettings.StatusCategoryType.NoticationLevel.getStatusCategoryType();
+                    : object.equals(ZConfigManager.Fetch_Object_Type.Operation) ? ZAppSettings.StatusCategoryType.OperationLevel.getStatusCategoryType()
+                    : object.equals(ZConfigManager.Fetch_Object_Type.NotificationTasks) ? ZAppSettings.StatusCategoryType.NotificationTaskLevel.getStatusCategoryType()
+                    : object.equals(ZConfigManager.Fetch_Object_Type.CheckSheetLevel) ? ZAppSettings.StatusCategoryType.CheckSheetLevel.getStatusCategoryType()
+                    : ZAppSettings.StatusCategoryType.NoticationLevel.getStatusCategoryType();
             String entitySetName = ZCollections.STATUS_CATEGORY_SET_COLLECTION;
-            String resPath = entitySetName + "?$filter=StatusCode eq '" + statusCode + "' and ObjectType eq '" + objectType + "' and tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
+            String resPath = "";
+            if (statusCode != null && !statusCode.isEmpty())
+                resPath = entitySetName + "?$filter=StatusCode eq '" + statusCode + "' and ObjectType eq '" + objectType + "' and tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
+            else
+                resPath = entitySetName + "?$filter=ObjectType eq '" + objectType + "' and tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
+
             ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
             if (result != null && !result.isError()) {
                 List<ODataEntity> entities = (List<ODataEntity>) result.Content();
                 if (entities != null && entities.size() == 0) {
-                    resPath = entitySetName + "?$filter=tolower(StatusCode) eq '" + statusCode.toLowerCase() + "' and tolower(ObjectType) eq 'x' and tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
+                    if (statusCode != null && !statusCode.isEmpty())
+                        resPath = entitySetName + "?$filter=tolower(StatusCode) eq '" + statusCode.toLowerCase() + "' and tolower(ObjectType) eq 'x' and tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
+                    else
+                        resPath = entitySetName + "?$filter=tolower(ObjectType) eq 'x' and tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
+
                     result = DataHelper.getInstance().getEntities(entitySetName, resPath);
                     if (result != null && !result.isError()) {
                         entities = (List<ODataEntity>) result.Content();
@@ -78,14 +133,13 @@ public class StatusCategory extends ZBaseEntity {
                         } catch (IllegalArgumentException e) {
                             statusCategory.notificationStatus = ZAppSettings.NotificationUserStatus.NotSet;
                         }
-                    else if(object == ZConfigManager.Fetch_Object_Type.NotificationTasks){
+                    else if (object == ZConfigManager.Fetch_Object_Type.NotificationTasks) {
                         try {
                             statusCategory.notificationTaskStatus = ZAppSettings.NotificationTaskStatus.valueOf(statusCategory.getImageResKey());
                         } catch (IllegalArgumentException e) {
                             statusCategory.notificationTaskStatus = ZAppSettings.NotificationTaskStatus.NotSet;
                         }
-                    }
-                    else
+                    } else
                         try {
                             statusCategory.woOprStatus = ZAppSettings.MobileStatus.valueOf(statusCategory.getImageResKey());
                         } catch (IllegalArgumentException e) {

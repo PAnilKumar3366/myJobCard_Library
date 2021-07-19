@@ -1,6 +1,5 @@
 package com.ods.myjobcard_library;
 
-import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.ConfigManager;
@@ -269,7 +268,8 @@ public class ZConfigManager extends ConfigManager {
         WorkOrderType,  //added by Shubham
         FormSetModel, //added by Shubham
         ResponseMasterModel,
-        FormAssignmentSetModel
+        FormAssignmentSetModel,
+        CheckSheetLevel
     }
 
 

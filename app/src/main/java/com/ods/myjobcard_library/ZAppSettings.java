@@ -306,20 +306,24 @@ public class ZAppSettings extends AppSettings {
             return type;
         }
     }
-    public enum StatusCategoryType{
+
+    public enum StatusCategoryType {
         WorkOrderLevel("WORKORDERLEVEL"),
         OperationLevel("OPERATIONLEVEL"),
         NoticationLevel("NOTIFICATIONLEVEL"),
-        NotificationTaskLevel("NOTIFICATIONTASKLEVEL");
+        NotificationTaskLevel("NOTIFICATIONTASKLEVEL"),
+        CheckSheetLevel("CHECKSHEETLEVEL");
         String statusCategoryType;
 
         StatusCategoryType(String type) {
-            this.statusCategoryType=type;
+            this.statusCategoryType = type;
         }
-        public String getStatusCategoryType(){
+
+        public String getStatusCategoryType() {
             return statusCategoryType;
         }
     }
+
     public enum WorkFlowActionKey {
 
         WOHoldScreen("key_WO_SC_HOLD", "Screen"),
@@ -639,14 +643,14 @@ public class ZAppSettings extends AppSettings {
     //Added by Anil
     public enum NotificationUserStatus {
 
-/*
-        CREATED("RECEIVED", "created", "PEND", false, 0, R.string.noAlert, true, R.drawable.download),
-        ACCEPTED("ACCEPT", "accept", "ACCP", false, 4, R.string.notificationAcceptAlert, true, R.drawable.accept),
-        REJECTED("REJECT", "reject", "MRJC", false, 9, R.string.notificationRejectAlert, true, R.drawable.reject),
-        INPROGRESS("START", "in progress", "SCRN", true, 5, R.string.notificationStartAlert, true, R.drawable.start),
-        COMPLETED("COMPLETE", "complete", "NOCO", false, 8, R.string.notificationCompleteAlert, true, R.drawable.complete),
-        NotSet("", "", "NTST", false, 16, R.string.noAlert, false, R.drawable.download);
-*/
+        /*
+                CREATED("RECEIVED", "created", "PEND", false, 0, R.string.noAlert, true, R.drawable.download),
+                ACCEPTED("ACCEPT", "accept", "ACCP", false, 4, R.string.notificationAcceptAlert, true, R.drawable.accept),
+                REJECTED("REJECT", "reject", "MRJC", false, 9, R.string.notificationRejectAlert, true, R.drawable.reject),
+                INPROGRESS("START", "in progress", "SCRN", true, 5, R.string.notificationStartAlert, true, R.drawable.start),
+                COMPLETED("COMPLETE", "complete", "NOCO", false, 8, R.string.notificationCompleteAlert, true, R.drawable.complete),
+                NotSet("", "", "NTST", false, 16, R.string.noAlert, false, R.drawable.download);
+        */
         CRTD("RECEIVED", "created", "PEND", false, 0, R.string.noAlert, true, R.drawable.download),
         ACCP("ACCEPT", "accept", "ACCP", false, 4, R.string.notificationAcceptAlert, true, R.drawable.accept),
         REJC("REJECT", "reject", "MRJC", false, 9, R.string.notificationRejectAlert, true, R.drawable.reject),
@@ -665,6 +669,105 @@ public class ZAppSettings extends AppSettings {
 
         NotificationUserStatus(String mobileStatusDesc, String voiceActionDesc, String MobileStatusCode, boolean ConsideredAsActive, int MobileStatusIcon,
                                int MobileStatusChangeAlertText, boolean showOnChart, int drawableResId) {
+            this.mobileStatusCode = MobileStatusCode;
+            this.voiceActionDesc = voiceActionDesc;
+            this.mobileStatusDesc = mobileStatusDesc;
+            this.mobileStatusIcon = MobileStatusIcon;
+            this.consideredAsActive = ConsideredAsActive;
+            this.mobileStatusChangeAlertText = MobileStatusChangeAlertText;
+            this.showOnChart = showOnChart;
+            this.drawableResId = drawableResId;
+        }
+
+        public String getMobileStatusCode() {
+            return mobileStatusCode;
+        }
+
+        public void setMobileStatusCode(String mobileStatusCode) {
+            this.mobileStatusCode = mobileStatusCode;
+        }
+
+        public String getMobileStatusDesc() {
+            return mobileStatusDesc;
+        }
+
+        public void setMobileStatusDesc(String mobileStatusDesc) {
+            this.mobileStatusDesc = mobileStatusDesc;
+        }
+
+        public String getVoiceActionDesc() {
+            return voiceActionDesc;
+        }
+
+        public void setVoiceActionDesc(String voiceActionDesc) {
+            this.voiceActionDesc = voiceActionDesc;
+        }
+
+        public String getViewID() {
+            return viewID;
+        }
+
+        public void setViewID(String viewID) {
+            this.viewID = viewID;
+        }
+
+        public int getMobileStatusIcon() {
+            return mobileStatusIcon;
+        }
+
+        public void setMobileStatusIcon(int mobileStatusIcon) {
+            this.mobileStatusIcon = mobileStatusIcon;
+        }
+
+        public int getMobileStatusChangeAlertText() {
+            return mobileStatusChangeAlertText;
+        }
+
+        public void setMobileStatusChangeAlertText(int mobileStatusChangeAlertText) {
+            this.mobileStatusChangeAlertText = mobileStatusChangeAlertText;
+        }
+
+        public boolean isConsideredAsActive() {
+            return consideredAsActive;
+        }
+
+        public void setConsideredAsActive(boolean consideredAsActive) {
+            this.consideredAsActive = consideredAsActive;
+        }
+
+        public boolean isShowOnChart() {
+            return showOnChart;
+        }
+
+        public void setShowOnChart(boolean showOnChart) {
+            this.showOnChart = showOnChart;
+        }
+
+        public int getDrawableResId() {
+            return drawableResId;
+        }
+
+        public void setDrawableResId(int drawableResId) {
+            this.drawableResId = drawableResId;
+        }
+
+    }
+
+    public enum CheckSheetStatus {
+        APPR("APPROVE", "approve", "APPR", true, 6, R.string.noAlert, true, 0),
+        REJC("REJECT", "reject", "REJC", true, 4, R.string.noAlert, true, 0);
+
+        boolean consideredAsActive;
+        boolean showOnChart;
+        int drawableResId;
+        private String mobileStatusCode;
+        private String mobileStatusDesc;
+        private String voiceActionDesc;
+        private String viewID;
+        private int mobileStatusIcon, mobileStatusChangeAlertText;
+
+        CheckSheetStatus(String mobileStatusDesc, String voiceActionDesc, String MobileStatusCode, boolean ConsideredAsActive, int MobileStatusIcon,
+                         int MobileStatusChangeAlertText, boolean showOnChart, int drawableResId) {
             this.mobileStatusCode = MobileStatusCode;
             this.voiceActionDesc = voiceActionDesc;
             this.mobileStatusDesc = mobileStatusDesc;

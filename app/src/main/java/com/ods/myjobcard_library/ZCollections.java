@@ -172,9 +172,12 @@ public class ZCollections extends Collections {
 	public static final String WO_NOTIFICATION_ITEMS_ENTITY_TYPE = Service_Name + "WONotificationItem";
 	public static final String WO_NOTIFICATION_ITEM_CAUSES_COLLECTION = "WONotificationItemCausesCollection";
 	public static final String WO_NOTIFICATION_ITEM_CAUSES_ENTITY_TYPE = Service_Name + "WONotificationItemCauses";
-    public static final String WO_NOTIFICATION_TASKS_COLLECTION = "WONotificationTaskCollection";
+	public static final String WO_NOTIFICATION_TASKS_COLLECTION = "WONotificationTaskCollection";
 	public static final String WO_NOTIFICATION_TASKS_ENTITY_TYPE = Service_Name + "WONotificationTask";
 	public static final String FORMS_RESPONSE_CAPTURE_ENTITY_TYPE = getFormsEngineServiceName() + "ResponseCapture";
+	public static final String REVIEWER_FORM_RESPONSE_ENTITY_TYPE = getFormsEngineServiceName() + "ReviewerFormResponse";
+	public static final String REVIEWER_FORM_RESPONSE_ENTITY_SET = getFormsEngineServiceName() + "ReviewerFormResponseSet";
+
 	public static final String WO_CONFIRMATION_ENTITY_TYPE = Service_Name + "WOConfirmation";
 	public static final String MEASPOINT_READING_ENTITY_TYPE = Service_Name + "MeasurementPointReading";
 	public static final String ACTIVITIES_COUNT = "ACTIVITY_COUNT";
@@ -435,10 +438,10 @@ public class ZCollections extends Collections {
 	public static final String APPROVER_MASTER_DATA_ENTITY_TYPE = "ApproverMasterData";
 	public static final String DEPT_MASTER_DATA_ENTITY_SET = "DeptMasterDataSet";
 	public static final String DEPT_MASTER_DATA_ENTITY_TYPE = "ApproverMasterData";
-	public static final String FORM_INSTANCE_STATUS_ENTITY_SET = "FormInstanceStatusSet";
-	public static final String FORM_INSTANCE_STATUS_ENTITY_TYPE = getFormsEngineServiceName() + "FormInstanceStatus";
+	public static final String FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET = "FormResponseApprovalStatusSet";
+	public static final String FORM_RESPONSE_APPROVAL_ENTITY_TYPE = getFormsEngineServiceName() + "FormResponseApprovalStatus";
 	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_SET = "FormManualAssignmentSet";
-	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_TYPE = getFormsEngineServiceName()+"FormManualAssignment";
+	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_TYPE = getFormsEngineServiceName() + "FormManualAssignment";
 
 	public static String getEditResourcePath(String collection, String key) {
 		return String.format("%s('%s')", collection, key);
