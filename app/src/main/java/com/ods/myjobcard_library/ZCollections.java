@@ -438,7 +438,7 @@ public class ZCollections extends Collections {
 	public static final String APPROVER_MASTER_DATA_ENTITY_TYPE = "ApproverMasterData";
 	public static final String DEPT_MASTER_DATA_ENTITY_SET = "DeptMasterDataSet";
 	public static final String DEPT_MASTER_DATA_ENTITY_TYPE = "ApproverMasterData";
-	public static final String FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET = getFormsEngineServiceName() + "FormResponseApprovalStatusSet";
+	public static final String FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET = "FormResponseApprovalStatusSet";
 	public static final String FORM_RESPONSE_APPROVAL_ENTITY_TYPE = getFormsEngineServiceName() + "FormResponseApprovalStatus";
 	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_SET = "FormManualAssignmentSet";
 	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_TYPE = getFormsEngineServiceName() + "FormManualAssignment";

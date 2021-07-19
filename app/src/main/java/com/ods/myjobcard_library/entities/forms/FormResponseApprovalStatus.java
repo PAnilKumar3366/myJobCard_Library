@@ -23,6 +23,16 @@ public class FormResponseApprovalStatus extends ZBaseEntity {
     private String Counter;
     private String FormName;
 
+    private String IterationRequired;
+
+    public FormResponseApprovalStatus() {
+        initializeEntityProperties();
+    }
+
+    public String getIterationRequired() {
+        return IterationRequired;
+    }
+
     public FormResponseApprovalStatus(ODataEntity entity) {
         create(entity);
         initializeEntityProperties();
@@ -33,7 +43,8 @@ public class FormResponseApprovalStatus extends ZBaseEntity {
         initializeEntityProperties();
     }
 
-    public FormResponseApprovalStatus() {
+    public void setIterationRequired(String iterationRequired) {
+        IterationRequired = iterationRequired;
     }
 
     public FormResponseApprovalStatus(String FormID, String Version, String FormInstanceID, String FormSubmittedBy, String ApproverID) {
@@ -137,7 +148,7 @@ public class FormResponseApprovalStatus extends ZBaseEntity {
         this.setEntitySetName(ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET);
         this.setEntityType(ZCollections.FORM_RESPONSE_APPROVAL_ENTITY_TYPE);
         this.addKeyFieldNames("FormID");
-        this.addKeyFieldNames("FormVersion");
+        this.addKeyFieldNames("Version");
         this.addKeyFieldNames("FormInstanceID");
         this.addKeyFieldNames("ApproverID");
         this.addKeyFieldNames("FormSubmittedBy");

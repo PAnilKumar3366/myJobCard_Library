@@ -45,7 +45,10 @@ public class CheckSheetStatusHelper {
             String resPath = "";
             String entitySet = ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET;
             String strOrderByURI = "&$orderby=CreatedDate";
-            resPath = entitySet + "?$filter=FormID eq '" + formID + "' and FormVersion eq '" + version + "' and FormInstanceID eq '" + instanceID + "'" + strOrderByURI;
+            if (submittedBy != null && !submittedBy.isEmpty())
+                resPath = entitySet + "?$filter=FormID eq '" + formID + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "'and FormSubmittedBy eq'" + submittedBy + "' and  Counter eq ' " + counter + "'" + strOrderByURI;
+            else
+                resPath = entitySet + "?$filter=FormID eq '" + formID + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "' and  Counter eq ' " + counter + "'" + strOrderByURI;
             result = DataHelper.getInstance().getEntities(entitySet, resPath);
             if (result != null && !result.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
@@ -66,11 +69,11 @@ public class CheckSheetStatusHelper {
         ArrayList<ZODataEntity> ZODataEntities = new ArrayList<>();
         String entitySetName = ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET;
         String filterQuery = "";
-        filterQuery = "$filter=FormID eq '" + formId + "' FormVersion eq '" + version + "' FormInstanceID eq '" + instanceID + "'";
+        filterQuery = "$filter=FormID eq '" + formId + "' Version eq '" + version + "' FormInstanceID eq '" + instanceID + "'";
 
-        if (!submittedBy.isEmpty())
+        if (submittedBy != null && !submittedBy.isEmpty())
             filterQuery += " and FormSubmittedBy eq '" + submittedBy + "'";
-        if (!counter.isEmpty())
+        if (counter != null && !counter.isEmpty())
             filterQuery += " and Counter eq '" + counter + "'";
 
         result = DataHelper.getInstance().getEntities(entitySetName, entitySetName + filterQuery);
