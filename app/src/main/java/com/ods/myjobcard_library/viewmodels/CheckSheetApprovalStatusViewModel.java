@@ -24,8 +24,8 @@ public class CheckSheetApprovalStatusViewModel extends BaseViewModel {
         helper = new CheckSheetApprovalStatusHelper();
     }
 
-    public void setApprovalStatusLiveData(String FormId, String FormVersion, String FormInstance, String counter, String submittedBy) {
-        ArrayList<ZODataEntity> zoDataEntityArrayList = helper.fetchFormApprovalStatus(FormId, FormInstance, FormVersion, submittedBy, counter);
+    public void setApprovalStatusLiveData(String FormId, String FormVersion, String FormInstance, String counter, String submittedBy, String approverID) {
+        ArrayList<ZODataEntity> zoDataEntityArrayList = helper.fetchFormApprovalStatus(FormId, FormInstance, FormVersion, submittedBy, counter, approverID);
         approvalStatusLiveData.setValue(onFetchApproverEntities(zoDataEntityArrayList));
     }
 

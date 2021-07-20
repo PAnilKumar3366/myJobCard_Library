@@ -14,25 +14,27 @@ import java.util.List;
 
 public class CheckSheetApprovalStatusHelper {
 
-    public ArrayList<ZODataEntity> fetchFormApprovalStatus(String FormId, String InstanceID, String Version, String submittedBy, String counter) {
+    public ArrayList<ZODataEntity> fetchFormApprovalStatus(String FormId, String InstanceID, String Version, String submittedBy, String counter, String approverID) {
 
-        return getFormApprovalStatus(FormId, InstanceID, Version, submittedBy, counter);
+        return getFormApprovalStatus(FormId, InstanceID, Version, submittedBy, counter, approverID);
     }
 
-    private ArrayList<ZODataEntity> getFormApprovalStatus(String formId, String instanceID, String version, String submittedBy, String counter) {
+    private ArrayList<ZODataEntity> getFormApprovalStatus(String formId, String instanceID, String version, String submittedBy, String counter, String approverID) {
         ResponseObject result = null;
         ArrayList<ZODataEntity> ZODataEntities = new ArrayList<>();
         String entitySetName = ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET;
         String filterQuery = "";
-        filterQuery = "$filter=FormID eq '" + formId + "' FormVersion eq '" + version + "' FormInstanceID eq '" + instanceID + "'";
+        filterQuery = entitySetName + "?$filter=FormID eq '" + formId + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "'";
 
-        if (!submittedBy.isEmpty())
+        if (submittedBy != null && !submittedBy.isEmpty())
             filterQuery += " and FormSubmittedBy eq '" + submittedBy + "'";
-        if (!counter.isEmpty())
+        if (counter != null && !counter.isEmpty())
             filterQuery += " and Counter eq '" + counter + "'";
+        if (approverID != null && !approverID.isEmpty())
+            filterQuery += " and ApproverID eq '" + approverID + "'";
 
 
-        result = DataHelper.getInstance().getEntities(entitySetName, entitySetName + filterQuery);
+        result = DataHelper.getInstance().getEntities(entitySetName, filterQuery);
         try {
             if (result != null && !result.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());

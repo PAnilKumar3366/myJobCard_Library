@@ -4,6 +4,7 @@ import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.forms.ApproverMasterData;
+import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
@@ -90,19 +91,26 @@ public class ApproverMasterHelper {
 
     private ApproverMasterData getApproverName(String approverID) {
         ApproverMasterData approverName = null;
+
         String entitySetName = ZCollections.APPROVER_MASTER_DATA_ENTITY_SET;
         String respath = ZCollections.APPROVER_MASTER_DATA_ENTITY_SET;
-        respath += "$filter=UserSystemID eq '" + approverID;
+        respath += "?$filter=UserSystemID eq '" + approverID.toUpperCase() + "'";
         ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, respath);
         try {
             if (result != null && result.isError()) {
-                approverName = (ApproverMasterData) result.Content();
+                List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
+                for (ODataEntity entity : entities) {
+                    approverName = new ApproverMasterData(entity);
+                    break;
+                }
+                //approverName = (ApproverMasterData) result.Content();
                 /*if(approver!=null)
                     return approver.getFirstName()+approver.getLastName();*/
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
         }
         return approverName;
     }

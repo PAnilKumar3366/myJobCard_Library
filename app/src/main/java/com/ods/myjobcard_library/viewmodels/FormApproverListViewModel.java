@@ -101,9 +101,9 @@ public class FormApproverListViewModel extends BaseViewModel {
         return approverMasterList;
     }
 
-    public void setWoFormApproversLiveData(String FormID, String ApproverID, String WONum, String OprNum) {
+    public void setWoFormApproversLiveData(String FormID, String ApproverID, String WONum, String OprNum, String version) {
         FormApproversHelper helper = new FormApproversHelper();
-        ArrayList<FormApproverSetModel> woFormApproversList = onFetchWOApproverEntities(helper.getWOFormApproversList(FormID, ApproverID, WONum, OprNum));
+        ArrayList<FormApproverSetModel> woFormApproversList = onFetchWOApproverEntities(helper.getWOFormApproversList(FormID, ApproverID, WONum, OprNum, version));
         woFormApproversLiveData.setValue(woFormApproversList);
     }
 

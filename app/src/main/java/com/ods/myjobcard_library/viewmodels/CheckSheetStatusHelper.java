@@ -46,9 +46,9 @@ public class CheckSheetStatusHelper {
             String entitySet = ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET;
             String strOrderByURI = "&$orderby=CreatedDate";
             if (submittedBy != null && !submittedBy.isEmpty())
-                resPath = entitySet + "?$filter=FormID eq '" + formID + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "'and FormSubmittedBy eq'" + submittedBy + "' and  Counter eq ' " + counter + "'" + strOrderByURI;
+                resPath = entitySet + "?$filter=FormID eq '" + formID + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "'and FormSubmittedBy eq'" + submittedBy + "' and  Counter eq '" + counter + "'";
             else
-                resPath = entitySet + "?$filter=FormID eq '" + formID + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "' and  Counter eq ' " + counter + "'" + strOrderByURI;
+                resPath = entitySet + "?$filter=FormID eq '" + formID + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "' and  Counter eq '" + counter + "'";
             result = DataHelper.getInstance().getEntities(entitySet, resPath);
             if (result != null && !result.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
