@@ -17,8 +17,8 @@ import java.util.List;
 
 public class FormApproversHelper {
 
-    public ArrayList<ZODataEntity> getWOFormApproversList(String FormID, String ApproverID, String WoNumber, String OprNum) {
-        return fetchWOFormApproversList(FormID, ApproverID, WoNumber, OprNum);
+    public ArrayList<ZODataEntity> getWOFormApproversList(String FormID, String ApproverID, String WoNumber, String OprNum, String version) {
+        return fetchWOFormApproversList(FormID, ApproverID, WoNumber, OprNum, version);
     }
 
     /**
@@ -71,16 +71,18 @@ public class FormApproversHelper {
      * @param OprNum     Operation Number
      * @return Returns the ZODataEntities
      */
-    private @NotNull ArrayList<ZODataEntity> fetchWOFormApproversList(String FormID, String ApproverID, String WoNumber, String OprNum) {
+    private @NotNull ArrayList<ZODataEntity> fetchWOFormApproversList(String FormID, String ApproverID, String WoNumber, String OprNum, String version) {
         ResponseObject result = null;
         ArrayList<ZODataEntity> approverList = new ArrayList<>();
         String entitySetName = ZCollections.FROM_APPROVER_ENTITY_SET;
         String resPath = entitySetName;
         //"?$resPath=(StatusProfile eq '" + statusProfile + "' and WithoutStatNo eq true)"
         if (OprNum != null && !OprNum.isEmpty())
-            resPath += "?$filter=(FormID eq'" + FormID + "' and WorkOrderNum eq '" + WoNumber + "' and OprNum eq '" + OprNum + "')";
+            resPath += "?$filter=(FormID eq'" + FormID + "' and Version eq '" + version + "' and WorkOrderNum eq '" + WoNumber + "' and OprNum eq '" + OprNum + "')";
         else
-            resPath += "?$filter=(FormID eq'" + FormID + "' and WorkOrderNum eq '" + WoNumber + "')";
+            resPath += "?$filter=(FormID eq'" + FormID + "' and Version eq '" + version + "' and WorkOrderNum eq '" + WoNumber + "')";
+
+
         result = DataHelper.getInstance().getEntities(entitySetName, resPath);
         try {
             if (result != null && !result.isError()) {
