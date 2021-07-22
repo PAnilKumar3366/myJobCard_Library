@@ -25,7 +25,7 @@ public class ReviewerCheckSheetListViewModel extends BaseViewModel {
     }
 
     public void setCheckSheetInstanceList() {
-        onFetchReviewerFormResponse(helper.getCheckSheetInstanceList());
+        checkSheetInstanceList.setValue(onFetchReviewerFormResponse(helper.getCheckSheetInstanceList()));
     }
 
     /**
