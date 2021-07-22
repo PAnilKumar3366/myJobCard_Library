@@ -97,7 +97,7 @@ public class ApproverMasterHelper {
         respath += "?$filter=UserSystemID eq '" + approverID.toUpperCase() + "'";
         ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, respath);
         try {
-            if (result != null && result.isError()) {
+            if (result != null && !result.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
                 for (ODataEntity entity : entities) {
                     approverName = new ApproverMasterData(entity);

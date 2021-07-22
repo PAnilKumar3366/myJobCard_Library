@@ -176,7 +176,7 @@ public class ZCollections extends Collections {
 	public static final String WO_NOTIFICATION_TASKS_ENTITY_TYPE = Service_Name + "WONotificationTask";
 	public static final String FORMS_RESPONSE_CAPTURE_ENTITY_TYPE = getFormsEngineServiceName() + "ResponseCapture";
 	public static final String REVIEWER_FORM_RESPONSE_ENTITY_TYPE = getFormsEngineServiceName() + "ReviewerFormResponse";
-	public static final String REVIEWER_FORM_RESPONSE_ENTITY_SET = getFormsEngineServiceName() + "ReviewerFormResponseSet";
+	public static final String REVIEWER_FORM_RESPONSE_ENTITY_SET = "ReviewerFormResponseSet";
 
 	public static final String WO_CONFIRMATION_ENTITY_TYPE = Service_Name + "WOConfirmation";
 	public static final String MEASPOINT_READING_ENTITY_TYPE = Service_Name + "MeasurementPointReading";

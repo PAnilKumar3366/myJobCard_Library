@@ -27,6 +27,15 @@ public class ReviewerFormResponse extends ZBaseEntity {
     private String IsDraft;
     private String NonObjType;
     private String OrderType;
+
+    public String getCounter() {
+        return Counter;
+    }
+
+    public void setCounter(String counter) {
+        Counter = counter;
+    }
+
     private String Counter;
 
     public ReviewerFormResponse() {
