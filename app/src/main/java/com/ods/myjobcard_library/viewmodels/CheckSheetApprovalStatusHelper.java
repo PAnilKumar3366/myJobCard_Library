@@ -24,17 +24,18 @@ public class CheckSheetApprovalStatusHelper {
         ArrayList<ZODataEntity> ZODataEntities = new ArrayList<>();
         String entitySetName = ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET;
         String filterQuery = "";
+        String orderBy = "&$orderby=CreatedDate,CreatedTime";
         filterQuery = entitySetName + "?$filter=FormID eq '" + formId + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "'";
 
         if (submittedBy != null && !submittedBy.isEmpty())
-            filterQuery += " and FormSubmittedBy eq '" + submittedBy + "'";
+            filterQuery += " and tolower(FormSubmittedBy) eq '" + submittedBy.toLowerCase() + "'";
         if (counter != null && !counter.isEmpty())
             filterQuery += " and Counter eq '" + counter + "'";
         if (approverID != null && !approverID.isEmpty())
-            filterQuery += " and ApproverID eq '" + approverID + "'";
+            filterQuery += " and tolower(ApproverID) eq '" + approverID.toLowerCase() + "'";
 
 
-        result = DataHelper.getInstance().getEntities(entitySetName, filterQuery);
+        result = DataHelper.getInstance().getEntities(entitySetName, filterQuery + orderBy);
         try {
             if (result != null && !result.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
