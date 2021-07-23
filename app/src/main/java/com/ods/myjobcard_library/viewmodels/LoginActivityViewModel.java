@@ -34,6 +34,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
     private boolean isDemoMode;
     private boolean isFirstDemoLogin;
     private boolean oldUserLogin;
+    private boolean saml2Auth;
     RegisterHelper helper;
 
 
@@ -60,6 +61,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         UserTable.resetUserDetails();
         helper = RegisterHelper.getInstance(context, this);
         helper.setIsFirstDemoLogin(isFirstDemoLogin);
+        helper.enableSAML2Auth(saml2Auth);
         helper.initRegistration(userName, oldUser, password, oldPass, isHttps, host, port, appname, oldUserLogin,isDemoMode);
     }
     public boolean fireBaseTokenConfiguration(String appConnID,String tokenID){
@@ -88,9 +90,13 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         return update;
     }
 
+    public void setSAML2Auth(boolean saml2Auth) {
+        this.saml2Auth = saml2Auth;
+    }
+
     @Override
     public void setSAML2UserName(String username) {
-
+        ZAppSettings.strUser = username;
     }
 
     @Override
@@ -135,7 +141,8 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
             ZAppSettings.App_ID = appname;
             ZAppSettings.App_IP = host;
             ZAppSettings.App_Port = Integer.parseInt(port);
-            ZAppSettings.strUser = userName;
+            if(! saml2Auth)
+                ZAppSettings.strUser = userName;
             ZAppSettings.strPassword = password;
             ZAppSettings.isLoggedIn = true;
             ZAppSettings.isOpenOnlineAPStore=preferences.getBoolean(ZCollections.IS_ONLINE_APPSTORE,true);

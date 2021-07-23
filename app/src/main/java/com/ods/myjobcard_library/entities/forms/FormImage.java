@@ -1,5 +1,6 @@
 package com.ods.myjobcard_library.entities.forms;
 
+import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
 
@@ -22,8 +23,8 @@ public class FormImage extends ZBaseEntity {
 
 
     private void initializingEntityProperties() {
-        this.setEntityType("FormImage");
-        this.setEntitySetName("FormImageSet");
+        this.setEntityType(ZCollections.FORM_IMAGE_ENTITY_TYPE);
+        this.setEntitySetName(ZCollections.FORM_IMAGE_ENTITY_SET);
         this.addKeyFieldNames("Formid");
         this.addKeyFieldNames("Version");
         this.addKeyFieldNames("Question");

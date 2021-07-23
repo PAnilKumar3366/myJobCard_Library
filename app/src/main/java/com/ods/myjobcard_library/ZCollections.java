@@ -442,6 +442,8 @@ public class ZCollections extends Collections {
 	public static final String FORM_RESPONSE_APPROVAL_ENTITY_TYPE = getFormsEngineServiceName() + "FormResponseApprovalStatus";
 	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_SET = "FormManualAssignmentSet";
 	public static final String FORM_MANUAL_ASSIGNMENT_ENTITY_TYPE = getFormsEngineServiceName() + "FormManualAssignment";
+	public static final String FORM_IMAGE_ENTITY_SET = "FormImageSet";
+	public static final String FORM_IMAGE_ENTITY_TYPE = getFormsEngineServiceName() + "FormImage";
 
 	public static String getEditResourcePath(String collection, String key) {
 		return String.format("%s('%s')", collection, key);
