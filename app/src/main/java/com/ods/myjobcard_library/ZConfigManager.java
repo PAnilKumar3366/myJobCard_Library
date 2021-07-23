@@ -206,6 +206,8 @@ public class ZConfigManager extends ConfigManager {
     public static String CATALOGCODE_TASK="2";
     public static String CATALOGCODE_SYMPTOM="D";
 
+    public static String POSTING_DURATION_UNIT="HR";
+
     /*Added new config flag for set the network Contriants to execute the workers
     * */
     public static boolean NETWORK_CONSTRAINTS = true;
