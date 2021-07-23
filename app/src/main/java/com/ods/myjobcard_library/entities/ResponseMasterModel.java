@@ -28,7 +28,7 @@ public class ResponseMasterModel extends ZBaseEntity {
     private String WoNum;
     private String CreatedBy;
     private GregorianCalendar CreatedOn;
-    private String modifiedBy;
+    private String ModifiedBy;
     private GregorianCalendar ModifiedOn;
     private String IsDraft;
     private String OperationNum;
@@ -251,11 +251,11 @@ public class ResponseMasterModel extends ZBaseEntity {
     }
 
     public String getModifiedBy() {
-        return modifiedBy;
+        return ModifiedBy;
     }
 
     public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = modifiedBy;
+        this.ModifiedBy = modifiedBy;
     }
 
     public GregorianCalendar getModifiedOn() {
