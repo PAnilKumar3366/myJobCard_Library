@@ -219,4 +219,8 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
         }
 
     }
+
+    public void printErrorLog(Class cls, String errorMessage) {
+        DliteLogger.WriteLog(cls.getClass(), ZAppSettings.LogLevel.Error, errorMessage);
+    }
 }
