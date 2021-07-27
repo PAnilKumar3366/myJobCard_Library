@@ -58,7 +58,7 @@ public class DisplayManualFormViewModel extends AndroidViewModel {
      */
     public void onFetchManualFormAssignedList(WorkOrder workOrder, String formType) {
         try {
-            if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentWO.Value) || formType.equals(ZAppSettings.FormAssignmentType.OrderTypeWithManualAssignWO.Value)) {
+            if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentWO.Value)) {
                 woNum = workOrder.getWorkOrderNum();
                 oprNum = "";
                 /*notification="";

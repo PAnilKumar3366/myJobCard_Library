@@ -73,7 +73,7 @@ public class ZAppSettings extends AppSettings {
         ManualAssignmentOPR("7"),
         ManualAssignmentEquip("8"),
         ManualAssignmentFuncLoc("9"),
-        OrderTypeWithManualAssignWO("10"),
+        TaskTypeWithManualAssignOPR("10"),
         None("");
 
         public final String Value;

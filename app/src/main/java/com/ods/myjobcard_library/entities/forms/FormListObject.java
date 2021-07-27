@@ -25,6 +25,7 @@ public class FormListObject {
     private String instanceId;
     private String isDraft;
     private boolean isGridTheme;
+    private String oprNum;
 
     public FormListObject(String formname, String formid, String version, String mandatory,
                           int occur, String multipleSub, int filledForm, String instanceId, boolean isGridTheme) {
@@ -38,6 +39,20 @@ public class FormListObject {
         this.filledForm = filledForm;
         this.instanceId = instanceId;
         this.isGridTheme = isGridTheme;
+    }
+    public FormListObject(String formname, String formid, String version, String mandatory,
+                          int occur, String multipleSub, int filledForm, String instanceId, boolean isGridTheme,String oprNum) {
+
+        this.formname = formname;
+        this.formid = formid;
+        this.version = version;
+        this.mandatory = mandatory;
+        this.occur = occur;
+        this.multipleSub = multipleSub;
+        this.filledForm = filledForm;
+        this.instanceId = instanceId;
+        this.isGridTheme = isGridTheme;
+        this.oprNum=oprNum;
     }
 
 
@@ -83,5 +98,13 @@ public class FormListObject {
 
     public void setIsDraft(String isDraft) {
         this.isDraft = isDraft;
+    }
+
+    public String getOprNum() {
+        return oprNum;
+    }
+
+    public void setOprNum(String oprNum) {
+        this.oprNum = oprNum;
     }
 }

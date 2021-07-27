@@ -42,7 +42,7 @@ public class ManualFormAssignmentHelper
             if(oprNum!=null&&oprNum.isEmpty())
                 resPath += "?$filter= (WorkOrderNum eq '" + woNum + "')&$orderby=FlowSequence asc,Mandatory desc";
             else
-                resPath += "?$filter= (WorkOrderNum eq '" + woNum + "' and OprNum eq eq '" + oprNum + "')&$orderby=FlowSequence asc,Mandatory desc";
+                resPath += "?$filter= (WorkOrderNum eq '" + woNum + "' and OprNum eq '" + oprNum + "')&$orderby=FlowSequence asc,Mandatory desc";
             result = DataHelper.getInstance().getEntities(entitySetName, resPath);
             zoDataManualFormAssignmentEntities=new ArrayList<>();
             if(result!=null&&!result.isError()){
@@ -101,7 +101,7 @@ public class ManualFormAssignmentHelper
                 FormSetModel f2 = it2.next();
                 FormListObject ob = new FormListObject(f2.getFormName(), f1.getFormID(),
                         f1.getVersion(), f1.getMandatory(), f1.getOccurInt(),
-                        f1.getMultipleSub(), filledForms, instanceId, f1.isGridTheme());
+                        f1.getMultipleSub(), filledForms, instanceId, f1.isGridTheme(),f1.getOprNum());
                 ob.setIsDraft(isDraft);
                 formItemsList.add(ob);
                 break;
