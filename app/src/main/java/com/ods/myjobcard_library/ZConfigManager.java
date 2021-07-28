@@ -17,11 +17,11 @@ public class ZConfigManager extends ConfigManager {
     //Background Flush Flags
     public static final String TRANSACTION_WORK = "TransactionWork";
     public static final String PERIODIC_REQUEST = "BackgroundJob";
-    //public static String Push_Service_Name = "http://%s:%d/restnotification/registration/";
-    public static String Attachment_Service_URL = "http://52.51.40.48:50000/sap/opu/odata/ODS/SAP_WM_DLITE_SRV/";
+    //public static String Push_Service_Name = "";
+    public static String Attachment_Service_URL = "";
 
     //public static String TX_SERVICE_NAME = "";//"S4HTransactionService";//
-    public static String SAP_Host = "http://52.30.23.148:8000/";
+    public static String SAP_Host = "";
     public static String Tx_Service_Suffix = "sap/opu/odata/ODS/SAP_WM_DLITE_SRV/";
     public static String TX_SERVICE_NAME = "TransactionService";//"S4HTransactionService";//
     public static String LOW_VOLUME_MD_SERVICE_NAME = "LowVolumeMDService";//"ctRootService";//"S4HLowVolumeService";//
@@ -205,6 +205,8 @@ public class ZConfigManager extends ConfigManager {
     public static String CATALOGCODE_ACTIVITY="A";
     public static String CATALOGCODE_TASK="2";
     public static String CATALOGCODE_SYMPTOM="D";
+
+    public static String BackEndUser="";
 
     /*Added new config flag for set the network Contriants to execute the workers
     * */
