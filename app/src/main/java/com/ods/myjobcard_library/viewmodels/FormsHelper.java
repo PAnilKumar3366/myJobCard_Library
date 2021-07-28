@@ -58,7 +58,7 @@ public class FormsHelper {
     }
 
     protected void getOrderType(WorkOrder workOrder, String type) {
-        if (type.equals(ZAppSettings.FormAssignmentType.WorkOrderLevel.Value)||!type.equals(ZAppSettings.FormAssignmentType.OrderTypeWithManualAssignWO.Value)) {
+        if (type.equals(ZAppSettings.FormAssignmentType.WorkOrderLevel.Value)) {
             orderType = workOrder.getOrderType();
            /* equipmentCat = "";
             funcLocCat = "";
@@ -172,6 +172,7 @@ public class FormsHelper {
                         f1.getVersion(), f1.getMandatory(), f1.getOccurInt(),
                         f1.getMultipleSub(), filledForms, instanceId, f1.isGridTheme());
                 ob.setIsDraft(isDraft);
+                ob.setOprNum(opr_Num);
                 formItemsList.add(ob);
                 break;
             }
@@ -233,6 +234,7 @@ public class FormsHelper {
                         }
                         instanceId = responseMasterModel.get(0).getInstanceId();
                         isDraft = responseMasterModel.get(0).getIsDraft();
+                        opr_Num=responseMasterModel.get(0).getOprNum();
                         filledForms = totGeneralFormResponseCount;
                         list2 = FormSetModel.getFormsData(f1.getFormid(), f1.getVersion(), false);
                         formSetModel = list2.get(0);
@@ -240,6 +242,8 @@ public class FormsHelper {
                                 f1.getVersion(), f1.getMandatory(), f1.getOccur(),
                                 f1.getMultipleSub(), filledForms, instanceId, f1.isGridTheme());
                         ob.setIsDraft(isDraft);
+                        ob.setOprNum(opr_Num);
+
                         formFilledItemsList.add(ob);
 
                     } catch (Exception e) {
