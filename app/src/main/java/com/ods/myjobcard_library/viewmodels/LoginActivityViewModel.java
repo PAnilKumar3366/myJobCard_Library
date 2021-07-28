@@ -203,7 +203,6 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                     ZAppSettings.userFirstName = UserTable.getUserFirstName();
                     ZAppSettings.userLastName = UserTable.getUserLastName();
                 }
-                ZConfigManager.setAppConfigurations();
                 putSharedPreferences(ZCollections.ARG_IS_LOGGED_IN, true);
 
                 if (ZConfigManager.ENABLE_PUSH_SUBCRIPTION&&!AppSettings.IS_DEMO_MODE&&response.getStatus().equals(ZConfigManager.Status.Success) && (ZAppSettings.App_FCM_Token == null || ZAppSettings.App_FCM_Token.isEmpty())) {
@@ -217,6 +216,10 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
             public void update(String update) {
                 if(update.equalsIgnoreCase("AppStore Open")){
                     // copyAssetsToSDCard(getApplication());
+                    ZConfigManager.setAppConfigurations();
+                    if(ZConfigManager.BackEndUser != null && !ZConfigManager.BackEndUser.isEmpty()){
+                        ZAppSettings.strUser = ZConfigManager.BackEndUser;
+                    }
                 }
             }
         }).execute((Void) null);
