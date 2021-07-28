@@ -3,13 +3,11 @@ package com.ods.myjobcard_library.viewmodels;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
-import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
 import com.ods.myjobcard_library.entities.forms.FormListObject;
 import com.ods.myjobcard_library.entities.forms.FormSetModel;
 import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
@@ -24,7 +22,7 @@ import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.util.ArrayList;
 
-public class DisplayManualFormViewModel extends AndroidViewModel {
+public class DisplayManualFormViewModel extends BaseViewModel {
     private final MutableLiveData<ArrayList<FormListObject>> formItems = new MutableLiveData<ArrayList<FormListObject>>();
     private final MutableLiveData<ArrayList<FormListObject>> formFilledItems = new MutableLiveData<ArrayList<FormListObject>>();
     private MutableLiveData<Boolean> postManualFormAssignment = new MutableLiveData<>();
@@ -32,16 +30,50 @@ public class DisplayManualFormViewModel extends AndroidViewModel {
     private ArrayList<FormSetModel> masterFormList = new ArrayList<>();
     private ArrayList<FormListObject> formItemsList = new ArrayList<>();
     private ManualFormAssignmentHelper manualFormAssignmentHelper;
+    private MutableLiveData<ArrayList<ManualFormAssignmentSetModel>> manualForms = new MutableLiveData<>();
+
     String woNum, oprNum, notification, notificationItem, notificationTask, equipment, functionalLocation;
 
-    private MutableLiveData<FormListObject> editFormItem = new MutableLiveData<>();
+    private MutableLiveData<ManualFormAssignmentSetModel> editFormItem = new MutableLiveData<>();
 
-    public MutableLiveData<FormListObject> getEditFormItem() {
+    public MutableLiveData<ManualFormAssignmentSetModel> getEditFormItem() {
         return editFormItem;
     }
 
-    public void setEditFormItem(FormListObject editFormItem) {
-        this.editFormItem.setValue(editFormItem);
+    public ArrayList<ManualFormAssignmentSetModel> getManualFormArraylist() {
+        return manualFormArraylist;
+    }
+
+    public MutableLiveData<ArrayList<ManualFormAssignmentSetModel>> getManualForms() {
+        return manualForms;
+    }
+
+    public void setManualForms(String orderNum, String oprNum) {
+        if (manualFormAssignmentHelper == null)
+            manualFormAssignmentHelper = new ManualFormAssignmentHelper();
+        ArrayList<ManualFormAssignmentSetModel> manualFormItems = onFetchManualFormEntities(manualFormAssignmentHelper.getManualFormAssignmentData(orderNum, oprNum));
+        if (manualFormItems != null && manualFormItems.size() > 0)
+            try {
+                this.manualForms.setValue(manualFormItems);
+            } catch (Exception e) {
+                e.printStackTrace();
+                printErrorLog(getClass(), e.getMessage());
+
+            }
+    }
+
+    public void setEditFormItem(String orderNum, String oprNum) {
+        if (manualFormAssignmentHelper == null)
+            manualFormAssignmentHelper = new ManualFormAssignmentHelper();
+        ArrayList<ManualFormAssignmentSetModel> manualEditItem = onFetchManualFormEntities(manualFormAssignmentHelper.getManualFormAssignmentData(orderNum, oprNum));
+        if (manualEditItem != null && manualEditItem.size() > 0)
+            try {
+                this.editFormItem.setValue(manualEditItem.get(0));
+            } catch (Exception e) {
+                e.printStackTrace();
+                printErrorLog(getClass(), e.getMessage());
+
+            }
     }
 
     public DisplayManualFormViewModel(@NonNull Application application) {
