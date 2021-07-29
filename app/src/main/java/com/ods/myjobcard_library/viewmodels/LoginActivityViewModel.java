@@ -217,7 +217,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                 if(update.equalsIgnoreCase("AppStore Open")){
                     // copyAssetsToSDCard(getApplication());
                     ZConfigManager.setAppConfigurations();
-                    if(ZConfigManager.BackEndUser != null && !ZConfigManager.BackEndUser.isEmpty()){
+                    if(saml2Auth && ZConfigManager.BackEndUser != null && !ZConfigManager.BackEndUser.isEmpty()){
                         ZAppSettings.strUser = ZConfigManager.BackEndUser;
                     }
                 }
