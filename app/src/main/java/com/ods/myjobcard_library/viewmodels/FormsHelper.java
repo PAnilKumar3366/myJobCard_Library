@@ -99,7 +99,7 @@ public class FormsHelper {
             else
                 funcLocCat = workOrder.getCurrentOperation().getFuncLocCategory().isEmpty() ? workOrder.getFuncLocCategory() : workOrder.getCurrentOperation().getFuncLocCategory();
             list = FormAssignmentSetModel.getFormAssignmentData_FunctionalLocType(funcLocCat);
-        } else if (type.equals(ZAppSettings.FormAssignmentType.TaskListType.Value)) {
+        } else if (type.equals(ZAppSettings.FormAssignmentType.TaskListType.Value)||type.equals(ZAppSettings.FormAssignmentType.TaskTypeWithManualAssignOPR.Value)) {
             /*equipmentCat = "";
             funcLocCat = "";*/
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
