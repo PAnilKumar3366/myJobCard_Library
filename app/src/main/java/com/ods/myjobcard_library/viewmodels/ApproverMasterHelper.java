@@ -22,7 +22,7 @@ public class ApproverMasterHelper {
     }
 
     public ArrayList<ZODataEntity> searchApproverList(String searchText, String searchKey) {
-        return fetchSearchApproverList(searchText, "");
+        return fetchSearchApproverList(searchText, searchKey);
     }
 
     private ArrayList<ZODataEntity> fetchSearchApproverList(String searchText, String searchKey) {
@@ -34,9 +34,11 @@ public class ApproverMasterHelper {
             String resPath = entitySetName;
             if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_OPTION_ID))
                 resPath += "?$filter=(indexof(UserSystemID, '" + searchText + "') ne -1)";
-            else if (searchText.equalsIgnoreCase(ZCollections.SEARCH_OPTION_NAME))
-                resPath += "?$filter=(indexof(FirstName, '" + searchText + "') ne -1 or indexof(LastName, '" + searchText + "'))";
-            else if (searchText.equalsIgnoreCase(ZCollections.SEARCH_APPROVER_DEPT))
+            else if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_OPTION_NAME)) {
+                searchText = searchText.replace(" ", "");
+                resPath += "?$filter=indexof(tolower(concat(FirstName,LastName)),'" + searchText.toLowerCase() + "') ne -1";
+                //resPath += "?$filter=(indexof(FirstName, '" + searchText + "') ne -1 or indexof(LastName, '" + searchText + "'))";
+            } else if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_APPROVER_DEPT))
                 resPath += "?$filter=(indexof(DepartmentID, '" + searchText + "') ne -1)";
 
             /*if (searchbyID)
