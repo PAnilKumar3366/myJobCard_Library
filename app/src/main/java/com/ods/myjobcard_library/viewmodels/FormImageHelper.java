@@ -53,7 +53,7 @@ public class FormImageHelper {
     private ZODataEntity getFormQuestionImage(String formId, String version, String questionId, String imageName){
         ZODataEntity entity = null;
         String entitySetName = ZCollections.FORM_IMAGE_ENTITY_SET;
-        String resPath = entitySetName+"?$filter=Formid eq '"+ formId +"' and Version eq '"+ version +"' and Question eq '"+ questionId +"' and FileName eq '"+ imageName +"'";
+        String resPath = entitySetName+"?$filter=Formid eq '"+ formId +"' and Version eq '"+ version +"' and FileName eq '"+ imageName +"'";
         ResponseObject result = DataHelper.getInstance().getEntities(entitySetName,resPath);
         if(result != null && !result.isError()){
             List<ODataEntity> offlineEntities = ZBaseEntity.setODataEntityList(result.Content());
