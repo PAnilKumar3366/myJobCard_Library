@@ -58,8 +58,8 @@ public class FormApproverListViewModel extends BaseViewModel {
         return ApproversSearchListLiveData;
     }
 
-    public void setSearchList(String searchText, String searchKey) {
-        ArrayList<ZODataEntity> zoDataEntityArrayList = approverMasterHelper.searchApproverList(searchText, searchKey);
+    public void setSearchList(String searchText, String SearchKey) {
+        ArrayList<ZODataEntity> zoDataEntityArrayList = approverMasterHelper.searchApproverList(searchText, SearchKey);
         ApproversSearchListLiveData.setValue(onFetchApproverEntities(zoDataEntityArrayList));
     }
 
