@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class Operation extends ZBaseEntity implements Serializable {
@@ -1763,9 +1764,26 @@ public class Operation extends ZBaseEntity implements Serializable {
                         errorMessages.add(context.getString(R.string.msgAtLeastOneAttachmentRequired));
                 }
                 //Forms
-                if (ZConfigManager.MANDATORY_FORMS_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.FORMS.getFeatureValue())) {
-                    if (WorkOrder.getCurrWo().getTotalNumUnSubmittedMandatoryForms() > 0)
-                        errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
+                if (ZConfigManager.MANDATORY_FORMS_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.OPERATIONFORM.getFeatureValue())) {
+                    try {
+                        String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
+                        HashMap<String,Integer> apprRejPredefinedFormCount=new HashMap<>();
+                        apprRejPredefinedFormCount=WorkOrder.getCurrWo().getTotalNumOfPredefinedApprovedandRejectedForms(formType);
+                        if(ZCommon.isPredefinedFormVisible(formType)) {
+                            if(WorkOrder.getCurrWo().getTotalNumUnSubmittedMandatoryForms() > 0)
+                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
+                            else if(WorkOrder.getCurrWo().getPredefinedFormApproversCount()>0&&(apprRejPredefinedFormCount.get("APPROVE")==0||apprRejPredefinedFormCount.get("REJECT")>0))
+                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
+                        }
+                        if(ZCommon.isManualAssignedFormsVisible(formType)) {
+                            if(WorkOrder.getCurrWo().getTotalNumUnSubmittedMandatoryForms() > 0)
+                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
+                            else if(WorkOrder.getCurrWo().getManualFormApproversCount()>0&&(apprRejPredefinedFormCount.get("APPROVE")==0||apprRejPredefinedFormCount.get("REJECT")>0))
+                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
+                        }
+                    } catch (Exception e) {
+                        DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+                    }
                 }
                 //Record Points
                 if (ZConfigManager.MPOINT_READING_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.RECORDPOINTS.getFeatureValue())) {

@@ -32,6 +32,7 @@
     <string name="msgAtLeastOneComponentRequiredToIssued">It is mandatory to issue at least one of the components %1$s.</string>
     <string name="msgAtLeastOneAttachmentRequired">It is mandatory to upload at least one attachment.</string>
     <string name="msgAllMandatoryFormsAreRequired">It is mandatory to submit all the required / mandatory forms for this Job.</string>
+    <string name="msgAllMandatoryFormsAreRequiredToApprove">It is mandatory to Approve all the required / mandatory forms for this Job.</string>
     <string name="msgAllReadingPointsAreMandatory">It is mandatory to record all the readings for this Job.</string>
     <string name="msgAtLeastOneReadingPointRequired">It is mandatory to record at least one reading for this Job.</string>
     <string name="msgInspectionLotDecisionPending">User decision is pending for inspection lot %1$s.</string>
