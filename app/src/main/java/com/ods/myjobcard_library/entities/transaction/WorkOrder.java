@@ -2207,7 +2207,7 @@ public class WorkOrder extends ZBaseEntity {
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
                         }
                         if(ZCommon.isManualAssignedFormsVisible(formType)) {
-                            if(getTotalNumUnSubmittedMandatoryForms() > 0)
+                            if(getTotalNumUnSubmittedManualMandatoryForms() > 0)
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
                             else if(getManualFormApproversCount()>0&&(apprRejPredefinedFormCount.get("APPROVE")==0||apprRejPredefinedFormCount.get("REJECT")>0))
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
@@ -2790,7 +2790,7 @@ public class WorkOrder extends ZBaseEntity {
     }
 /* getting the forms data for manadatory check based on Form Assignment type
 * */
-    private ResponseObject getFormEntities(boolean mandatoryFormChk) {
+    public ResponseObject getFormEntities(boolean mandatoryFormChk) {
         ResponseObject responseObject = null;
         String formAssignType = ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
         String strResPath = "";
@@ -2902,7 +2902,7 @@ public class WorkOrder extends ZBaseEntity {
     }
     /* getting the forms data for  Manual manadatory check based on Form Assignment type
      * */
-    private ResponseObject getManualFormEntities(boolean mandatoryFormChk) {
+    public ResponseObject getManualFormEntities(boolean mandatoryFormChk) {
         ResponseObject responseObject = null;
         String formAssignType = ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
         String strResPath = "";

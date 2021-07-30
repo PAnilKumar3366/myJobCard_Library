@@ -18,6 +18,8 @@ import com.ods.myjobcard_library.entities.appsettings.StatusCategory;
 import com.ods.myjobcard_library.entities.ctentities.OrderTypeFeature;
 import com.ods.myjobcard_library.entities.ctentities.UserTable;
 import com.ods.myjobcard_library.entities.ctentities.WorkOrderStatus;
+import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
+import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
 import com.ods.myjobcard_library.entities.supervisor.SupervisorWorkOrder;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
@@ -1767,20 +1769,10 @@ public class Operation extends ZBaseEntity implements Serializable {
                 if (ZConfigManager.MANDATORY_FORMS_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.OPERATIONFORM.getFeatureValue())) {
                     try {
                         String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
-                        HashMap<String,Integer> apprRejPredefinedFormCount=new HashMap<>();
-                        apprRejPredefinedFormCount=WorkOrder.getCurrWo().getTotalNumOfPredefinedApprovedandRejectedForms(formType);
-                        if(ZCommon.isPredefinedFormVisible(formType)) {
-                            if(WorkOrder.getCurrWo().getTotalNumUnSubmittedMandatoryForms() > 0)
+                        if(ZCommon.isPredefinedFormVisible(formType)&&getTotalNumUnSubmittedMandatoryForms() > 0)
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
-                            else if(WorkOrder.getCurrWo().getPredefinedFormApproversCount()>0&&(apprRejPredefinedFormCount.get("APPROVE")==0||apprRejPredefinedFormCount.get("REJECT")>0))
-                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
-                        }
-                        if(ZCommon.isManualAssignedFormsVisible(formType)) {
-                            if(WorkOrder.getCurrWo().getTotalNumUnSubmittedMandatoryForms() > 0)
+                        if(ZCommon.isManualAssignedFormsVisible(formType)&&getTotalNumUnSubmittedManualMandatoryForms() > 0)
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
-                            else if(WorkOrder.getCurrWo().getManualFormApproversCount()>0&&(apprRejPredefinedFormCount.get("APPROVE")==0||apprRejPredefinedFormCount.get("REJECT")>0))
-                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
-                        }
                     } catch (Exception e) {
                         DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
                     }
@@ -1820,7 +1812,66 @@ public class Operation extends ZBaseEntity implements Serializable {
         }
         return result;
     }
-
+    /* get the count of the un-submitted Predefined Manadatory forms based on Form Assignment type
+     * */
+    public int getTotalNumUnSubmittedMandatoryForms() {
+        int unSubmittedFinalFormsSubmissionCount = 0;
+        ResponseObject responseObject = null;
+        String strResPath = "";
+        Object rawData = null;
+        try {
+            responseObject=WorkOrder.getCurrWo().getFormEntities(true);
+            if (!responseObject.isError()) {
+                rawData = responseObject.Content();
+                ArrayList<FormAssignmentSetModel> forms = (ArrayList<FormAssignmentSetModel>) rawData;
+                if (forms != null && forms.size() > 0) {
+                    for (FormAssignmentSetModel form : forms) {
+                        strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "' and OperationNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "'and IsDraft eq 'X')";
+                        responseObject = DataHelper.getInstance().getEntities(ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION, strResPath);
+                        if (!responseObject.isError()) {
+                            rawData = responseObject.Content();
+                            if (Integer.parseInt(rawData.toString()) > 0) {
+                                unSubmittedFinalFormsSubmissionCount++;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return unSubmittedFinalFormsSubmissionCount;
+    }
+    /* get the count of the un-submitted Manula Manadatory forms based on Form Assignment type
+     * */
+    public int getTotalNumUnSubmittedManualMandatoryForms() {
+        int unSubmittedFinalFormsSubmissionCount = 0;
+        ResponseObject responseObject = null;
+        String strResPath = "";
+        Object rawData = null;
+        try {
+            responseObject=WorkOrder.getCurrWo().getManualFormEntities(true);
+            if (!responseObject.isError()) {
+                rawData = responseObject.Content();
+                ArrayList<ManualFormAssignmentSetModel> forms = (ArrayList<ManualFormAssignmentSetModel>) rawData;
+                if (forms != null && forms.size() > 0) {
+                    for (ManualFormAssignmentSetModel form : forms) {
+                        strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "' and OperationNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "'and IsDraft eq 'X')";
+                        responseObject = DataHelper.getInstance().getEntities(ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION, strResPath);
+                        if (!responseObject.isError()) {
+                            rawData = responseObject.Content();
+                            if (Integer.parseInt(rawData.toString()) > 0) {
+                                unSubmittedFinalFormsSubmissionCount++;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return unSubmittedFinalFormsSubmissionCount;
+    }
     public int getTotalNumUnIssuedComponents() {
         int intComponentsCount = 0;
         ResponseObject responseObject = null;
