@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
-import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
 import com.ods.myjobcard_library.entities.forms.FormListObject;
 import com.ods.myjobcard_library.entities.forms.FormSetModel;
 import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
@@ -106,11 +105,15 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                     manualFormArraylist.clear();
                     ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
                     ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
+                    ArrayList<ManualFormAssignmentSetModel> tempManualForms = new ArrayList<>();
                     for (Operation operation : totalOperations) {
                         woNum = operation.getWorkOrderNum();
                         oprNum = operation.getOperationNum();
                         ArrayList<ZODataEntity> zoDataEntityArrayList = manualFormAssignmentHelper.getManualFormAssignmentData(woNum, oprNum);
-                        manualFormArraylist.addAll(onFetchManualFormEntities(zoDataEntityArrayList));
+                        tempManualForms.addAll(onFetchManualFormEntities(zoDataEntityArrayList));
+                        if (tempManualForms.size() > 0)
+                            manualFormArraylist.addAll(tempManualForms);
+                        // manualFormArraylist.addAll(onFetchManualFormEntities(zoDataEntityArrayList));
                     }
                 } else {
                     woNum = workOrder.getWorkOrderNum();
