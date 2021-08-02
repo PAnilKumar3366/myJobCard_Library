@@ -110,10 +110,10 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                         woNum = operation.getWorkOrderNum();
                         oprNum = operation.getOperationNum();
                         ArrayList<ZODataEntity> zoDataEntityArrayList = manualFormAssignmentHelper.getManualFormAssignmentData(woNum, oprNum);
-                        tempManualForms.addAll(onFetchManualFormEntities(zoDataEntityArrayList));
-                        if (tempManualForms.size() > 0)
-                            manualFormArraylist.addAll(tempManualForms);
-                        // manualFormArraylist.addAll(onFetchManualFormEntities(zoDataEntityArrayList));
+                        //tempManualForms.addAll(onFetchManualFormEntities(zoDataEntityArrayList));
+                        /*if (tempManualForms.size() > 0)
+                            manualFormArraylist.addAll(tempManualForms);*/
+                        manualFormArraylist.addAll(onFetchManualFormEntities(zoDataEntityArrayList));
                     }
                 } else {
                     woNum = workOrder.getWorkOrderNum();

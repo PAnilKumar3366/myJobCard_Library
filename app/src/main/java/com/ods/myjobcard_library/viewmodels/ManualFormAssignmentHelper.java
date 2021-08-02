@@ -5,7 +5,6 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ResponseMasterModel;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.forms.FormListObject;
-import com.ods.myjobcard_library.entities.forms.FormMasterMetadata;
 import com.ods.myjobcard_library.entities.forms.FormSetModel;
 import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
@@ -39,13 +38,13 @@ public class ManualFormAssignmentHelper
         try {
             String entitySetName = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET;
             String resPath = entitySetName;
-            if(oprNum!=null&&oprNum.isEmpty())
-                resPath += "?$filter= (WorkOrderNum eq '" + woNum + "')&$orderby=FlowSequence asc,Mandatory desc";
-            else
+            if (oprNum != null && !oprNum.isEmpty())
                 resPath += "?$filter= (WorkOrderNum eq '" + woNum + "' and OprNum eq '" + oprNum + "')&$orderby=FlowSequence asc,Mandatory desc";
+            else
+                resPath += "?$filter= (WorkOrderNum eq '" + woNum + "')&$orderby=FlowSequence asc,Mandatory desc";
             result = DataHelper.getInstance().getEntities(entitySetName, resPath);
-            zoDataManualFormAssignmentEntities=new ArrayList<>();
-            if(result!=null&&!result.isError()){
+            zoDataManualFormAssignmentEntities = new ArrayList<>();
+            if (result != null && !result.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
                 for (ODataEntity entity : entities) {
                     ZODataEntity zoDataEntity = new ZODataEntity(entity);
