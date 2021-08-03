@@ -93,14 +93,9 @@ public class DisplayManualFormViewModel extends BaseViewModel {
             if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentWO.Value)) {
                 woNum = workOrder.getWorkOrderNum();
                 oprNum = "";
-                /*notification="";
-                notificationItem="";
-                notificationTask="";
-                equipment="";
-                functionalLocation="";*/
                 ArrayList<ZODataEntity> zoDataEntityArrayList = manualFormAssignmentHelper.getManualFormAssignmentData(woNum, oprNum);
                 manualFormArraylist = onFetchManualFormEntities(zoDataEntityArrayList);
-            } else if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentOPR.Value)) {
+            } else if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentOPR.Value)||formType.equals(ZAppSettings.FormAssignmentType.TaskTypeWithManualAssignOPR.Value)) {
                 if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
                     manualFormArraylist.clear();
                     ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
@@ -123,7 +118,7 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                 }
             }
             if (manualFormArraylist.size() > 0)
-                formItemsList = manualFormAssignmentHelper.getManualFormItemsList(manualFormArraylist, woNum, oprNum);
+                formItemsList = manualFormAssignmentHelper.getManualFormItemsList(manualFormArraylist, woNum);
             formItems.setValue(formItemsList);
         } catch (Exception e) {
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
@@ -141,16 +136,16 @@ public class DisplayManualFormViewModel extends BaseViewModel {
      * @return
      */
     protected ArrayList<ManualFormAssignmentSetModel> onFetchManualFormEntities(ArrayList<ZODataEntity> zODataEntities) {
-        manualFormArraylist = new ArrayList<>();
+        ArrayList<ManualFormAssignmentSetModel> manualFormArraylisttemp = new ArrayList<>();
         try {
             for (ZODataEntity entity : zODataEntities) {
                 ManualFormAssignmentSetModel capacityLevelData = new ManualFormAssignmentSetModel(entity);
-                manualFormArraylist.add(capacityLevelData);
+                manualFormArraylisttemp.add(capacityLevelData);
             }
         } catch (Exception e) {
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
         }
-        return manualFormArraylist;
+        return manualFormArraylisttemp;
     }
 
     public void setPostManualFormAssignment(ArrayList<ManualFormAssignmentSetModel> manualFormAssignmentSetList) {
@@ -185,6 +180,7 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                     strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + woNum + "' and OprNum eq '' and tolower(Mandatory)" + strMandatoryChk + ")";
                     break;
                 case "7":
+                case "10":
                     if(!oprNum.isEmpty())
                     {
                         strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + woNum + "' and OprNum eq '" + oprNum + "' and tolower(Mandatory)" + strMandatoryChk + ")";
@@ -194,6 +190,7 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                         ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, WorkOrder.getCurrWo().getWorkOrderNum());
                         ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                         ArrayList<ManualFormAssignmentSetModel> contentList = new ArrayList<ManualFormAssignmentSetModel>();
+                        manualFormArraylist = new ArrayList<>();
                         for (Operation operation : totalOperations) {
                             strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + operation.getWorkOrderNum() + "' and OprNum eq '" + operation.getOperationNum() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
                             ArrayList<ZODataEntity> zoDataEntityArrayList = manualFormAssignmentHelper.getManualUnSubmittedMandatoryForm(strResPath);
@@ -201,10 +198,10 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                             if (manualFormArraylist != null && manualFormArraylist.size() > 0) {
                                 unSubmittedFormsCount = manualFormArraylist.size();
                                 for (ManualFormAssignmentSetModel form : manualFormArraylist) {
-                                    if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED && ZConfigManager.WO_OP_OBJS_DISPLAY.equalsIgnoreCase("x"))
-                                        strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + woNum + "' and OperationNum eq '" + oprNum + "')";
-                                    else
-                                        strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + woNum + "')";
+                                    //if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED && ZConfigManager.WO_OP_OBJS_DISPLAY.equalsIgnoreCase("x"))
+                                        strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + woNum + "' and OperationNum eq '" + operation.getOperationNum() + "')";
+                                    /*else
+                                        strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + woNum + "')";*/
                                     responseObject = DataHelper.getInstance().getEntities(ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION, strResPath);
                                     if (!responseObject.isError()) {
                                         rawData = responseObject.Content();
@@ -214,8 +211,8 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                                     }
                                 }
                             }
-                            return unSubmittedFormsCount;
                         }
+                        return unSubmittedFormsCount;
                     }
                 case "8":
                     strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (Equipment eq '" + WorkOrder.getCurrWo().getEquipNum() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
@@ -223,7 +220,7 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                 case "9":
                     strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (FunctionalLocation eq '" + WorkOrder.getCurrWo().getFuncLocation() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
                     break;
-                case "10":
+               /* case "10":
                     if(!oprNum.isEmpty())
                     {
                         strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + woNum + "' and OprNum eq '" + oprNum + "' and tolower(Mandatory)" + strMandatoryChk + ")";
@@ -258,7 +255,7 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                     }
                 default:
                     strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + woNum + "' and OprNum eq '' and tolower(Mandatory)" + strMandatoryChk + ")";
-                    break;
+                    break;*/
             }
 
             if (manualFormArraylist.size() > 0)
@@ -295,14 +292,32 @@ public class DisplayManualFormViewModel extends BaseViewModel {
         String entitySetName=ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET;
         try {
             String formAssignType = ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
-            String orderType, controlKey, equipCat, funcLocCat,taskListType,group,groupCounter,internalCounter;
             switch (formAssignType) {
                 case "6":
                     strResPath = entitySetName + "/$count?$filter=(WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '')";
                     break;
                 case "7":
-                    strResPath = entitySetName+ "/$count?$filter=(WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "')";
-                    break;
+                case "10":
+                     if(ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED){
+                         strResPath = entitySetName+ "/$count?$filter=(WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "')";
+                         break;
+                     }
+                    else {
+                    ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, WorkOrder.getCurrWo().getWorkOrderNum());
+                    ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
+                    for (Operation operation : totalOperations) {
+                        strResPath = entitySetName + "/$count?$filter= (WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '" + operation.getOperationNum() + "')";
+                        //responseObject = ManualFormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
+                        responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
+                        if (!responseObject.isError()) {
+                            rawData = responseObject.Content();
+                            if (rawData != null) {
+                                formsCount += Integer.valueOf(String.valueOf(rawData));
+                            }
+                        }
+                    }
+                    return formsCount;
+                }
                 case "8":
                     strResPath = entitySetName + "/$count?$filter=(Equipment eq '" + WorkOrder.getCurrWo().getEquipNum() + "')";
                     break;
