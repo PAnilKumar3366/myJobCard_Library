@@ -62,7 +62,7 @@ public class ManualFormAssignmentHelper
      * @param list
      * @return
      */
-    protected ArrayList<FormListObject> getManualFormItemsList(ArrayList<ManualFormAssignmentSetModel> list, String woNum, String oprNum) {
+    protected ArrayList<FormListObject> getManualFormItemsList(ArrayList<ManualFormAssignmentSetModel> list, String woNum) {
         //list = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat, taskListType, group, groupCounter, internalCounter);
 
         Iterator<ManualFormAssignmentSetModel> it1 = list.iterator();
@@ -76,7 +76,7 @@ public class ManualFormAssignmentHelper
             String instanceId = null;
             String isDraft = "";
             ManualFormAssignmentSetModel f1 = it1.next();
-            ArrayList<ResponseMasterModel> response = ResponseMasterModel.getResponseCaptureData(f1.getFormID(), f1.getVersion(), woNum, oprNum, false, null);
+            ArrayList<ResponseMasterModel> response = ResponseMasterModel.getResponseCaptureData(f1.getFormID(), f1.getVersion(), woNum, f1.getOprNum(), false, null);
             if (response != null) {
                 Iterator<ResponseMasterModel> it = response.iterator();
                 while (it.hasNext()) {
