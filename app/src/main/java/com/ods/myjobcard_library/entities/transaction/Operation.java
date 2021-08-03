@@ -1795,7 +1795,7 @@ public class Operation extends ZBaseEntity implements Serializable {
                 //Inspection Lot
                 if (orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.INSPECTIONLOT.getFeatureValue())) {
                     if (getSystemStatus().toLowerCase().contains(ZConfigManager.OPR_INSP_ENABLE_STATUS.toLowerCase())
-                            && getSystemStatus().toLowerCase().contains(ZConfigManager.OPR_INSP_RESULT_RECORDED_STATUS.toLowerCase())) {
+                            && !getSystemStatus().toLowerCase().contains(ZConfigManager.OPR_INSP_RESULT_RECORDED_STATUS.toLowerCase())) {
                         errorMessages.add(context.getString(R.string.msgInspectionLotDecisionPending, ""));
                     }
                 }

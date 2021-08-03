@@ -212,6 +212,7 @@ public class DashBoardViewModel extends BaseViewModel {
             filterCategories.add(new SpinnerItem("SysStatus", "System Status"));
             filterCategories.add(new SpinnerItem("MainWorkCtr", "WorkCenter"));
             filterCategories.add(new SpinnerItem("MaintActivityType", "Mant. Activity Type"));
+            filterCategories.add(new SpinnerItem("InspectionLot", "Inspection Lot"));
             filterCategories.add(new SpinnerItem("FuncLocation", "Functional Location"));
             filterCategories.add(new SpinnerItem("Location", "Location"));
             filterCategories.add(new SpinnerItem("Date", "Date"));
@@ -394,6 +395,8 @@ public class DashBoardViewModel extends BaseViewModel {
                     filterQuery1 = "?$filter=" + getWorkOrderDateFilterQuery(item1.getId());
                 else if (woSelectedCategory1.equalsIgnoreCase("OperationTechnician"))
                     filterQuery1 = "?$filter=(" + ZCollections.WO_OPR_NAV_PROPERTY + "/any(d:d/PersonnelNo eq '" + item1.getId() + "'))";
+                else if (woSelectedCategory1.equalsIgnoreCase("InspectionLot"))
+                    filterQuery1 = "?$filter=" + getWOInspectionFilterQuery(item1.getId());
                 else if (woSelectedCategory1.equalsIgnoreCase("FuncLocation"))
                     filterQuery1 = "?$filter=indexof(" + woSelectedCategory1 + ", '" + item1.getId() + "') ne -1";
                 else if (woSelectedCategory1.equalsIgnoreCase("CreatedBy")) {
@@ -418,6 +421,8 @@ public class DashBoardViewModel extends BaseViewModel {
                             filterQuery2 = filterQuery1 + " and " + getWorkOrderDateFilterQuery(item2.getId());
                         else if (woSelectedCategory2.equalsIgnoreCase("OperationTechnician"))
                             filterQuery2 = filterQuery1 + " and (" + ZCollections.WO_OPR_NAV_PROPERTY + "/any(d:d/PersonnelNo eq '" + item2.getId() + "'))";
+                        else if (woSelectedCategory2.equalsIgnoreCase("InspectionLot"))
+                            filterQuery2 = filterQuery1 + " and " + getWOInspectionFilterQuery(item2.getId());
                         else if (woSelectedCategory2.equalsIgnoreCase("FuncLocation"))
                             filterQuery2 = filterQuery1 + " and (indexof(" + woSelectedCategory2 + ", '" + item2.getId() + "') ne -1)";
                         else if (woSelectedCategory2.equalsIgnoreCase("CreatedBy")) {
@@ -539,26 +544,28 @@ public class DashBoardViewModel extends BaseViewModel {
 
     private String getNotificationWOCreatedFilterQuery(String selectedValue) {
         String filterQuery = "";
-        if ("0".equals(selectedValue)) {
+        if ("0".equals(selectedValue)) { // order created
             filterQuery = "(WorkOrderNum ne '')";
-        } else if ("1".equals(selectedValue)) {
+        } else if ("1".equals(selectedValue)) { // order not created
             filterQuery = "(WorkOrderNum eq '')";
         }
         return filterQuery;
     }
 
 
-    /*private String getWOInspFilterQuery(String selectedValue){
+    /**
+     * @param selectedValue selected option from the drop down list
+     * @return filter query for QM inspection completed or not based upon selected option
+     */
+    private String getWOInspectionFilterQuery(String selectedValue){
         String filterQuery="";
-        if(ZConfigManager.DEFAULT_ASSIGNMENT_TYPE.equalsIgnoreCase(ZAppSettings.AssignmentType.OperationLevel.getAssignmentTypeText())){
-            if("0".equalsIgnoreCase(selectedValue))
-                filterQuery="(InspectionLot ne '' and MobileObjStatus eq 'COMP')";
-            else if("1".equalsIgnoreCase(selectedValue))
-                filterQuery="(InspectionLot ne '' and MobileObjStatus ne 'COMP')";
-        }
-
+        if("0".equals(selectedValue)) // inspection completed
+            filterQuery = "(" + ZCollections.WO_OPR_NAV_PROPERTY + "/all(d:indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_ENABLE_STATUS.toLowerCase() +"') ne -1 and indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_RESULT_RECORDED_STATUS.toLowerCase() +"') ne -1))";
+        else if("1".equals(selectedValue)) // inspection pending
+            filterQuery = "(" + ZCollections.WO_OPR_NAV_PROPERTY + "/all(d:indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_ENABLE_STATUS.toLowerCase() +"') ne -1 and indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_RESULT_RECORDED_STATUS.toLowerCase() +"') eq -1))";
        return filterQuery;
-    }*/
+    }
+
     private List<SliceValue> getSupervisorsData() {
         pieData = new ArrayList<SliceValue>();
         int supOrderCount;
@@ -777,14 +784,18 @@ public class DashBoardViewModel extends BaseViewModel {
     }
 
     public ArrayList<SpinnerItem> getNoWOConversion() {
-        noWOConversion.add(new SpinnerItem("0", "Order Created"));
-        noWOConversion.add(new SpinnerItem("1", "Order Not Created"));
+        if(noWOConversion.size() == 0) {
+            noWOConversion.add(new SpinnerItem("0", "Order Created"));
+            noWOConversion.add(new SpinnerItem("1", "Order Not Created"));
+        }
         return noWOConversion;
     }
 
     public ArrayList<SpinnerItem> getWoInspLotSpinnerItems() {
-        woInspLotSpinnerItems.add(new SpinnerItem("0", "Inspection Complete"));
-        woInspLotSpinnerItems.add(new SpinnerItem("1", "Inspection InComplete"));
+        if(woInspLotSpinnerItems.size() == 0) {
+            woInspLotSpinnerItems.add(new SpinnerItem("0", "Inspection Completed"));
+            woInspLotSpinnerItems.add(new SpinnerItem("1", "Inspection Pending"));
+        }
         return woInspLotSpinnerItems;
     }
 
