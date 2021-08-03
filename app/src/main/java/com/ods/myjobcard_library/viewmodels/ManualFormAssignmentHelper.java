@@ -5,7 +5,6 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ResponseMasterModel;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.forms.FormListObject;
-import com.ods.myjobcard_library.entities.forms.FormMasterMetadata;
 import com.ods.myjobcard_library.entities.forms.FormSetModel;
 import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
@@ -39,13 +38,13 @@ public class ManualFormAssignmentHelper
         try {
             String entitySetName = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET;
             String resPath = entitySetName;
-            if(oprNum!=null&&oprNum.isEmpty())
-                resPath += "?$filter= (WorkOrderNum eq '" + woNum + "')&$orderby=FlowSequence asc,Mandatory desc";
-            else
+            if (oprNum != null && !oprNum.isEmpty())
                 resPath += "?$filter= (WorkOrderNum eq '" + woNum + "' and OprNum eq '" + oprNum + "')&$orderby=FlowSequence asc,Mandatory desc";
+            else
+                resPath += "?$filter= (WorkOrderNum eq '" + woNum + "')&$orderby=FlowSequence asc,Mandatory desc";
             result = DataHelper.getInstance().getEntities(entitySetName, resPath);
-            zoDataManualFormAssignmentEntities=new ArrayList<>();
-            if(result!=null&&!result.isError()){
+            zoDataManualFormAssignmentEntities = new ArrayList<>();
+            if (result != null && !result.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
                 for (ODataEntity entity : entities) {
                     ZODataEntity zoDataEntity = new ZODataEntity(entity);
@@ -63,7 +62,7 @@ public class ManualFormAssignmentHelper
      * @param list
      * @return
      */
-    protected ArrayList<FormListObject> getManualFormItemsList(ArrayList<ManualFormAssignmentSetModel> list, String woNum, String oprNum) {
+    protected ArrayList<FormListObject> getManualFormItemsList(ArrayList<ManualFormAssignmentSetModel> list, String woNum) {
         //list = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat, taskListType, group, groupCounter, internalCounter);
 
         Iterator<ManualFormAssignmentSetModel> it1 = list.iterator();
@@ -77,7 +76,7 @@ public class ManualFormAssignmentHelper
             String instanceId = null;
             String isDraft = "";
             ManualFormAssignmentSetModel f1 = it1.next();
-            ArrayList<ResponseMasterModel> response = ResponseMasterModel.getResponseCaptureData(f1.getFormID(), f1.getVersion(), woNum, oprNum, false, null);
+            ArrayList<ResponseMasterModel> response = ResponseMasterModel.getResponseCaptureData(f1.getFormID(), f1.getVersion(), woNum, f1.getOprNum(), false, null);
             if (response != null) {
                 Iterator<ResponseMasterModel> it = response.iterator();
                 while (it.hasNext()) {

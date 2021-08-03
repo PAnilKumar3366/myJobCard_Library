@@ -1,9 +1,13 @@
 package com.ods.myjobcard_library.entities.forms;
 
+import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.myjobcard_library.viewmodels.CheckSheetApprovalStatusHelper;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
+import com.ods.ods_sdk.utils.DliteLogger;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 public class ReviewerFormResponse extends ZBaseEntity {
@@ -27,6 +31,26 @@ public class ReviewerFormResponse extends ZBaseEntity {
     private String IsDraft;
     private String NonObjType;
     private String OrderType;
+    private String Counter;
+    private boolean isReviewed;
+
+    public boolean isReviewed() {
+        try {
+            CheckSheetApprovalStatusHelper helper = new CheckSheetApprovalStatusHelper();
+            ArrayList<FormResponseApprovalStatus> StatusList = helper.getInstanceReviewStatus(this.FormID, this.InstanceID, this.Version, this.ModifiedBy, this.Counter, ZAppSettings.strUser);
+            if (StatusList != null && StatusList.size() > 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return isReviewed;
+    }
+
+    public void setReviewed(boolean reviewed) {
+        isReviewed = reviewed;
+    }
 
     public String getCounter() {
         return Counter;
@@ -36,7 +60,7 @@ public class ReviewerFormResponse extends ZBaseEntity {
         Counter = counter;
     }
 
-    private String Counter;
+
 
     public ReviewerFormResponse() {
         initializingEntityProperties();

@@ -73,14 +73,6 @@ public class CheckSheetApprovalStatusViewModel extends BaseViewModel {
         return checkSheetInstanceStatus;
     }
 
-    public void fetchDummyData() {
-        FormResponseApprovalStatus statuone = new FormResponseApprovalStatus("Pre_Check_List", "005", "FE20201009150817", "Anil Kumar", "");
-        FormResponseApprovalStatus statutwo = new FormResponseApprovalStatus("Health_Form_equip - Copy", "000", "FE20201009150888", "Anil Kumar", "");
-        ArrayList<FormResponseApprovalStatus> list = new ArrayList<>();
-        list.add(statuone);
-        list.add(statutwo);
-        checkSheetInstanceStatus.setValue(list);
-    }
 
     protected ArrayList<FormResponseApprovalStatus> onFetchApproverEntities(ArrayList<ZODataEntity> zODataEntities) {
         ArrayList<FormResponseApprovalStatus> approverMasterList = new ArrayList<>();
