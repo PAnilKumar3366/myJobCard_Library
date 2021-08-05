@@ -2598,7 +2598,7 @@ public class WorkOrder extends ZBaseEntity {
                     String entitySetName = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION;
                     resourcePath = entitySetName;
                     //if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentWO.Value))
-                        resourcePath += "?$filter=(tolower(FormID) eq '" + manualFormAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + manualFormAssignmentSetModel.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "')&$orderby=Counter desc";
+                        resourcePath += "?$filter=(tolower(FormID) eq '" + manualFormAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + manualFormAssignmentSetModel.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "'  and OperationNum eq '')&$orderby=Counter desc";
                     /*else if(formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentOPR.Value)||formType.equals(ZAppSettings.FormAssignmentType.TaskTypeWithManualAssignOPR.Value))
                         resourcePath += "?$filter=(tolower(FormID) eq '" + manualFormAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + manualFormAssignmentSetModel.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "')&$orderby=Counter desc";
                     */

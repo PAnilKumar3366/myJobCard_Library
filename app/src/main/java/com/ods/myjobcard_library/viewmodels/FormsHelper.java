@@ -100,8 +100,7 @@ public class FormsHelper {
                 funcLocCat = workOrder.getCurrentOperation().getFuncLocCategory().isEmpty() ? workOrder.getFuncLocCategory() : workOrder.getCurrentOperation().getFuncLocCategory();
             list = FormAssignmentSetModel.getFormAssignmentData_FunctionalLocType(funcLocCat);
         } else if (type.equals(ZAppSettings.FormAssignmentType.TaskListType.Value)||type.equals(ZAppSettings.FormAssignmentType.TaskTypeWithManualAssignOPR.Value)) {
-            /*equipmentCat = "";
-            funcLocCat = "";*/
+            list.clear();
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
                 // isTaskType = true;
                 ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
@@ -113,7 +112,8 @@ public class FormsHelper {
                     group = operation.getGroup();
                     groupCounter = operation.getGroupCounter();
                     internalCounter = operation.getInternalCounter();
-                    list = FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter);
+                    list.addAll(FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter));
+                    //list = FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter);
                 }
             } else {
                 orderType = workOrder.getCurrentOperation().getOrderType();
@@ -122,7 +122,8 @@ public class FormsHelper {
                 group = workOrder.getCurrentOperation().getGroup();
                 groupCounter = workOrder.getCurrentOperation().getGroupCounter();
                 internalCounter = workOrder.getCurrentOperation().getInternalCounter();
-                list = FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter);
+                list.addAll(FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter));
+                //list = FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter);
             }
         } else if (type.equals(ZAppSettings.FormAssignmentType.None.Value)) {
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)

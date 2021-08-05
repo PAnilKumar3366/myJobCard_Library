@@ -96,8 +96,8 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                 ArrayList<ZODataEntity> zoDataEntityArrayList = manualFormAssignmentHelper.getManualFormAssignmentData(woNum, oprNum);
                 manualFormArraylist = onFetchManualFormEntities(zoDataEntityArrayList);
             } else if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentOPR.Value)||formType.equals(ZAppSettings.FormAssignmentType.TaskTypeWithManualAssignOPR.Value)) {
+                manualFormArraylist.clear();
                 if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
-                    manualFormArraylist.clear();
                     ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
                     ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                     ArrayList<ManualFormAssignmentSetModel> tempManualForms = new ArrayList<>();
