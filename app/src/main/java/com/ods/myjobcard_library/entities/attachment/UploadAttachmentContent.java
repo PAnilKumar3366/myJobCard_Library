@@ -51,8 +51,14 @@ public class UploadAttachmentContent extends ZBaseEntity {
         ResponseObject result = null;
         try {
             File sourceFile = new File(filePath);
-            ByteArrayOutputStream output = DocsUtil.convertToBase64(filePath, isImage);
-            if (output != null) {
+            String base64Content = "";
+            if(isImage)
+                base64Content = DocsUtil.resizeFileContent(filePath);
+            else {
+                ByteArrayOutputStream output = DocsUtil.convertToBase64(filePath, isImage);
+                base64Content = output.toString();
+            }
+            if (!base64Content.isEmpty()) {
                 UploadAttachmentContent uploadAttachmentFile;
                 uploadAttachmentFile = new UploadAttachmentContent();
                 uploadAttachmentFile.setFILE_NAME(fileName != null ? fileName : sourceFile.getName());
@@ -61,7 +67,7 @@ public class UploadAttachmentContent extends ZBaseEntity {
                 uploadAttachmentFile.setDocID(ZConfigManager.LOCAL_ID + Common.getReqTimeStamp(16));
                 uploadAttachmentFile.setFILE_SIZE(String.valueOf(sourceFile.length()));
                 uploadAttachmentFile.setBINARY_FLG("1");
-                uploadAttachmentFile.setLine(output.toString());
+                uploadAttachmentFile.setLine(base64Content);
                 uploadAttachmentFile.setDescription(description);
                 if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED)
                     uploadAttachmentFile.setOperationNum(workOrder.getCurrentOperation().getOperationNum());
@@ -85,6 +91,7 @@ public class UploadAttachmentContent extends ZBaseEntity {
         ResponseObject result = null;
         try {
             if (fileContent != null && !fileContent.isEmpty()) {
+                fileContent = DocsUtil.resizeBase64Content(fileContent);
                 UploadAttachmentContent uploadAttachmentFile;
                 uploadAttachmentFile = new UploadAttachmentContent();
                 uploadAttachmentFile.setFILE_NAME(fileName);

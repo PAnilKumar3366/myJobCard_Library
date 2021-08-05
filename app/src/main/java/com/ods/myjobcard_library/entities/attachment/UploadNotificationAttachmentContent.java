@@ -103,8 +103,14 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
         ResponseObject result = null;
         try {
             File sourceFile = new File(filePath);
-            ByteArrayOutputStream output = DocsUtil.convertToBase64(filePath, isImage);
-            if (output != null) {
+            String base64Content = "";
+            if(isImage)
+                base64Content = DocsUtil.resizeFileContent(filePath);
+            else {
+                ByteArrayOutputStream output = DocsUtil.convertToBase64(filePath, isImage);
+                base64Content = output.toString();
+            }
+            if (!base64Content.isEmpty()) {
                 UploadNotificationAttachmentContent uploadAttachmentFile;
                 uploadAttachmentFile = new UploadNotificationAttachmentContent();
                 uploadAttachmentFile.setFILE_NAME(fileName != null ? fileName : sourceFile.getName());
@@ -114,7 +120,7 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
                 uploadAttachmentFile.setDocID(ZConfigManager.LOCAL_ID + ZCommon.getReqTimeStamp(16));
                 uploadAttachmentFile.setFILE_SIZE(String.valueOf(sourceFile.length()));
                 uploadAttachmentFile.setBINARY_FLG("1");
-                uploadAttachmentFile.setLine(output.toString());
+                uploadAttachmentFile.setLine(base64Content);
                 uploadAttachmentFile.setDescription(description);
 
                 uploadAttachmentFile.setMode(ZAppSettings.EntityMode.Create);
@@ -134,6 +140,7 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
         UploadNotificationAttachmentContent uploadAttachmentFile = null;
         try {
             if (fileContent != null && !fileContent.isEmpty()) {
+                fileContent = DocsUtil.resizeBase64Content(fileContent);
                 uploadAttachmentFile = new UploadNotificationAttachmentContent();
                 uploadAttachmentFile.setFILE_NAME(fileName);
                 uploadAttachmentFile.setMIMETYPE(fileType);//DocsUtil.extractMimeType(fileContent)

@@ -752,12 +752,9 @@ public class DocsUtil {
             fileInputStream.read(b);
             scaledBitmap = getDownScaledBitmap(b);
             if(scaledBitmap != null) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-
-                byte[] bo = baos.toByteArray();
-                System.gc();
-                resizedBase64 = Base64.encodeToString(bo, Base64.NO_WRAP);
+                byte[] bo = compressBitmap(scaledBitmap);
+                if(bo != null)
+                    resizedBase64 = Base64.encodeToString(bo, Base64.NO_WRAP);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -777,15 +774,23 @@ public class DocsUtil {
         byte[] encodeByte = Base64.decode(base64image.getBytes(), Base64.DEFAULT);
         scaledBitmap = getDownScaledBitmap(encodeByte);
         if(scaledBitmap != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-
-            byte[] b = baos.toByteArray();
-            System.gc();
-            resizedBase64 = Base64.encodeToString(b, Base64.NO_WRAP);
+            byte[] b = compressBitmap(scaledBitmap);
+            if(b != null)
+                resizedBase64 = Base64.encodeToString(b, Base64.NO_WRAP);
         }
         return resizedBase64;
 
+    }
+
+    private static byte[] compressBitmap(Bitmap bitmap){
+        byte[] bo = null;
+        if(bitmap != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, ZConfigManager.Bitmap_Compression_Quality, baos);
+            bo = baos.toByteArray();
+            System.gc();
+        }
+        return bo;
     }
 
     private static Bitmap getDownScaledBitmap(byte[] decodedByteArray){
