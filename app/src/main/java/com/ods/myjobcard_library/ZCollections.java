@@ -371,6 +371,7 @@ public class ZCollections extends Collections {
 	public static final String ARG_WORK_END_TIME = "WFT";
 	public static final String ARG_WORK_DURATION = "duration";
 	public static final String ARG_ACTIVITY_TYPE = "activity_type";
+	public static final String ARG_CATS_FINAL_CONFIRMATION = "CATS_FINAL_CONFIRMATION";
 	public static final String BROADCAST_ACTION = "com.ods.myjobcard.uploadAttachment.BROADCAST";
 	//public static final String ARG_ITEM_ID = "item_id";
 	public static final String EXTENDED_DATA_STATUS = "com.ods.myjobcard.uploadAttachment.STATUS";
