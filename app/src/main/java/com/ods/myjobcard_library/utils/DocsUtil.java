@@ -7,6 +7,10 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -36,6 +40,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -732,24 +737,171 @@ public class DocsUtil {
         }
     }
 
+    /**
+     * @param filePath Path of the image to be compressed
+     * @return Resized Base64 string
+     */
+    public static String resizeFileContent(String filePath){
+        Bitmap scaledBitmap = null;
+        String resizedBase64 = "";
+        File file = new File(filePath);
+        byte[] b = new byte[(int) file.length()];
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(file);
+            fileInputStream.read(b);
+            scaledBitmap = getDownScaledBitmap(b);
+            if(scaledBitmap != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+
+                byte[] bo = baos.toByteArray();
+                System.gc();
+                resizedBase64 = Base64.encodeToString(bo, Base64.NO_WRAP);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return resizedBase64;
+    }
+
+    /**
+     * @param base64image Base64 string of an image to be compressed
+     * @return Resized Base64 string
+     */
     public static String resizeBase64Content(String base64image) {
+        Bitmap scaledBitmap = null;
+        String resizedBase64 = "";
         byte[] encodeByte = Base64.decode(base64image.getBytes(), Base64.DEFAULT);
+        scaledBitmap = getDownScaledBitmap(encodeByte);
+        if(scaledBitmap != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+
+            byte[] b = baos.toByteArray();
+            System.gc();
+            resizedBase64 = Base64.encodeToString(b, Base64.NO_WRAP);
+        }
+        return resizedBase64;
+
+    }
+
+    private static Bitmap getDownScaledBitmap(byte[] decodedByteArray){
+        Bitmap scaledBitmap = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPurgeable = true;
-        Bitmap image = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length, options);
+        options.inJustDecodeBounds = true;
+        Bitmap image = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length, options);
 
+        int actualHeight = options.outHeight;
+        int actualWidth = options.outWidth;
 
+//      max Height and width values of the compressed image is taken as 816x612
+
+        float maxHeight = 816.0f;
+        float maxWidth = 612.0f;
+        float imgRatio = actualWidth / actualHeight;
+        float maxRatio = maxWidth / maxHeight;
+
+//      width and height values are set maintaining the aspect ratio of the image
+
+        if (actualHeight > maxHeight || actualWidth > maxWidth) {
+            if (imgRatio < maxRatio) {
+                imgRatio = maxHeight / actualHeight;
+                actualWidth = (int) (imgRatio * actualWidth);
+                actualHeight = (int) maxHeight;
+            } else if (imgRatio > maxRatio) {
+                imgRatio = maxWidth / actualWidth;
+                actualHeight = (int) (imgRatio * actualHeight);
+                actualWidth = (int) maxWidth;
+            } else {
+                actualHeight = (int) maxHeight;
+                actualWidth = (int) maxWidth;
+
+            }
+        }
+
+        //      setting inSampleSize value allows to load a scaled down version of the original image
+
+        options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight);
+
+//      inJustDecodeBounds set to false to load the actual bitmap
+        options.inJustDecodeBounds = false;
+
+//      this options allow android to claim the bitmap memory if it runs low on memory
+        options.inTempStorage = new byte[16 * 1024];
+
+        try {
+//          load the bitmap
+            image = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length, options);
+        } catch (OutOfMemoryError exception) {
+            exception.printStackTrace();
+
+        }
+
+        try {
+            scaledBitmap = Bitmap.createScaledBitmap(image, actualWidth, actualHeight, false);
+        } catch (OutOfMemoryError exception) {
+            exception.printStackTrace();
+        }
+
+        /*float ratioX = actualWidth / (float) options.outWidth;
+        float ratioY = actualHeight / (float) options.outHeight;
+        float middleX = actualWidth / 2.0f;
+        float middleY = actualHeight / 2.0f;
+
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
+
+//      check the rotation of the image and display it properly
+        ExifInterface exif;
+        try {
+            exif = new ExifInterface(new ByteArrayInputStream(encodeByte));
+
+            int orientation = exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION, 0);
+            Log.d("EXIF", "Exif: " + orientation);
+            Matrix matrix = new Matrix();
+            if (orientation == 6) {
+                matrix.postRotate(90);
+                Log.d("EXIF", "Exif: " + orientation);
+            } else if (orientation == 3) {
+                matrix.postRotate(180);
+                Log.d("EXIF", "Exif: " + orientation);
+            } else if (orientation == 8) {
+                matrix.postRotate(270);
+                Log.d("EXIF", "Exif: " + orientation);
+            }
+            scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
+                    scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix,
+                    true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
         /*if(image.getHeight() <= 400 && image.getWidth() <= 400){
             return base64image;
         }
-        image = Bitmap.createScaledBitmap(image, IMG_WIDTH, IMG_HEIGHT, false);*/
+        image = Bitmap.createScaledBitmap(image, actualWidth, actualHeight, false);*/
+        return scaledBitmap;
+    }
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
 
-        byte[] b = baos.toByteArray();
-        System.gc();
-        return Base64.encodeToString(b, Base64.NO_WRAP);
+        if (height > reqHeight || width > reqWidth) {
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+        final float totalPixels = width * height;
+        final float totalReqPixelsCap = reqWidth * reqHeight * 2;
+        while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
+            inSampleSize++;
+        }
 
+        return inSampleSize;
     }
 }
