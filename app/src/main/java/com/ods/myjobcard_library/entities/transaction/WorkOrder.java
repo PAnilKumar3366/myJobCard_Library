@@ -2162,10 +2162,7 @@ public class WorkOrder extends ZBaseEntity {
                 if (ZConfigManager.OPERATION_COMPLETION_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.OPERATION.getFeatureValue())) {
                     int incompleteOperations = getTotalNumInCompleteOperations();
                     int totalOperations = getTotalNumOperations();
-                    if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
-                        if (incompleteOperations > 0)
-                            errorMessages.add(context.getString(R.string.msgTotalOperationRequiredToComplete, incompleteOperations));
-                    } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
+                    if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalOperations == incompleteOperations)
                             errorMessages.add(context.getString(R.string.msgAtLeastOneOperationRequiredToComplete));
                     } else {
@@ -2177,10 +2174,7 @@ public class WorkOrder extends ZBaseEntity {
                 if (ZConfigManager.COMPONENT_ISSUE_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.COMPONENT.getFeatureValue())) {
                     int remainingComponents = getTotalNumUnIssuedComponents() + (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? 0 : getTotalNumPartialIssuedComponents());
                     int totalComponents = getTotalNumComponents();
-                    if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
-                        if (remainingComponents > 0)
-                            errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
-                    } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
+                    if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalComponents == remainingComponents) {
                             errorMessages.add(context.getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
                         }
@@ -2221,10 +2215,7 @@ public class WorkOrder extends ZBaseEntity {
                 if (ZConfigManager.MPOINT_READING_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.RECORDPOINTS.getFeatureValue())) {
                     int totalPoints = getTotalNumMeasurementPoints();
                     int totalReadingTaken = getTotalNumReadingTaken();
-                    if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_ALL)) {
-                        if (totalPoints > 0 && totalPoints != totalReadingTaken)
-                            errorMessages.add(context.getString(R.string.msgAllReadingPointsAreMandatory));
-                    } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
+                    if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
                         if (totalPoints > 0 && totalReadingTaken <= 0)
                             errorMessages.add(context.getString(R.string.msgAtLeastOneReadingPointRequired));
                     } else {
@@ -2272,7 +2263,7 @@ public class WorkOrder extends ZBaseEntity {
         String strResPath, strQuery = null;
         Object rawData = null;
         try {
-            strResPath = ZCollections.OPR_COLLECTION + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true and (SubOperation eq '' or SubOperation eq null))";
+            strResPath = ZCollections.OPR_COLLECTION + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and indexof(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') eq -1 and (SubOperation eq '' or SubOperation eq null))";
             responseObject = DataHelper.getInstance().getEntities(ZCollections.OPR_COLLECTION, strResPath);
             if (!responseObject.isError()) {
                 rawData = responseObject.Content();
@@ -2290,7 +2281,7 @@ public class WorkOrder extends ZBaseEntity {
         String strResPath;
         Object rawData = null;
         try {
-            strResPath = ZCollections.OPR_COLLECTION + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and (startswith(SystemStatus,'" + ZAppSettings.MobileStatus.CONFIRMED.getMobileStatusCode() + "') eq true or MobileStatus eq '" + ZAppSettings.MobileStatus.COMP.getMobileStatusCode() + "' or startswith(UserStatus, '" + ZAppSettings.MobileStatus.COMP.getMobileStatusCode() + "') eq true) and (SubOperation eq '' or SubOperation eq null))";
+            strResPath = ZCollections.OPR_COLLECTION + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and (indexof(SystemStatus,'" + ZAppSettings.MobileStatus.CONFIRMED.getMobileStatusCode() + "') ne -1 or MobileStatus eq '" + ZAppSettings.MobileStatus.COMP.getMobileStatusCode() + "' or startswith(UserStatus, '" + ZAppSettings.MobileStatus.COMP.getMobileStatusCode() + "') eq true) and (SubOperation eq '' or SubOperation eq null))";
             responseObject = DataHelper.getInstance().getEntities(ZCollections.OPR_COLLECTION, strResPath);
             if (!responseObject.isError()) {
                 rawData = responseObject.Content();
@@ -2598,7 +2589,7 @@ public class WorkOrder extends ZBaseEntity {
                     String entitySetName = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION;
                     resourcePath = entitySetName;
                     //if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentWO.Value))
-                        resourcePath += "?$filter=(tolower(FormID) eq '" + manualFormAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + manualFormAssignmentSetModel.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "')&$orderby=Counter desc";
+                        resourcePath += "?$filter=(tolower(FormID) eq '" + manualFormAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + manualFormAssignmentSetModel.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "'  and OperationNum eq '')&$orderby=Counter desc";
                     /*else if(formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentOPR.Value)||formType.equals(ZAppSettings.FormAssignmentType.TaskTypeWithManualAssignOPR.Value))
                         resourcePath += "?$filter=(tolower(FormID) eq '" + manualFormAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + manualFormAssignmentSetModel.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "')&$orderby=Counter desc";
                     */
@@ -3254,6 +3245,10 @@ public class WorkOrder extends ZBaseEntity {
     public boolean inspectionLotUDAvailable() {
         try {
             if (getInspectionLot() != null && !getInspectionLot().isEmpty()) {
+                /*String entitySet = ZCollections.WO_COLLECTION;
+                String filterQuery = entitySet + "?$filter=(WorkOrderNum eq '" + getWorkOrderNum() + "' and " + ZCollections.WO_OPR_NAV_PROPERTY + "/all(d:indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_ENABLE_STATUS.toLowerCase() +"') ne -1 and indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_RESULT_RECORDED_STATUS.toLowerCase() +"') ne -1))";
+                int count = getWorkOrdersCount(filterQuery);
+                return count > 0;*/
                 ArrayList<com.ods.myjobcard_library.entities.qmentities.InspectionLot> lots = com.ods.myjobcard_library.entities.qmentities.InspectionLot.getInspectionLot(getWorkOrderNum());
                 if (lots != null && lots.size() > 0) {
                     com.ods.myjobcard_library.entities.qmentities.InspectionLot lot = lots.get(0);

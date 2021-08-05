@@ -35,7 +35,7 @@ public class AppFeature extends ZBaseEntity {
     private static boolean getAppFeatureState(String viewtype, String feature) {
         AppFeature appFeature = new AppFeature();
         try {
-            if (userRoleFeatures == null) {
+            if (userRoleFeatures == null || userRoleFeatures.size() == 0) {
                 setUserRoleFeatures();
             }
             return userRoleFeatures.contains(feature.toLowerCase());
@@ -47,11 +47,11 @@ public class AppFeature extends ZBaseEntity {
 
     public static void setUserRoleFeatures() {
         try {
-            userRoleFeatures = new ArrayList<>();
             String entitySetName = ZCollections.APPLICATION_FEATURE_COLLECTION;
             //String resPath = entitySetName + "(Viewtype='"+ viewtype +"',Feature='"+ feature +"')";
             ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, entitySetName);
             if (result != null && !result.isError()) {
+                userRoleFeatures = new ArrayList<>();
                 List<ODataEntity> entities = (List<ODataEntity>) result.Content();
                 for (ODataEntity entity : entities) {
                     String featureName = String.valueOf(Objects.requireNonNull(entity.getProperties().get("Feature")).getValue());
