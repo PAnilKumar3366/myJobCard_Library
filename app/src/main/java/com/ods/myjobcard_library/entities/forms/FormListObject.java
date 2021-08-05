@@ -26,6 +26,16 @@ public class FormListObject {
     private String isDraft;
     private boolean isGridTheme;
     private String oprNum;
+    private int approversCount;
+
+    public int getApproversCount() {
+        return approversCount;
+    }
+
+    public void setApproversCount(int approversCount) {
+        this.approversCount = approversCount;
+    }
+
 
     public FormListObject(String formname, String formid, String version, String mandatory,
                           int occur, String multipleSub, int filledForm, String instanceId, boolean isGridTheme) {

@@ -62,6 +62,11 @@ public class DisplayManualFormViewModel extends BaseViewModel {
             }
     }
 
+    public int getCheckSheetApproversCount(String formId, String ApproverID, String version, String woNumber, String oprNum) {
+        FormsHelper formsHelper = new FormsHelper();
+        return formsHelper.fetChApproversCount(formId, ApproverID, woNumber, oprNum, version);
+    }
+
     public void setEditFormItem(String orderNum, String oprNum) {
         if (manualFormAssignmentHelper == null)
             manualFormAssignmentHelper = new ManualFormAssignmentHelper();

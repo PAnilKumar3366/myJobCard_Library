@@ -7,6 +7,7 @@ import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.forms.FormListObject;
 import com.ods.myjobcard_library.entities.forms.FormSetModel;
 import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
+import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
@@ -143,4 +144,42 @@ public class ManualFormAssignmentHelper
         return zoDataManualFormAssignmentEntities;
     }
 
+    public int fetChApproversCount(String FormID, String ApproverID, String wo_Number, String OprNum, String version) {
+        //"/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "')"
+        return getCheckSheetApproversCount(FormID, ApproverID, wo_Number, OprNum, version);
+    }
+
+    /**
+     * This method is used to fetch the FormApprover entities from Offline based on the below Parameters.
+     *
+     * @param FormID     CheckSheet FormID
+     * @param ApproverID Selected ApproverID
+     * @param WoNumber   WorkOrder Number
+     * @param OprNum     Operation Number
+     * @return Returns the number of approvers count
+     */
+    private int getCheckSheetApproversCount(String FormID, String ApproverID, String WoNumber, String OprNum, String version) {
+        ResponseObject result = null;
+        int count = 0;
+        Object rawData = null;
+        ArrayList<ZODataEntity> approverList = new ArrayList<>();
+        String entitySetName = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET;
+        String resPath = entitySetName;
+        //"?$resPath=(StatusProfile eq '" + statusProfile + "' and WithoutStatNo eq true)"
+        if (OprNum != null && !OprNum.isEmpty())
+            resPath += "$count??$filter=(FormID eq'" + FormID + "' and Version eq '" + version + "' and WorkOrderNum eq '" + WoNumber + "' and OprNum eq '" + OprNum + "')";
+        else
+            resPath += "$count??$filter=(FormID eq'" + FormID + "' and Version eq '" + version + "' and WorkOrderNum eq '" + WoNumber + "')";
+        result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+        try {
+            if (!result.isError()) {
+                rawData = result.Content();
+                count = Integer.parseInt(rawData.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
+        }
+        return count;
+    }
 }

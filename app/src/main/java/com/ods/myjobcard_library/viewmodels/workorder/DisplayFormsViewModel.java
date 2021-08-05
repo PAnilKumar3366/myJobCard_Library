@@ -75,6 +75,10 @@ public class DisplayFormsViewModel extends BaseViewModel {
         generalFormItems.setValue(generalFormItemsList);
     }
 
+    public int getCheckSheetApproversCount(String formId, String ApproverID, String version, String woNumber, String oprNum) {
+        return formsHelper.fetChApproversCount(formId, ApproverID, woNumber, oprNum, version);
+    }
+
     public MutableLiveData<ArrayList<ManualFormAssignmentSetModel>> getManualCheckSheetLiveData() {
         //manualCheckSheetLiveData.setValue(ManualCheckSheetData.getInstance().getManualCheckSheetList());
         return manualCheckSheetLiveData;

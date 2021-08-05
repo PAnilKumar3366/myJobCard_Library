@@ -43,6 +43,9 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
     private String Equipment;
     private String FunctionalLocation;
 
+    private int approversCount;
+
+
     public ManualFormAssignmentSetModel(String FormVersion, String FormName, String Mandatory, String MultipleSub, String Occur) {
         this.Version = FormVersion;
         this.FormID = FormName;
@@ -276,6 +279,14 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
 
     public void setActive(boolean active) {
         Active = active;
+    }
+
+    public int getApproversCount() {
+        return approversCount;
+    }
+
+    public void setApproversCount(int approversCount) {
+        this.approversCount = approversCount;
     }
 
     public static ResponseObject getObjectsFromEntity(String entitySetName, String resPath) {
