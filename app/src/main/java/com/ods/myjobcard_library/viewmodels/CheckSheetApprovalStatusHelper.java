@@ -42,11 +42,13 @@ public class CheckSheetApprovalStatusHelper {
         filterQuery = entitySetName + "?$filter=FormID eq '" + formId + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "'";
 
         if (submittedBy != null && !submittedBy.isEmpty())
-            filterQuery += " and tolower(FormSubmittedBy) eq '" + submittedBy.toLowerCase() + "'";
+            filterQuery += " and FormSubmittedBy eq '" + submittedBy + "'";
+        //filterQuery += " and tolower(FormSubmittedBy) eq '" + submittedBy.toLowerCase() + "'";
         if (counter != null && !counter.isEmpty())
             filterQuery += " and Counter eq '" + counter + "'";
         if (approverID != null && !approverID.isEmpty())
-            filterQuery += " and tolower(ApproverID) eq '" + approverID.toLowerCase() + "'";
+            // filterQuery += " and tolower(ApproverID) eq '" + approverID.toLowerCase() + "'";
+            filterQuery += " and ApproverID eq '" + approverID + "'";
 
 
         result = DataHelper.getInstance().getEntities(entitySetName, filterQuery + orderBy);
@@ -74,12 +76,15 @@ public class CheckSheetApprovalStatusHelper {
         String orderBy = "&$orderby=CreatedDate,CreatedTime";
         filterQuery = entitySetName + "?$filter=FormID eq '" + formId + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "'";
 
+
         if (submittedBy != null && !submittedBy.isEmpty())
-            filterQuery += " and tolower(FormSubmittedBy) eq '" + submittedBy.toLowerCase() + "'";
+            filterQuery += " and FormSubmittedBy eq '" + submittedBy + "'";
+        //filterQuery += " and tolower(FormSubmittedBy) eq '" + submittedBy.toLowerCase() + "'";
         if (counter != null && !counter.isEmpty())
             filterQuery += " and Counter eq '" + counter + "'";
         if (approverID != null && !approverID.isEmpty())
-            filterQuery += " and tolower(ApproverID) eq '" + approverID.toLowerCase() + "'";
+            // filterQuery += " and tolower(ApproverID) eq '" + approverID.toLowerCase() + "'";
+            filterQuery += " and ApproverID eq '" + approverID + "'";
 
 
         result = DataHelper.getInstance().getEntities(entitySetName, filterQuery + orderBy);
