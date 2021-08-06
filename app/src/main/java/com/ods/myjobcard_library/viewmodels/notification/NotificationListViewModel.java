@@ -13,7 +13,6 @@ import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
-import com.sap.smp.client.odata.ODataEntity;
 
 import java.util.ArrayList;
 
@@ -54,6 +53,8 @@ public class NotificationListViewModel extends NotificationBaseViewModel {
 
     private void loadList(final String filterQuery) {
         notifications = new ArrayList<>();
+        notificationSubSet = new ArrayList<>();
+        this.filterQuery = filterQuery;
         new AsyncTask<Void, Void, Boolean>() {
 
             @Override
@@ -100,11 +101,12 @@ public class NotificationListViewModel extends NotificationBaseViewModel {
     private void setNotifications() {
         if (orderByCriteria != null)
             orderByCriteria = null;
-        if (filterQuery != null && !filterQuery.isEmpty())
+        if (notificationSubSet != null && !notificationSubSet.isEmpty())
             mNotificationsList.setValue(notificationSubSet);
         else
             mNotificationsList.setValue(notifications);
         mTotalNotificationCount.setValue(notifications.size());
+
     }
 
     public LiveData<ArrayList<Notification>> getNotificationsList() {
