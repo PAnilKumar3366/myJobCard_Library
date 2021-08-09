@@ -105,9 +105,10 @@ public class ResponseMasterModel extends ZBaseEntity {
                 resourcePath += "?$filter=(InstanceID eq '" + instanceID + "')";
 
             if (!isResponseData)
-                resourcePath += "&$select=InstanceID,WoNum,OperationNum,FormID,Version,CreatedOn,IsDraft,Counter";
+                resourcePath += "&$select=InstanceID,WoNum,OperationNum,FormID,Version,CreatedOn,IsDraft,Counter,ModifiedBy";
 
             result = DataHelper.getInstance().getEntities(entitySetName, resourcePath);
+
             if (!result.isError()) {
                 //parse data for Equipment Characteristics
                 result = FromEntity((List<ODataEntity>) result.Content());
