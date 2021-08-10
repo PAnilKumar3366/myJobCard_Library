@@ -50,9 +50,11 @@ public class FormsHelper {
         } else {
             opr_Num = "";
         }
+        if (formItemsList.size() > 0)
+            formItemsList.clear();
         getOrderType(workOrder, typeValue);
         /*if (!isTaskType)*/
-        getFormItemsList(list);
+       // getFormItemsList(list,"");
         return formItemsList;
         //formItems.setValue(formItemsList);
     }
@@ -61,7 +63,7 @@ public class FormsHelper {
         getGeneralFormItemsList();
     }
 
-    protected void getOrderType(WorkOrder workOrder, String type) {
+    protected ArrayList<FormListObject> getOrderType(WorkOrder workOrder, String type) {
         if (type.equals(ZAppSettings.FormAssignmentType.WorkOrderLevel.Value)) {
             orderType = workOrder.getOrderType();
            /* equipmentCat = "";
@@ -79,15 +81,20 @@ public class FormsHelper {
                 ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
                 ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                 for (Operation operation : totalOperations) {
+                    list.clear();
                     controlKey = operation.getControlKey();
                     orderType = operation.getOrderType();
                     list.addAll(FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType, controlKey));
                     //list=FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType,controlKey);
+                    getFormItemsList(list,operation.getOperationNum());
                 }
+                return formItemsList;
             } else {
                 orderType = workOrder.getOrderType();
                 controlKey = workOrder.getCurrentOperation().getControlKey();
                 list = FormAssignmentSetModel.getFormAssignmentData_OperationType(orderType, controlKey);
+                getFormItemsList(list, workOrder.getCurrentOperation().getOperationNum());
+                return formItemsList;
             }
         } else if (type.equals(ZAppSettings.FormAssignmentType.Equipment.Value)) {
             //funcLocCat = "";
@@ -110,6 +117,7 @@ public class FormsHelper {
                 ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
                 ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                 for (Operation operation : totalOperations) {
+                    list.clear();
                     orderType = operation.getOrderType();
                     controlKey = operation.getControlKey();
                     taskListType = operation.getTaskListType();
@@ -117,8 +125,10 @@ public class FormsHelper {
                     groupCounter = operation.getGroupCounter();
                     internalCounter = operation.getInternalCounter();
                     list.addAll(FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter));
+                    getFormItemsList(list,operation.getOperationNum());
                     //list = FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter);
                 }
+                return formItemsList;
             } else {
                 orderType = workOrder.getCurrentOperation().getOrderType();
                 controlKey = workOrder.getCurrentOperation().getControlKey();
@@ -127,6 +137,8 @@ public class FormsHelper {
                 groupCounter = workOrder.getCurrentOperation().getGroupCounter();
                 internalCounter = workOrder.getCurrentOperation().getInternalCounter();
                 list.addAll(FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter));
+                getFormItemsList(list,workOrder.getCurrentOperation().getOperationNum());
+                return formItemsList;
                 //list = FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter);
             }
         } else if (type.equals(ZAppSettings.FormAssignmentType.None.Value)) {
@@ -135,15 +147,17 @@ public class FormsHelper {
             else
                 list = FormAssignmentSetModel.getFormAssignmentData_OperationType(workOrder.getOrderType(), workOrder.getCurrentOperation().getControlKey());
         }
+        getFormItemsList(list,"");
+        return formItemsList;
     }
 
-    private void getFormItemsList(ArrayList<FormAssignmentSetModel> list) {
+    private void getFormItemsList(ArrayList<FormAssignmentSetModel> list,String oprNum) {
         //list = FormAssignmentSetModel.getFormAssignmentData(orderType, controlKey, equipmentCat, funcLocCat, taskListType, group, groupCounter, internalCounter);
 
         Iterator<FormAssignmentSetModel> it1 = list.iterator();
 
-        if (formItemsList.size() > 0)
-            formItemsList.clear();
+       /* if (formItemsList.size() > 0)
+            formItemsList.clear();*/
 
         while (it1.hasNext()) {
             int filledForms = 0;
@@ -151,7 +165,7 @@ public class FormsHelper {
             String instanceId = null;
             String isDraft = "";
             FormAssignmentSetModel f1 = it1.next();
-            ArrayList<ResponseMasterModel> response = ResponseMasterModel.getResponseCaptureData(f1.getFormID(), f1.getVersion(), wo_Number, opr_Num, false, null);
+            ArrayList<ResponseMasterModel> response = ResponseMasterModel.getResponseCaptureData(f1.getFormID(), f1.getVersion(), wo_Number, oprNum, false, null);
             if (response != null) {
                 Iterator<ResponseMasterModel> it = response.iterator();
                 while (it.hasNext()) {
@@ -177,7 +191,7 @@ public class FormsHelper {
                         f1.getVersion(), f1.getMandatory(), f1.getOccurInt(),
                         f1.getMultipleSub(), filledForms, instanceId, f1.isGridTheme());
                 ob.setIsDraft(isDraft);
-                ob.setOprNum(opr_Num);
+                ob.setOprNum(oprNum);
                 formItemsList.add(ob);
                 break;
             }

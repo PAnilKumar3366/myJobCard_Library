@@ -2193,14 +2193,15 @@ public class WorkOrder extends ZBaseEntity {
                     try {
                         String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
                         HashMap<String,Integer> apprRejPredefinedFormCount=new HashMap<>();
-                        apprRejPredefinedFormCount=getTotalNumOfPredefinedApprovedandRejectedForms(formType);
                         if(ZCommon.isPredefinedFormVisible(formType)) {
+                            apprRejPredefinedFormCount=getTotalNumOfPredefinedApprovedandRejectedForms(formType);
                             if(getTotalNumUnSubmittedMandatoryForms() > 0)
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
                             else if(getPredefinedFormApproversCount()>0&&(apprRejPredefinedFormCount.get("APPROVE")==0||apprRejPredefinedFormCount.get("REJECT")>0))
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
                         }
                         if(ZCommon.isManualAssignedFormsVisible(formType)) {
+                            apprRejPredefinedFormCount=getTotalNumOfManualApprovedandRejectedForms(formType);
                             if(getTotalNumUnSubmittedManualMandatoryForms() > 0)
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
                             else if(getManualFormApproversCount()>0&&(apprRejPredefinedFormCount.get("APPROVE")==0||apprRejPredefinedFormCount.get("REJECT")>0))
@@ -3244,7 +3245,7 @@ public class WorkOrder extends ZBaseEntity {
 
     public boolean inspectionLotUDAvailable() {
         try {
-            if (getInspectionLot() != null && !getInspectionLot().isEmpty()) {
+            if (getInspectionLot() != null && !getInspectionLot().isEmpty()&&Integer.parseInt(getInspectionLot())!=0) {
                 /*String entitySet = ZCollections.WO_COLLECTION;
                 String filterQuery = entitySet + "?$filter=(WorkOrderNum eq '" + getWorkOrderNum() + "' and " + ZCollections.WO_OPR_NAV_PROPERTY + "/all(d:indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_ENABLE_STATUS.toLowerCase() +"') ne -1 and indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_RESULT_RECORDED_STATUS.toLowerCase() +"') ne -1))";
                 int count = getWorkOrdersCount(filterQuery);
@@ -3258,7 +3259,7 @@ public class WorkOrder extends ZBaseEntity {
         } catch (Exception e) {
             DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
         }
-        return false;
+        return true;
     }
 
     /**

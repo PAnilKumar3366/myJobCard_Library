@@ -1826,11 +1826,21 @@ public class Operation extends ZBaseEntity implements Serializable {
                 ArrayList<FormAssignmentSetModel> forms = (ArrayList<FormAssignmentSetModel>) rawData;
                 if (forms != null && forms.size() > 0) {
                     for (FormAssignmentSetModel form : forms) {
-                        strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "' and OperationNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "'and IsDraft eq 'X')";
+                        strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "' and OperationNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "')";
                         responseObject = DataHelper.getInstance().getEntities(ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION, strResPath);
                         if (!responseObject.isError()) {
                             rawData = responseObject.Content();
                             if (Integer.parseInt(rawData.toString()) > 0) {
+                                strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "' and OperationNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "'and IsDraft eq 'X')";
+                                responseObject = DataHelper.getInstance().getEntities(ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION, strResPath);
+                                if (!responseObject.isError()) {
+                                    rawData = responseObject.Content();
+                                    if (Integer.parseInt(rawData.toString()) > 0) {
+                                        unSubmittedFinalFormsSubmissionCount++;
+                                    }
+                                }
+                            }
+                            else{
                                 unSubmittedFinalFormsSubmissionCount++;
                             }
                         }
@@ -1856,11 +1866,21 @@ public class Operation extends ZBaseEntity implements Serializable {
                 ArrayList<ManualFormAssignmentSetModel> forms = (ArrayList<ManualFormAssignmentSetModel>) rawData;
                 if (forms != null && forms.size() > 0) {
                     for (ManualFormAssignmentSetModel form : forms) {
-                        strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "' and OperationNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "'and IsDraft eq 'X')";
+                        strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "' and OperationNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "')";
                         responseObject = DataHelper.getInstance().getEntities(ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION, strResPath);
                         if (!responseObject.isError()) {
                             rawData = responseObject.Content();
                             if (Integer.parseInt(rawData.toString()) > 0) {
+                                strResPath = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION + "/$count?$filter= (tolower(FormID) eq '" + form.getFormID().toLowerCase() + "' and Version eq '" + form.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "' and OperationNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "'and IsDraft eq 'X')";
+                                responseObject = DataHelper.getInstance().getEntities(ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION, strResPath);
+                                if (!responseObject.isError()) {
+                                    rawData = responseObject.Content();
+                                    if (Integer.parseInt(rawData.toString()) > 0) {
+                                        unSubmittedFinalFormsSubmissionCount++;
+                                    }
+                                }
+                            }
+                            else{
                                 unSubmittedFinalFormsSubmissionCount++;
                             }
                         }
