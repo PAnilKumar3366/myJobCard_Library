@@ -52,7 +52,7 @@ public class DisplayManualFormViewModel extends BaseViewModel {
         if (manualFormAssignmentHelper == null)
             manualFormAssignmentHelper = new ManualFormAssignmentHelper();
         ArrayList<ManualFormAssignmentSetModel> manualFormItems = onFetchManualFormEntities(manualFormAssignmentHelper.getManualFormAssignmentData(orderNum, oprNum));
-        if (manualFormItems != null && manualFormItems.size() > 0)
+        if (manualFormItems != null && manualFormItems.size() > 0) {
             try {
                 this.manualForms.setValue(manualFormItems);
             } catch (Exception e) {
@@ -60,6 +60,8 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                 printErrorLog(getClass(), e.getMessage());
 
             }
+        } else
+            manualForms.setValue(manualFormItems);
     }
 
     public int getCheckSheetApproversCount(String formId, String ApproverID, String version, String woNumber, String oprNum) {
