@@ -180,7 +180,7 @@ public class UserTable extends ZBaseEntity {
     public static String getUserFullName() {
         if (!isInitialized)
             getUserDetails();
-        return UserFirstName + " " + UserLastName;
+        return (UserFirstName == null ? "" : UserFirstName) + " " + (UserLastName == null ? "" : UserLastName);
     }
 
     public static String getUserPersonnelNumber() {

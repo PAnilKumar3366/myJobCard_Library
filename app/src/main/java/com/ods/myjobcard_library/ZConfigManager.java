@@ -82,6 +82,7 @@ public class ZConfigManager extends ConfigManager {
     public static String DEFAULT_ASSIGNMENT_TYPE = ZAppSettings.AssignmentType.WorkOrderLevel.getAssignmentTypeText();
     public static ZAppSettings.AssignmentType ASSIGNMENT_TYPE = ZAppSettings.AssignmentType.WorkOrderLevel;
     public static ZAppSettings.NotificationAssignmentType NOTIFICATION_ASSIGNMENT_TYPE = ZAppSettings.NotificationAssignmentType.PersonelNumber;
+    public static ZAppSettings.FormAssignmentType FORM_ASSIGNMENT = ZAppSettings.FormAssignmentType.WorkOrderLevel;
     public static boolean CREATE_WORKORDER_WITH_OPERATION = false;
     public static boolean SHOW_OPERATION_NOTES_IN_WO = true;
     public static boolean SHOW_STATUS_CHANGE_ALERT = true;

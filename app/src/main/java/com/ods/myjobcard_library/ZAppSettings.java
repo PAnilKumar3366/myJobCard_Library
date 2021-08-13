@@ -64,22 +64,24 @@ public class ZAppSettings extends AppSettings {
     }
 
     public enum FormAssignmentType {
-        WorkOrderLevel("1"),
-        OperationLevel("2"),
-        Equipment("3"),
-        FuncLoc("4"),
-        TaskListType("5"),
-        ManualAssignmentWO("6"),
-        ManualAssignmentOPR("7"),
-        ManualAssignmentEquip("8"),
-        ManualAssignmentFuncLoc("9"),
-        TaskTypeWithManualAssignOPR("10"),
-        None("");
+        WorkOrderLevel("1",false),
+        OperationLevel("2",true),
+        Equipment("3",false),
+        FuncLoc("4",false),
+        TaskListType("5",true),
+        ManualAssignmentWO("6",false),
+        ManualAssignmentOPR("7",true),
+        ManualAssignmentEquip("8",false),
+        ManualAssignmentFuncLoc("9",false),
+        TaskTypeWithManualAssignOPR("10",true),
+        None("",false);
 
         public final String Value;
+        public final boolean IsOperationLevel;
 
-        FormAssignmentType(String value) {
+        FormAssignmentType(String value, boolean isOperationLevel) {
             this.Value = value;
+            this.IsOperationLevel = isOperationLevel;
         }
 
         public static String getFormAssignmentType(String type) {
@@ -89,6 +91,15 @@ public class ZAppSettings extends AppSettings {
                     return value.Value;
             }
             return typeValue;
+        }
+
+        public static FormAssignmentType getFormAssignment(String typeValue) {
+            FormAssignmentType type = None;
+            for (FormAssignmentType value : FormAssignmentType.values()) {
+                if (value.Value.equalsIgnoreCase(typeValue))
+                    return value;
+            }
+            return type;
         }
     }
 
