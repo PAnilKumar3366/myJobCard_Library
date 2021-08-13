@@ -631,6 +631,10 @@ public class ZCommon extends Common {
         void noNetworkError();
     }
 
+    /** method to differentiate the predefined or manula forms
+     * @param formAssignemntType
+     * @return
+     */
     public static boolean isPredefinedFormVisible(String formAssignemntType){
         boolean active = false;
         if(formAssignemntType=="1"||formAssignemntType=="2"||formAssignemntType=="4"||formAssignemntType=="5"||formAssignemntType=="10")

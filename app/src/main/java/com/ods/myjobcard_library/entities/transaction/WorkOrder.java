@@ -2321,7 +2321,7 @@ public class WorkOrder extends ZBaseEntity {
             if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED || !ZConfigManager.WO_OP_OBJS_DISPLAY.equalsIgnoreCase("x"))
                 strResPath = ZCollections.COMPONENT_COLLECTION + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and Deleted ne true)";
             else
-                strResPath = ZCollections.COMPONENT_COLLECTION + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and OperAct eq '" + getCurrentOperation().getOperationNum() + "' and Deleted ne true)";
+                strResPath = ZCollections.COMPONENT_COLLECTION + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and OperAct eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "' and Deleted ne true)";
             responseObject = DataHelper.getInstance().getEntities(ZCollections.COMPONENT_COLLECTION, strResPath);
             if (!responseObject.isError()) {
                 rawData = responseObject.Content();
@@ -2332,7 +2332,40 @@ public class WorkOrder extends ZBaseEntity {
         }
         return intComponentsCount;
     }
-
+    public int getTotalNumAllComponents() {
+        int intComponentsCount = 0;
+        ResponseObject responseObject = null;
+        String strResPath;
+        Object rawData = null;
+        try {
+            if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED || !ZConfigManager.WO_OP_OBJS_DISPLAY.equalsIgnoreCase("x"))
+                strResPath = ZCollections.COMPONENT_COLLECTION + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and Deleted ne true)";
+            else {
+                ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, getWorkOrderNum());
+                ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
+                for (Operation operation : totalOperations) {
+                    strResPath = ZCollections.COMPONENT_COLLECTION + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and OperAct eq '" + operation.getOperationNum() + "' and Deleted ne true)";
+                    //responseObject = ManualFormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
+                    responseObject = DataHelper.getInstance().getEntities(ZCollections.COMPONENT_COLLECTION, strResPath);
+                    if (!responseObject.isError()) {
+                        rawData = responseObject.Content();
+                        if (rawData != null) {
+                            intComponentsCount += Integer.valueOf(String.valueOf(rawData));
+                        }
+                    }
+                }
+                return intComponentsCount;
+                }
+            responseObject = DataHelper.getInstance().getEntities(ZCollections.COMPONENT_COLLECTION, strResPath);
+            if (!responseObject.isError()) {
+                rawData = responseObject.Content();
+                intComponentsCount = Integer.parseInt(rawData.toString());
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return intComponentsCount;
+    }
     public int getTotalNumUnIssuedComponents() {
         int intComponentsCount = 0;
         ResponseObject responseObject = null;
