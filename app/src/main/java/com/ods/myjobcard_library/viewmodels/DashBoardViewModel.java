@@ -195,7 +195,6 @@ public class DashBoardViewModel extends BaseViewModel {
         this.woSelectedValues1 = new ArrayList<>();
         this.woSelectedValues2 = new ArrayList<>();
         this.dateFilterOptions = new ArrayList<>();
-        dateFilterOptions.add(new SpinnerItem("0", "Select"));
         dateFilterOptions.add(new SpinnerItem("1", "Planned for tomorrow"));
         dateFilterOptions.add(new SpinnerItem("2", "Planned for next week"));
         if (isWorkOrder) {
