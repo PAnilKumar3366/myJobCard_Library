@@ -565,8 +565,8 @@ public class ZCommon extends Common {
     public static boolean copyAssetsToSDCard(final Context ctx) {
         boolean result = false;
         try {
-            String appPath = Environment.getExternalStorageDirectory() + File.separator + ZAppSettings.App_Name;
-            String formsPath = appPath + File.separator + "forms";
+            String rootPath = ctx.getFilesDir().getAbsolutePath();
+            String formsPath = rootPath + File.separator + "forms";
             ZAppSettings.HTML_FOMRS_PATH = formsPath;
             String jsPath = formsPath + File.separator + "js";
             String cssPath = formsPath + File.separator + "css";
@@ -578,7 +578,7 @@ public class ZCommon extends Common {
             byte[] buff;
             int read;
             String filePath;
-            File storesDirectory = new File(appPath, "forms");
+            File storesDirectory = new File(rootPath, "forms");
             if (!storesDirectory.exists())
                 storesDirectory.mkdirs();
             for (String filePath1 : filePaths) {
