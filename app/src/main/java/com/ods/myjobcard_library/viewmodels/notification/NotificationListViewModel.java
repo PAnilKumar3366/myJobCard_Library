@@ -101,10 +101,14 @@ public class NotificationListViewModel extends NotificationBaseViewModel {
     private void setNotifications() {
         if (orderByCriteria != null)
             orderByCriteria = null;
-        if (notificationSubSet != null && !notificationSubSet.isEmpty())
+        if (filterQuery != null && !filterQuery.isEmpty())
             mNotificationsList.setValue(notificationSubSet);
         else
             mNotificationsList.setValue(notifications);
+        /*if (notificationSubSet != null)
+            mNotificationsList.setValue(notificationSubSet);
+        else
+            mNotificationsList.setValue(notifications);*/
         mTotalNotificationCount.setValue(notifications.size());
 
     }
