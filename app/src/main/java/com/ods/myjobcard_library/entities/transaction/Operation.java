@@ -1753,7 +1753,7 @@ public class Operation extends ZBaseEntity implements Serializable {
                         if (remainingComponents > 0)
                             errorMessages.add(context.getString(R.string.msgTotalComponentsRequiredToIssued, remainingComponents));
                     } else if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
-                        if (totalComponents == remainingComponents)
+                        if (totalComponents!=0&&remainingComponents!=0&&totalComponents == remainingComponents)
                             errorMessages.add(context.getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
                     } else {
                         if (remainingComponents > 0)

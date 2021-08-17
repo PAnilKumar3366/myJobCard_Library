@@ -2175,7 +2175,7 @@ public class WorkOrder extends ZBaseEntity {
                     int remainingComponents = getTotalNumUnIssuedComponents() + (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? 0 : getTotalNumPartialIssuedComponents());
                     int totalComponents = getTotalNumComponents();
                     if (orderTypeFeature.getMandatoryLevel().equalsIgnoreCase(OrderTypeFeature.LEVEL_PARTIAL)) {
-                        if (totalComponents == remainingComponents) {
+                        if (totalComponents!=0&&remainingComponents!=0&&totalComponents == remainingComponents) {
                             errorMessages.add(context.getString(R.string.msgAtLeastOneComponentRequiredToIssued, (ZConfigManager.PARTIAL_COMPONENT_ISSUE_ALLOWED ? "Partially" : "Completely")));
                         }
                     } else {
