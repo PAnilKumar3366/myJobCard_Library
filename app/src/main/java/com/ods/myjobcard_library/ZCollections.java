@@ -409,6 +409,7 @@ public class ZCollections extends Collections {
 	public static final String readValueIdentifier = "mjc_vr";
 	public static final String createNotificationIdentifier = "mjc_create_notification";
 	public static final String entityIdentifier = "$e";
+	public static final String queryParameterIdentifier = "$qp";
 	public static final String objectIdentifier = "_p";
 	public static final String readFieldIdentifier = "_f";
 	public static final String fieldIdentifier = "$f";
@@ -417,8 +418,8 @@ public class ZCollections extends Collections {
 	public static final String instanceTag = "instance";
 	public static final String descriptionIdentifier = "$mjc$";
 	public static final String valueIdentifier = "-999";
-	public static final String multiDataItemFormat = "<item><label>$mjc$</label><value>-999</value></item>";
-	public static final String multiDataItemFormat2 = "<item><label ref=\"jr:itext('$mjc$')\" /><value>-999</value></item>";
+	public static final String multiDataItemFormat = "<item><label>$mjc$</label><value>-999</value></item>"; // for forms designed in kobo
+	public static final String multiDataItemFormat2 = "<option value=\\\"-999\\\">$mjc$</option>"; // for forms designed in vellam
 	public static final String singleDataItemFormat = "<item><label>$mjc$</label><value>-999</value></item>";
 
 	public final static int STATUS_CHANGE_FORM_TRIGGERED = 998;
