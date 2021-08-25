@@ -4,17 +4,22 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
 import com.ods.ods_sdk.AppSettings;
+import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.ods.ods_sdk.utils.OnlineAsyncHelper;
 import com.sap.client.odata.v4.EntityValue;
 import com.sap.client.odata.v4.EntityValueList;
+import com.sap.smp.client.odata.ODataEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 /*Created By Anil Kumar*/
 
@@ -168,5 +173,44 @@ public class WorkOrderHelper {
      */
     public void deleteOrder(WorkOrder order) {
 
+    }
+
+    /**
+     * This method is used to fetch the single WorkOrder ZODataEntity from Offline Store.
+     *
+     * @param orderNum
+     * @return
+     */
+    public ZODataEntity fetchSingleWorkOrder(String orderNum) {
+        return fetchSingleZODataEntity(orderNum);
+    }
+
+
+    /**
+     * This method is used to fetch the single WorkOrder ZODataEntity from Offline Store.
+     *
+     * @param orderNum
+     * @return zODataEntity
+     */
+    private ZODataEntity fetchSingleZODataEntity(String orderNum) {
+        ResponseObject result;
+        ZODataEntity zoDataEntity = null;
+        String resourcePath = null;
+        String strEntitySet = ZCollections.WO_COLLECTION;
+        try {
+            if (orderNum != null && !orderNum.isEmpty())
+                resourcePath = strEntitySet + "?$filter=(WorkOrderNum eq '" + orderNum + "')";
+            result = DataHelper.getInstance().getEntities(strEntitySet, resourcePath);
+            if (result != null && !result.isError()) {
+                List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
+                for (ODataEntity entity : entities) {
+                    zoDataEntity = new ZODataEntity(entity);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return zoDataEntity;
     }
 }

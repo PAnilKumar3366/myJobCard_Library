@@ -9,12 +9,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZAppSettings;
-import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.StatusChangeLog;
 import com.ods.myjobcard_library.entities.appsettings.StatusCategory;
 import com.ods.myjobcard_library.entities.attachment.UploadAttachmentContent;
 import com.ods.myjobcard_library.entities.attachment.WorkOrderAttachment;
-import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
 import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.ods_sdk.entities.ResponseObject;
@@ -37,6 +35,7 @@ public class WorkOrderListViewModel extends BaseViewModel {
     public WorkOrderListViewModel(@NonNull Application application) {
         super(application);
         woLiveData = new WorkOrdersListLiveData(application);
+
     }
 
     public MutableLiveData<Boolean> getIsLoading() {
@@ -71,8 +70,9 @@ public class WorkOrderListViewModel extends BaseViewModel {
     }
 
     public void setCurrentWorkOrder(String workOrderNum) {
-        ResponseObject result = WorkOrder.getWorkOrders(ZAppSettings.FetchLevel.Single, workOrderNum, null);
-
+        WorkOrder currentOrder = fetchSingleWorkOrder(workOrderNum);
+        currentWorkOrder.setValue(currentOrder);
+       /* ResponseObject result = WorkOrder.getWorkOrders(ZAppSettings.FetchLevel.Single, workOrderNum, null);
         if (result != null && !result.isError()) {
             ArrayList<WorkOrder> orders = (ArrayList<WorkOrder>) result.Content();
             if (orders != null && orders.size() > 0) {
@@ -98,7 +98,7 @@ public class WorkOrderListViewModel extends BaseViewModel {
                 WorkOrder.setCurrWo(currOrder);
                 currentWorkOrder.setValue(currOrder);
             }
-        }
+        }*/
     }
 
     public void saveStatusChangeLog(StatusCategory status, String workOrderNum, String operation, GregorianCalendar changedTime, Location location) {

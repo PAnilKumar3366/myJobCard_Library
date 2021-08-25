@@ -1,35 +1,44 @@
 package com.ods.myjobcard_library.viewmodels.workorder;
 
+import android.app.Application;
 import android.location.Location;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.ods.myjobcard_library.ZAppSettings;
-import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.StatusChangeLog;
 import com.ods.myjobcard_library.entities.appsettings.StatusCategory;
 import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
-import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 
-import java.util.ArrayList;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.GregorianCalendar;
 
-public class WorkOrderDetailViewModel extends ViewModel {
+public class WorkOrderDetailViewModel extends BaseViewModel {
 
     private static final String TAG = "WorkOrderDetailViewMode";
 
     private MutableLiveData<WorkOrder> currentWorkOrder = new MutableLiveData<>();
+
+
+    public WorkOrderDetailViewModel(@NonNull @NotNull Application application) {
+        super(application);
+
+    }
 
     public LiveData<WorkOrder> getCurrentWorkOrder() {
         return currentWorkOrder;
     }
 
     public void setCurrentWorkOrder(String workOrderNum) {
-        ResponseObject result = WorkOrder.getWorkOrders(ZAppSettings.FetchLevel.Single, workOrderNum, null);
+        WorkOrder currentOrder = fetchSingleWorkOrder(workOrderNum);
+        currentWorkOrder.setValue(currentOrder);
+        /*ResponseObject result = WorkOrder.getWorkOrders(ZAppSettings.FetchLevel.Single, workOrderNum, null);
         if (result != null && !result.isError()) {
             ArrayList<WorkOrder> orders = (ArrayList<WorkOrder>) result.Content();
             if (orders != null && orders.size() > 0) {
@@ -49,7 +58,7 @@ public class WorkOrderDetailViewModel extends ViewModel {
                 WorkOrder.setCurrWo(currOrder);
                 currentWorkOrder.setValue(currOrder);
             }
-        }
+        }*/
     }
 
     public void setCurrentSelectedOperation(String selectedOperation, String subOperationNum) {
@@ -75,6 +84,7 @@ public class WorkOrderDetailViewModel extends ViewModel {
     public StatusChangeLog getStatusChangeLog(String workOrder, String operation, StatusCategory newStatus) {
         return StatusChangeLog.getObjectStatusTimeLog(workOrder, operation, newStatus);
     }
+
 
     @Override
     protected void onCleared() {

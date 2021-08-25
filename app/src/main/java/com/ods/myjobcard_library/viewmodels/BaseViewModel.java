@@ -14,6 +14,8 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.myjobcard_library.entities.transaction.Operation;
+import com.ods.myjobcard_library.entities.transaction.WorkOrder;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.appsetting.AppStoreSet;
@@ -222,5 +224,46 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
 
     public void printErrorLog(Class cls, String errorMessage) {
         DliteLogger.WriteLog(cls.getClass(), ZAppSettings.LogLevel.Error, errorMessage);
+    }
+
+    public WorkOrder fetchSingleWorkOrder(String orderNum) {
+        WorkOrder currOrder = null;
+        WorkOrderHelper workOrderHelper = new WorkOrderHelper();
+        try {
+            ZODataEntity zoDataEntity = workOrderHelper.fetchSingleWorkOrder(orderNum);
+            currOrder = onFetchSingleWoEntity(zoDataEntity);
+            if (currOrder != null) {
+                if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
+                    Operation currOperation = null;
+                    if (WorkOrder.getCurrWo() != null && orderNum.equals(WorkOrder.getCurrWo().getWorkOrderNum())) {
+                        currOperation = WorkOrder.getCurrWo().getCurrentOperation();
+                        if (currOperation != null) {
+                            currOperation = Operation.getOperation(orderNum, currOperation.getOperationNum(), currOperation.getSubOperation());
+                            if (currOperation != null)
+                                currOrder.setCurrentOperation(currOperation);
+                        }
+                    } else {
+                        ResponseObject results = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, orderNum);
+                        ArrayList<Operation> operationArrayList = (ArrayList<Operation>) results.Content();
+                        if (operationArrayList.size() > 0)
+                            currOrder.setCurrentOperation(operationArrayList.get(0));
+
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return currOrder;
+    }
+
+    protected WorkOrder onFetchSingleWoEntity(ZODataEntity zoDataEntity) {
+        WorkOrder workOrder = null;
+        if (zoDataEntity != null) {
+            workOrder = new WorkOrder(zoDataEntity);
+            WorkOrder.setCurrWo(workOrder);
+        }
+        return workOrder;
     }
 }
