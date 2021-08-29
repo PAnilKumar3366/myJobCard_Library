@@ -11,12 +11,14 @@ import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
+import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperationViewModel extends AndroidViewModel {
+public class OperationViewModel extends BaseViewModel {
 
     private static final String TAG = "OperationViewModel";
     private MutableLiveData<ArrayList<Operation>> operationlistLiveData = new MutableLiveData<>();
@@ -77,7 +79,13 @@ public class OperationViewModel extends AndroidViewModel {
     }
 
     public void setCurrentOperation(String workOrderNum, String operationNum, String subOperationNum) {
-        Operation operation = Operation.getOperation(workOrderNum, operationNum, subOperationNum);
+        try {
+            Operation operation=fetchSingleOperation(workOrderNum,operationNum,subOperationNum);
+            currentOperation.setValue(operation);
+        } catch (Exception e) {
+            DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        /*Operation operation = Operation.getOperation(workOrderNum, operationNum, subOperationNum);
 
         if (operation != null) {
             if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
@@ -86,7 +94,7 @@ public class OperationViewModel extends AndroidViewModel {
                 }
             }
             currentOperation.setValue(operation);
-        }
+        }*/
     }
 
     @Override

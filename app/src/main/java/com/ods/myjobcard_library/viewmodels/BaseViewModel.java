@@ -44,12 +44,14 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
     private MutableLiveData<String > error=new MutableLiveData<>();
     public static String QUERIABLE_DATE_FORMAT = "yyyy-MM-dd'T'00:00:00";
     private String TAG = BaseViewModel.class.getSimpleName();
+    public OperationHelper operationHelper;
 
     public BaseViewModel(@NonNull Application application) {
         super(application);
         preferences = getApplication().getSharedPreferences(ZCollections.SERVER_DETAILS_SP_NAME, MODE_PRIVATE);
         transmitResponse = new MutableLiveData<>();
         transmitUpdateMsg = new MutableLiveData<>();
+        operationHelper=new OperationHelper();
     }
 
 
@@ -235,8 +237,8 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
             if (currOrder != null) {
                 if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
                     Operation currOperation = null;
-                    if (WorkOrder.getCurrWo() != null && orderNum.equals(WorkOrder.getCurrWo().getWorkOrderNum())) {
-                        currOperation = WorkOrder.getCurrWo().getCurrentOperation();
+                    if (currOrder != null && orderNum.equals(currOrder.getWorkOrderNum())) {
+                        currOperation = currOrder.getCurrentOperation();
                         if (currOperation != null) {
                             currOperation = Operation.getOperation(orderNum, currOperation.getOperationNum(), currOperation.getSubOperation());
                             if (currOperation != null)
@@ -266,4 +268,35 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
         }
         return workOrder;
     }
+
+    public Operation fetchSingleOperation(String workOrderNum, String operationNum, String subOperation){
+        Operation operation=null;
+        try {
+            ZODataEntity zoDataEntity=operationHelper.getSingleOperationZODataEntity(workOrderNum,operationNum,subOperation);
+            operation=onFetchSingleOperationEntity(zoDataEntity);
+        } catch (Exception e) {
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return operation;
+    }
+    protected Operation onFetchSingleOperationEntity(ZODataEntity zoDataEntity) {
+        Operation operation = null;
+        try {
+            if (zoDataEntity != null) {
+                operation = new Operation(zoDataEntity, ZAppSettings.FetchLevel.Single);
+                if (operation != null && !operation.isError()) {
+                    if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
+                        if (operation.getWorkOrderNum().equals(WorkOrder.getCurrWo().getWorkOrderNum())) {
+                            WorkOrder.getCurrWo().setCurrentOperation(operation);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return operation;
+    }
+
+
 }
