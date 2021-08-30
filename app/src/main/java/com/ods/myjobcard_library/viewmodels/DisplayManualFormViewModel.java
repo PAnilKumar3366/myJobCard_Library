@@ -32,7 +32,7 @@ public class DisplayManualFormViewModel extends BaseViewModel {
     private ManualFormAssignmentHelper manualFormAssignmentHelper;
     private MutableLiveData<ArrayList<ManualFormAssignmentSetModel>> manualForms = new MutableLiveData<>();
 
-    String woNum, oprNum, notification, notificationItem, notificationTask, equipment, functionalLocation;
+    String woNum, oprNum, subOprNum,notification, notificationItem, notificationTask, equipment, functionalLocation;
 
     private MutableLiveData<ManualFormAssignmentSetModel> editFormItem = new MutableLiveData<>();
 
@@ -105,13 +105,17 @@ public class DisplayManualFormViewModel extends BaseViewModel {
             } else if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentOPR.Value)||formType.equals(ZAppSettings.FormAssignmentType.TaskTypeWithManualAssignOPR.Value)) {
                 manualFormArraylist.clear();
                 if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
+                    subOprNum="";
                     ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrder.getWorkOrderNum());
                     ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                     ArrayList<ManualFormAssignmentSetModel> tempManualForms = new ArrayList<>();
                     for (Operation operation : totalOperations) {
+                        ArrayList<ZODataEntity> zoDataEntityArrayList = new ArrayList<>();
                         woNum = operation.getWorkOrderNum();
                         oprNum = operation.getOperationNum();
-                        ArrayList<ZODataEntity> zoDataEntityArrayList = manualFormAssignmentHelper.getManualFormAssignmentData(woNum, oprNum);
+                        subOprNum=operation.getSubOperation();
+                        if(subOprNum.isEmpty())
+                             zoDataEntityArrayList = manualFormAssignmentHelper.getManualFormAssignmentData(woNum, oprNum);
                         //tempManualForms.addAll(onFetchManualFormEntities(zoDataEntityArrayList));
                         /*if (tempManualForms.size() > 0)
                             manualFormArraylist.addAll(tempManualForms);*/
@@ -313,13 +317,15 @@ public class DisplayManualFormViewModel extends BaseViewModel {
                     ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, WorkOrder.getCurrWo().getWorkOrderNum());
                     ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                     for (Operation operation : totalOperations) {
-                        strResPath = entitySetName + "/$count?$filter= (WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '" + operation.getOperationNum() + "')";
-                        //responseObject = ManualFormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
-                        responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
-                        if (!responseObject.isError()) {
-                            rawData = responseObject.Content();
-                            if (rawData != null) {
-                                formsCount += Integer.valueOf(String.valueOf(rawData));
+                        if(operation.getSubOperation().isEmpty()) {
+                            strResPath = entitySetName + "/$count?$filter= (WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '" + operation.getOperationNum() + "')";
+                            //responseObject = ManualFormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
+                            responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
+                            if (!responseObject.isError()) {
+                                rawData = responseObject.Content();
+                                if (rawData != null) {
+                                    formsCount += Integer.valueOf(String.valueOf(rawData));
+                                }
                             }
                         }
                     }

@@ -1,5 +1,6 @@
 package com.ods.myjobcard_library.viewmodels.workorder;
 
+import android.app.Application;
 import android.util.Log;
 import android.view.Menu;
 
@@ -10,16 +11,21 @@ import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
+import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.util.ArrayList;
 
-public class OperationDetailViewModel extends ViewModel {
+public class OperationDetailViewModel extends BaseViewModel {
     private static final String TAG = "OperationDetailViewMode";
     private MutableLiveData<Operation> currentOperation = new MutableLiveData<Operation>();
     private MutableLiveData<WorkOrder> currentSelectedWO = new MutableLiveData<WorkOrder>();
     private Menu menu;
 
+    public OperationDetailViewModel(Application application){
+        super(application);
+    }
     public MutableLiveData<WorkOrder> getCurrentSelectedWO() {
         return currentSelectedWO;
     }
@@ -60,7 +66,21 @@ public class OperationDetailViewModel extends ViewModel {
     }
 
     public void setCurrentOperation(String woNum, String oprNum, String subOprNum) {
-        Operation operation = Operation.getOperation(woNum, oprNum, subOprNum);
+        try {
+            Operation operation=fetchSingleOperation(woNum,oprNum,subOprNum);
+            currentOperation.setValue(operation);
+            WorkOrder currentOrder=null;
+            if(operation!=null) {
+                currentOrder = fetchSingleWorkOrder(operation.getWorkOrderNum());
+                currentOrder.setCurrentOperation(operation);
+                currentSelectedWO.setValue(currentOrder);
+            }
+
+
+        } catch (Exception e) {
+            DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+       /* Operation operation = Operation.getOperation(woNum, oprNum, subOprNum);
         if (operation != null && !operation.isError()) {
             if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
                 if (woNum.equals(WorkOrder.getCurrWo().getWorkOrderNum())) {
@@ -68,7 +88,7 @@ public class OperationDetailViewModel extends ViewModel {
                 }
             }
             currentOperation.setValue(operation);
-        }
+        }*/
     }
 
     @Override

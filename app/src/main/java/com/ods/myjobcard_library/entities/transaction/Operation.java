@@ -23,6 +23,7 @@ import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
 import com.ods.myjobcard_library.entities.supervisor.SupervisorWorkOrder;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.client.odata.v4.EntityValue;
 import com.sap.smp.client.odata.ODataEntity;
@@ -159,6 +160,10 @@ public class Operation extends ZBaseEntity implements Serializable {
     }
 
     public Operation(ODataEntity entity, ZAppSettings.FetchLevel fetchLevel) {
+        initializeEntityProperties();
+        create(entity, fetchLevel);
+    }
+    public Operation(ZODataEntity entity, ZAppSettings.FetchLevel fetchLevel) {
         initializeEntityProperties();
         create(entity, fetchLevel);
     }
@@ -1314,6 +1319,20 @@ public class Operation extends ZBaseEntity implements Serializable {
     }*/
 
     public ResponseObject create(ODataEntity entity, ZAppSettings.FetchLevel fetchLevel) {
+        ResponseObject result = null;
+        try {
+            super.create(entity);
+            //Extract PRT and Components only when Operation get iformation is not limited to header only
+            if (fetchLevel.equals(ZAppSettings.Hierarchy.All) || fetchLevel.equals(ZAppSettings.FetchLevel.Single) || fetchLevel.equals(ZAppSettings.FetchLevel.List) || fetchLevel.equals(ZAppSettings.FetchLevel.ListWithStatusAllowed)) {
+                deriveOperationStatus();
+            }
+            result = new ResponseObject(ZConfigManager.Status.Success, "", this);
+        } catch (Exception e) {
+            result = new ResponseObject(ZConfigManager.Status.Error, e.getMessage(), null);
+        }
+        return result;
+    }
+    public ResponseObject create(ZODataEntity entity, ZAppSettings.FetchLevel fetchLevel) {
         ResponseObject result = null;
         try {
             super.create(entity);
