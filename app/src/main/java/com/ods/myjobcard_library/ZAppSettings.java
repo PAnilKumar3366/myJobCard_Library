@@ -1,9 +1,11 @@
 package com.ods.myjobcard_library;
 
 import android.content.Context;
+import android.os.Environment;
 
 import com.ods.ods_sdk.AppSettings;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class ZAppSettings extends AppSettings {
@@ -39,6 +41,8 @@ public class ZAppSettings extends AppSettings {
     public static boolean Bt_Secure;
     public static int conn_State;
     public static String resopr;
+
+    public static final String DownloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + ZConfigManager.AttachmentsFolder).getAbsolutePath();
 
     public enum FetchLevel {
         ListMap(0),

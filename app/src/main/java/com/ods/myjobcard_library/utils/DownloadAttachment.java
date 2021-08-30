@@ -230,7 +230,7 @@ public class DownloadAttachment {
                 inputStream = new ByteArrayInputStream(DocsUtil.hexStringToByteArray(String.valueOf(result.Content())));
 
                 if (!isURL) {
-                    saveDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + ZConfigManager.AttachmentsFolder).getAbsolutePath();
+                    saveDir = ZAppSettings.DownloadPath;
                     saveFilePath = saveDir + File.separator + fileName;
                     actualFile = new File(saveFilePath);
                     if (!actualFile.exists()) {

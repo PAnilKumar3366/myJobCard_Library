@@ -463,7 +463,7 @@ public class DocsUtil {
             for (int i = 0; i < count; i++) {
                 filePaths[i] =
                         Environment
-                                .getExternalStorageDirectory() + "/ArcGIS/ODS/geoDB/ODS_GeoDB_" + i + ".geodatabase";
+                                .getRootDirectory() + "/ArcGIS/ODS/geoDB/ODS_GeoDB_" + i + ".geodatabase";
             }
             return filePaths;
         } catch (Exception e) {
@@ -475,7 +475,8 @@ public class DocsUtil {
     public static String createBasemapFilePath() {
         String filePath = "";
         try {
-            return Environment.getExternalStorageDirectory().getPath() + "/ArcGIS/samples/tiledcache/";
+            return Environment
+                    .getRootDirectory().getPath() + "/ArcGIS/samples/tiledcache/";
             /*if(gdbFile.exists()) {
                 gdbFile = new File(gdbFile.getPath() + File.separator
                         + "basemap_assets.tpk");

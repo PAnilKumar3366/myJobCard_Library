@@ -407,6 +407,7 @@ public class ZCollections extends Collections {
 	public static final String multiDataIdentifier = "mjc_$vm";
 	public static final String singleDataIdentifier = "mjc_$vsco";
 	public static final String readValueIdentifier = "mjc_vr";
+	public static final String formResponseIdentifier = "_form";
 	public static final String createNotificationIdentifier = "mjc_create_notification";
 	public static final String entityIdentifier = "$e";
 	public static final String queryParameterIdentifier = "$qp";

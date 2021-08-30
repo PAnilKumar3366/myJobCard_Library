@@ -515,8 +515,7 @@ public class ZCommon extends Common {
             int[] fileResIds = new int[]{R.raw.apllicationstore, R.raw.apllicationstore_rq, R.raw.formenginestore, R.raw.formenginestore_rq,
                     R.raw.highvolumestore, R.raw.highvolumestore_rq, R.raw.lowvolumestore, R.raw.lowvolumestore_rq,
                     R.raw.qmstore, R.raw.qmstore_rq, R.raw.userstore, R.raw.userstore_rq, R.raw.wmstore, R.raw.wmstore_rq};
-            String logsPath = Environment.getExternalStorageDirectory() + File.separator + ZAppSettings.App_Name + File.separator + "logs";
-            String path = logsPath + File.separator + "stores";
+            String path = ZAppSettings.DemoModeStoresPath;
             String[] fileNames = new String[]{"apllicationstore", "apllicationstore_rq", "formenginestore", "formenginestore_rq"
                     , "highvolumestore", "highvolumestore_rq", "lowvolumestore", "lowvolumestore_rq"
                     , "qmstore", "qmstore_rq", "userstore", "userstore_rq", "wmstore", "wmstore_rq"};
@@ -525,7 +524,7 @@ public class ZCommon extends Common {
             byte[] buff;
             int read;
             String filePath;
-            File storesDirectory = new File(logsPath, "stores");
+            File storesDirectory = new File(path);
             if (!storesDirectory.exists())
                 storesDirectory.mkdirs();
             for (int i = 0; i < fileResIds.length; i++) {
