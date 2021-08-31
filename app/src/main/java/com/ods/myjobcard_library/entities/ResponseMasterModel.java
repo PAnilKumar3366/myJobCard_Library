@@ -41,6 +41,7 @@ public class ResponseMasterModel extends ZBaseEntity {
     private String GroupCounter;
     private String InternalCounter;
     private String Counter;
+    private String Remarks;
 
     public ResponseMasterModel(ODataEntity entity) {
         initializeEntityProperties();
@@ -378,5 +379,13 @@ public class ResponseMasterModel extends ZBaseEntity {
 
     public void setCounter(String counter) {
         Counter = counter;
+    }
+
+    public String getRemarks() {
+        return Remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        Remarks = remarks;
     }
 }
