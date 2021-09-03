@@ -211,6 +211,9 @@ public class ZConfigManager extends ConfigManager {
 
     public static String BackEndUser="";
 
+    //flag to indicate whether to show the default timesheet entry of logged in user in resources list or not
+    public static boolean SHOW_DEFAULT_TIMESHEET_ENTRY_IN_LIST = true;
+
     /*Added new config flag for set the network Contriants to execute the workers
     * */
     public static boolean NETWORK_CONSTRAINTS = true;
