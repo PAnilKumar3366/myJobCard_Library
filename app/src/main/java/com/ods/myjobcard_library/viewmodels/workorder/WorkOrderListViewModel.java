@@ -9,13 +9,16 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZAppSettings;
+import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.StatusChangeLog;
 import com.ods.myjobcard_library.entities.appsettings.StatusCategory;
 import com.ods.myjobcard_library.entities.attachment.UploadAttachmentContent;
 import com.ods.myjobcard_library.entities.attachment.WorkOrderAttachment;
+import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
 import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -70,8 +73,31 @@ public class WorkOrderListViewModel extends BaseViewModel {
     }
 
     public void setCurrentWorkOrder(String workOrderNum) {
-        WorkOrder currentOrder = fetchSingleWorkOrder(workOrderNum);
-        currentWorkOrder.setValue(currentOrder);
+        try {
+            Operation currentOpr = null;
+            WorkOrder currentOrder = null;
+            if (currentWorkOrder.getValue() != null && currentWorkOrder.getValue().getWorkOrderNum().equalsIgnoreCase(workOrderNum)) {
+                currentOrder = currentWorkOrder.getValue();
+                currentOpr = currentOrder.getCurrentOperation();
+                    /*if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
+                        if (currentOrder.getCurrentOperation() != null)
+                            currentOpr = currentOrder.getCurrentOperation();
+                    }*/
+            }
+            currentOrder = fetchSingleWorkOrder(workOrderNum);
+            if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED && currentOpr != null) {
+                currentOpr = fetchSingleOperation(workOrderNum, currentOpr.getOperationNum(), currentOpr.getSubOperation());
+                currentOrder.setCurrentOperation(currentOpr);
+            }
+            currentWorkOrder.setValue(currentOrder);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "setCurrentWorkOrder: ", e);
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            currentWorkOrder.setValue(fetchSingleWorkOrder(workOrderNum));
+        }
+        /*WorkOrder currentOrder = fetchSingleWorkOrder(workOrderNum);
+        currentWorkOrder.setValue(currentOrder);*/
        /* ResponseObject result = WorkOrder.getWorkOrders(ZAppSettings.FetchLevel.Single, workOrderNum, null);
         if (result != null && !result.isError()) {
             ArrayList<WorkOrder> orders = (ArrayList<WorkOrder>) result.Content();
