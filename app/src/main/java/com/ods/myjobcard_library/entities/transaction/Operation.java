@@ -1818,6 +1818,22 @@ public class Operation extends ZBaseEntity implements Serializable {
                         errorMessages.add(context.getString(R.string.msgInspectionLotDecisionPending, ""));
                     }
                 }
+
+                //Notifications
+                if (orderTypeFeature.getFeature().contains(ZAppSettings.Features.NOTIFICATION.getFeatureValue())) {
+                    Notification woNotification = null;
+                    ResponseObject response = Notification.getNotifications(ZAppSettings.FetchLevel.Single, ZAppSettings.Hierarchy.HeaderOnly, WorkOrder.getCurrWo().getNotificationNum(), "", true);
+                    if (response != null && !response.isError()) {
+                        woNotification = ((ArrayList<Notification>) response.Content()).get(0);
+                        if (woNotification != null) {
+                            ArrayList<String> notiPreCheckMsgs = woNotification.getPreCompletionMessages(true);
+                            if (notiPreCheckMsgs.size() > 0) {
+                                errorMessages.addAll(notiPreCheckMsgs);
+                            }
+                        }
+                    }
+                }
+
             }
 
             if (errorMessages.size() > 0) {

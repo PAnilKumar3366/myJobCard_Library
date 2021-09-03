@@ -69,13 +69,8 @@ public class FormApproverListViewModel extends BaseViewModel {
 
     public void setCurrentOrder(String woNum) {
         try {
-            if (WorkOrder.getCurrWo() != null && WorkOrder.getCurrWo().equals(woNum))
+            if (!woNum.isEmpty())
                 currentOrder.setValue(WorkOrder.getCurrWo());
-            else {
-                ResponseObject result = WorkOrder.getWorkOrders(ZAppSettings.FetchLevel.Single, woNum, "");
-                ArrayList<WorkOrder> list = (ArrayList<WorkOrder>) result.Content();
-                currentOrder.setValue(list.get(0));
-            }
         } catch (Exception e) {
             e.printStackTrace();
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());

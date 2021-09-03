@@ -234,7 +234,8 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
         try {
             ZODataEntity zoDataEntity = workOrderHelper.fetchSingleWorkOrder(orderNum);
             currOrder = onFetchSingleWoEntity(zoDataEntity);
-            if (currOrder != null) {
+            WorkOrder.setCurrWo(currOrder);
+          /*  if (currOrder != null) {
                 if (ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
                     Operation currOperation = null;
                     if (currOrder != null && orderNum.equals(currOrder.getWorkOrderNum())) {
@@ -252,7 +253,7 @@ public class BaseViewModel extends AndroidViewModel implements ZCommon.TransmitP
 
                     }
                 }
-            }
+            }*/
         } catch (Exception e) {
             e.printStackTrace();
             DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
