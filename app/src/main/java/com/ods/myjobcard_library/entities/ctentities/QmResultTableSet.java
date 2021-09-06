@@ -14,7 +14,7 @@ import java.util.List;
 
 public class QmResultTableSet extends ZBaseEntity {
     //Fields
-    private String Charnum;
+    private String CharNums;
     private String Description;
     private String Catalog;
     private String SelectedSet;
@@ -35,7 +35,7 @@ public class QmResultTableSet extends ZBaseEntity {
         ResponseObject result = new ResponseObject(ZConfigManager.Status.Error);
         try {
             String entitySetName = ZCollections.QM_RESULT_TABLE_COLLECTION;
-            String resPath = entitySetName + "?$filter=Charnum eq '" + charName + "' and Equipment eq '" + equipmentNum + "' and SelectedSet eq '" + selectedSet + "'&$orderby=Code";
+            String resPath = entitySetName + "?$filter=CharNums eq '" + charName + "' and Equipment eq '" + equipmentNum + "' and SelectedSet eq '" + selectedSet + "'&$orderby=Code";
             result = DataHelper.getInstance().getEntities(entitySetName, resPath);
             if (!result.isError()) {
                 result = FromEntity((List<ODataEntity>) result.Content());
@@ -85,12 +85,12 @@ public class QmResultTableSet extends ZBaseEntity {
         this.addKeyFieldNames("Code");
     }
 
-    public String getCharnum() {
-        return Charnum;
+    public String getCharNums() {
+        return CharNums;
     }
 
-    public void setCharnum(String charnum) {
-        Charnum = charnum;
+    public void setCharNums(String charNums) {
+        CharNums = charNums;
     }
 
     public String getCatalog() {
