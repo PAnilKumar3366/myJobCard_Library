@@ -366,7 +366,7 @@ public class DocsUtil {
         try {
             // External sdcard location
             String TAG = DocsUtil.class.getSimpleName();
-            File mediaStorageDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+context.getCacheDir());
+            File mediaStorageDir = new File(ZAppSettings.ExternalDirectoryPath + context.getCacheDir());
 //            mediaStorageDir.mkdirs();
 
             // Create the storage directory if it does not exist

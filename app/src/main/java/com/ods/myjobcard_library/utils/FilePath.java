@@ -43,7 +43,7 @@ public class FilePath {
                     final String type = split[0];
 
                     if ("primary".equalsIgnoreCase(type)) {
-                        return Environment.getExternalStorageDirectory() + "/"
+                        return ZAppSettings.ExternalDirectoryPath + "/"
                                 + split[1];
                     }
                 }
