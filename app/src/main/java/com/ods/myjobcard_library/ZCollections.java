@@ -332,7 +332,7 @@ public class ZCollections extends Collections {
 	public static final String ARG_IS_DEMO_MODE = "IS_DEMO_MODE";
 	public static final String ARG_USER_ID = "USER_ID";
 	public static final String ARG_IS_HISTORY = "IsHistory";
-	public static final String ARG_USER_NEW_PASSWORD = "NEW_PASSWORD";
+	public static final String ARG_USER_NEW_PWD = "NEW_PWD";
 	public static final String ARG_USER_WORKCENTER = "USER_WORKCENTER";
 	public static final String ARG_USER_PLANT = "USER_PLANT";
 	public static final String ARG_APP_PUSH_ID = "APPPID";

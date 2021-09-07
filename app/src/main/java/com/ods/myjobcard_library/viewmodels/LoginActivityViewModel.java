@@ -56,7 +56,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         this.isDemoMode=isDemo;
         this.isFirstDemoLogin = isFirstDemoLogin;
         this.oldUserLogin = oldUserLogin;
-        String oldPass = preferences.getString(ZCollections.ARG_USER_PASSWORD, "");
+        String oldPass = preferences.getString(ZCollections.ARG_USER_PWD, "");
         ZAppSettings.AppStoreName="APLLICATIONSTORE";
         UserTable.resetUserDetails();
         helper = RegisterHelper.getInstance(context, this);
@@ -153,7 +153,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
 
     @Override
     public void onDeregisterSuccess(){
-        preferences.edit().remove(Collections.ARG_USER_ID).remove(Collections.ARG_USER_PASSWORD).remove(Collections.ARG_APP_CONNECTION_ID).remove(Collections.ARG_FCM_TOKEN).remove(ZCollections.IS_ONLINE_APPSTORE).apply();
+        preferences.edit().remove(Collections.ARG_USER_ID).remove(Collections.ARG_USER_PWD).remove(Collections.ARG_APP_CONNECTION_ID).remove(Collections.ARG_FCM_TOKEN).remove(ZCollections.IS_ONLINE_APPSTORE).apply();
         AppFeature.resetUserRoleFeatures();
     }
 
