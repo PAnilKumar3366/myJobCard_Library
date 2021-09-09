@@ -304,6 +304,8 @@ public class DashBoardViewModel extends BaseViewModel {
                 filterQuery1 = "?$filter=" + getNotificationWOCreatedFilterQuery(item1.getId());
             else if (woSelectedCategory1.equalsIgnoreCase("date"))
                 filterQuery1 = "?$filter=" + getNotificationDateFilterQuery(item1.getId());
+            else if (woSelectedCategory1.equalsIgnoreCase("WorkCenter"))
+                filterQuery1 = "?$filter=" + woSelectedCategory1 + " eq '" + item1.getObjectID() + "'";
             else if (woSelectedCategory1.equalsIgnoreCase("CreatedBy")) {
                 if (item1.getId().equalsIgnoreCase("EnteredBy"))
                     filterQuery1 = "?$filter=" + item1.getId() + " eq '" + ZAppSettings.strUser + "'";
@@ -324,6 +326,8 @@ public class DashBoardViewModel extends BaseViewModel {
                         filterQuery2 = filterQuery1 + " and " + getNotificationWOCreatedFilterQuery(item2.getId());
                     else if (woSelectedCategory2.equalsIgnoreCase("date"))
                         filterQuery2 = filterQuery1 + " and " + getNotificationDateFilterQuery(item2.getId());
+                    else if (woSelectedCategory2.equalsIgnoreCase("WorkCenter"))
+                        filterQuery2 = filterQuery1 + " and (" + woSelectedCategory2 + " eq '" + item2.getObjectID() + "')";
                     else if (woSelectedCategory2.equalsIgnoreCase("CreatedBy")) {
                         if (item2.getId().equalsIgnoreCase("EnteredBy"))
                             filterQuery1 = "?$filter=" + item2.getId() + " eq '" + ZAppSettings.strUser + "'";
