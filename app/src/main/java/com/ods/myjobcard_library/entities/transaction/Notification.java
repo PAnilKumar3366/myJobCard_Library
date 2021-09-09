@@ -676,7 +676,47 @@ public class Notification extends ZBaseEntity {
         }
         return spinnerLocations;
     }
+    /**
+     * @return ArrayList of all distinct Equipment among all notifications
+     */
+    public static ArrayList<String> getAllDistinctEquipment() {
+        ArrayList<String> types = new ArrayList<>();
+        try {
+            String resPath = ZCollections.NOTIFICATION_COLLECTION + "?$filter=Equipment ne ''&$select=Equipment";
+            ResponseObject response = DataHelper.getInstance().getEntities(ZCollections.NOTIFICATION_COLLECTION, resPath);
+            if (response != null && !response.isError()) {
+                List<ODataEntity> entities = BaseEntity.setODataEntityList(response.Content());
+                if (entities != null && entities.size() > 0) {
+                    for (ODataEntity entity : entities) {
+                        types.add(String.valueOf(entity.getProperties().get("Equipment").getValue()));
+                    }
+                    Set<String> strings = new HashSet<String>(types);
+                    types.clear();
+                    types.addAll(strings);
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return types;
+    }
 
+    /**
+     * @return ArrayList of SpinnerItem of all distinct Equipment with Technical Identification Number among all notifications
+     */
+    public static ArrayList<SpinnerItem> getSpinnerEquipmentTechIDs() {
+        ArrayList<SpinnerItem> spinnerEqps = new ArrayList<>();
+        ArrayList<String> equipmentList = getAllDistinctEquipment();
+        for (String equipment : equipmentList) {
+            String resPath = ZCollections.EQUIPMENT_COLLECTION + "('"+ equipment +"')?$select=TechIdentNo";
+            ResponseObject response = DataHelper.getInstance().getEntities(ZCollections.EQUIPMENT_COLLECTION, resPath);
+            if (response != null && !response.isError()) {
+                ODataEntity entity = (ODataEntity) response.Content();
+                spinnerEqps.add(new SpinnerItem(equipment, String.valueOf(entity.getProperties().get("TechIdentNo").getValue())));
+            }
+        }
+        return spinnerEqps;
+    }
     @Override
     public boolean isLocal() {
         boolean local = super.isLocal();

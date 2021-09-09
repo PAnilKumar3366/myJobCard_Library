@@ -65,6 +65,8 @@ public class DashBoardViewModel extends BaseViewModel {
     public ArrayList<SpinnerItem> woLocations = new ArrayList<>();
     public ArrayList<SpinnerItem> noLocations = new ArrayList<>();
     public ArrayList<SpinnerItem> woInspLotSpinnerItems = new ArrayList<>();
+    public ArrayList<SpinnerItem> woTechIdentifNoItems = new ArrayList<>();
+    public ArrayList<SpinnerItem> noTechIdentifNoItems = new ArrayList<>();
     private boolean isWorkOrder = true;
     public String woSelectedCategory1 = "";
     public String woSelectedCategory2 = "";
@@ -183,6 +185,8 @@ public class DashBoardViewModel extends BaseViewModel {
         this.woTechnicians = new ArrayList<>();
         this.noWOConversion = new ArrayList<>();
         this.woSysStatusSpinnerItems = new ArrayList<>();
+        this.woTechIdentifNoItems=new ArrayList<>();
+        this.noTechIdentifNoItems=new ArrayList<>();
     }
 
     public HashMap<Integer, String> getSupOrderMap() {
@@ -215,6 +219,7 @@ public class DashBoardViewModel extends BaseViewModel {
             filterCategories.add(new SpinnerItem("FuncLocation", "Functional Location"));
             filterCategories.add(new SpinnerItem("Location", "Location"));
             filterCategories.add(new SpinnerItem("Date", "Date"));
+            filterCategories.add(new SpinnerItem("EquipNum", "TechIdentNo"));
             //filterCategories.add(new SpinnerItem("InspectionLot","InspectionLot"));
             ArrayList<SpinnerItem> woPriorities = getPriorities();
             ArrayList<SpinnerItem> woStatuses = getStatuses();
@@ -246,6 +251,7 @@ public class DashBoardViewModel extends BaseViewModel {
             filterCategories.add(new SpinnerItem("WOConversion", "Order Conversion"));
             filterCategories.add(new SpinnerItem("Location", "Location"));
             filterCategories.add(new SpinnerItem("Date", "Date"));
+            filterCategories.add(new SpinnerItem("Equipment", "TechIdentNo"));
             ArrayList<SpinnerItem> noPriorities = getPriorities();
             ArrayList<SpinnerItem> noStatuses = getStatuses();
             woSelectedCategory1 = "Priority";
@@ -802,6 +808,23 @@ public class DashBoardViewModel extends BaseViewModel {
         return woInspLotSpinnerItems;
     }
 
+    /**
+     * @return ArrayList of SpinnerItems for all distinct TechIdentification number for WorkOrder and  Notifications based on selected filter
+     */
+    public ArrayList<SpinnerItem> getTechIdentificationNoItems(){
+        if(isWorkOrder) {
+            if (woTechIdentifNoItems.size() == 0) {
+                woTechIdentifNoItems = WorkOrder.getSpinnerEquipmentTechIDs();
+            }
+            return woTechIdentifNoItems;
+        }
+        else {
+            if (noTechIdentifNoItems.size() == 0) {
+                noTechIdentifNoItems = Notification.getSpinnerEquipmentTechIDs();
+            }
+            return noTechIdentifNoItems;
+        }
+    }
     public ArrayList<SpinnerItem> getWOSysStatus() {
         if (woSysStatusSpinnerItems.size() == 0)
             woSysStatusSpinnerItems = WorkOrder.getSpinnerSysStatuses();
