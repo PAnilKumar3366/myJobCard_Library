@@ -219,7 +219,7 @@ public class DashBoardViewModel extends BaseViewModel {
             filterCategories.add(new SpinnerItem("FuncLocation", "Functional Location"));
             filterCategories.add(new SpinnerItem("Location", "Location"));
             filterCategories.add(new SpinnerItem("Date", "Date"));
-            filterCategories.add(new SpinnerItem("EquipNum", "TechIdentNo"));
+            //filterCategories.add(new SpinnerItem("EquipNum", "TechIdentNo"));
             //filterCategories.add(new SpinnerItem("InspectionLot","InspectionLot"));
             ArrayList<SpinnerItem> woPriorities = getPriorities();
             ArrayList<SpinnerItem> woStatuses = getStatuses();
@@ -251,7 +251,7 @@ public class DashBoardViewModel extends BaseViewModel {
             filterCategories.add(new SpinnerItem("WOConversion", "Order Conversion"));
             filterCategories.add(new SpinnerItem("Location", "Location"));
             filterCategories.add(new SpinnerItem("Date", "Date"));
-            filterCategories.add(new SpinnerItem("Equipment", "TechIdentNo"));
+            //filterCategories.add(new SpinnerItem("Equipment", "TechIdentNo"));
             ArrayList<SpinnerItem> noPriorities = getPriorities();
             ArrayList<SpinnerItem> noStatuses = getStatuses();
             woSelectedCategory1 = "Priority";
