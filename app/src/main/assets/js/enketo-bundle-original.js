@@ -6575,7 +6575,8 @@ Date.prototype.getTimezoneOffsetAsTime = function() {
     offsetMinutesTotal = this.getTimezoneOffset();
 
     direction = ( offsetMinutesTotal < 0 ) ? '+' : '-';
-    hours = pad2( Math.abs( Math.floor( offsetMinutesTotal / 60 ) ) );
+    //hours = pad2( Math.abs( Math.floor( offsetMinutesTotal / 60 ) ) );
+    hours =parseInt(pad2( offsetMinutesTotal / 60 ) .split("-")[1]);//added by Gowri for time issue
     minutes = pad2( Math.abs( Math.floor( offsetMinutesTotal % 60 ) ) );
 
     return direction + hours + ':' + minutes;
