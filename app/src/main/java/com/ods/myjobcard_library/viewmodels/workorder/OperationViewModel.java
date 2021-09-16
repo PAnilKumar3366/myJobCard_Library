@@ -4,11 +4,9 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.ods.myjobcard_library.ZAppSettings;
-import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.transaction.Operation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
 import com.ods.myjobcard_library.viewmodels.BaseViewModel;
@@ -25,6 +23,15 @@ public class OperationViewModel extends BaseViewModel {
     private MutableLiveData<List<Operation>> wosoperationlistLiveData = new MutableLiveData<>();
     private MutableLiveData<Operation> currentOperation = new MutableLiveData<>();
     private MutableLiveData<WorkOrder> currentOpetationWorkOrder = new MutableLiveData<WorkOrder>();
+    protected Boolean fetchUnAssingedOpr = false;
+
+    public Boolean getFetchUnAssingedOpr() {
+        return fetchUnAssingedOpr;
+    }
+
+    public void setFetchUnAssingedOpr(Boolean fetchUnAssingedOpr) {
+        this.fetchUnAssingedOpr = fetchUnAssingedOpr;
+    }
 
     public OperationViewModel(@NonNull Application application) {
         super(application);
@@ -61,17 +68,24 @@ public class OperationViewModel extends BaseViewModel {
         return wosoperationlistLiveData;
     }
 
+    public void fetchAllOperations(boolean fetchUnAssingedOpr) {
+
+    }
+
     public void setAllWorkOrdersOprerationLiveData(List<WorkOrder> workOrderList) {
         ArrayList<Operation> operation = null;
         List<Operation> wowithOpr = new ArrayList<>();
-        for (int i = 0; i < workOrderList.size(); i++) {
+        operation = Operation.getAllOperations(fetchUnAssingedOpr);
+        wosoperationlistLiveData.setValue(operation);
+        /*for (int i = 0; i < workOrderList.size(); i++) {
             ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrderList.get(i).getRefId());
             operation = (ArrayList<Operation>) result.Content();
             wowithOpr.addAll(operation);
         }
         if (wowithOpr != null) {
             wosoperationlistLiveData.setValue(wowithOpr);
-        }
+        }*/
+
     }
 
     public MutableLiveData<Operation> getCurrentOperation() {

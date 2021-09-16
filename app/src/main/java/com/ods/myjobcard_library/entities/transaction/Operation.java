@@ -3,6 +3,7 @@ package com.ods.myjobcard_library.entities.transaction;
 import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,7 @@ import com.ods.myjobcard_library.entities.ctentities.WorkOrderStatus;
 import com.ods.myjobcard_library.entities.forms.FormAssignmentSetModel;
 import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
 import com.ods.myjobcard_library.entities.supervisor.SupervisorWorkOrder;
+import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
@@ -39,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -302,6 +303,7 @@ public class Operation extends ZBaseEntity implements Serializable {
         String resPath = "";
         String strEntitySet = ZCollections.OPR_COLLECTION;
         String strOrderByURI = "&$orderby=OperationNum,SubOperation";
+
         try {
             resPath = strEntitySet;
 
@@ -2112,7 +2114,7 @@ public class Operation extends ZBaseEntity implements Serializable {
         ArrayList<SpinnerItem> spinnerEqps = new ArrayList<>();
         ArrayList<String> equipmentList = getAllDistinctEquipment();
         for (String equipment : equipmentList) {
-            String resPath = ZCollections.EQUIPMENT_COLLECTION + "('"+ equipment +"')?$select=TechIdentNo";
+            String resPath = ZCollections.EQUIPMENT_COLLECTION + "('" + equipment + "')?$select=TechIdentNo";
             ResponseObject response = DataHelper.getInstance().getEntities(ZCollections.EQUIPMENT_COLLECTION, resPath);
             if (response != null && !response.isError()) {
                 ODataEntity entity = (ODataEntity) response.Content();
@@ -2120,5 +2122,33 @@ public class Operation extends ZBaseEntity implements Serializable {
             }
         }
         return spinnerEqps;
+    }
+
+    public static ArrayList<Operation> getAllOperations(boolean fetchUnAssinged) {
+        ArrayList<Operation> operationsList = new ArrayList<>();
+        ResponseObject result = null;
+        String resPath = "";
+        String strEntitySet = ZCollections.OPR_COLLECTION;
+        String strOrderByURI = "&$orderby=OperationNum,SubOperation";
+        try {
+            if (fetchUnAssinged)
+                resPath = strEntitySet + "?$filter=( EnteredBy eq '' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,EnteredBy" + strOrderByURI;
+            else
+                resPath = strEntitySet + "?$filter=( EnteredBy ne '' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,EnteredBy" + strOrderByURI;
+            //resPath = strEntitySet + "?$filter=startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true&$orderby=";
+            ResponseObject response = DataHelper.getInstance().getEntities(strEntitySet, resPath);
+            if (response != null && !response.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) response.Content();
+                if (entities != null && entities.size() > 0) {
+                    response = FromEntity(entities, ZAppSettings.FetchLevel.List);
+                    operationsList = (ArrayList<Operation>) response.Content();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(Operation.class, AppSettings.LogLevel.Error, e.getMessage());
+            Log.e(Operation.class.getName(), "getAllOperations: ", e);
+        }
+        return operationsList;
     }
 }

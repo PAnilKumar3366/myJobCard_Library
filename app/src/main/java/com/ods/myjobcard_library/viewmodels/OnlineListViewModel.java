@@ -208,22 +208,26 @@ public class OnlineListViewModel extends BaseViewModel {
     /*Converting the ZODataEntity list to WorkOrder's list  */
     protected void onFetchOnlineWOList(ArrayList<ZODataEntity> zoDataEntities) {
         ArrayList<WorkOrder> onlineWo = new ArrayList<>();
+        operations = new ArrayList<>();
         try {
             EntityValue entityValue;
             EntityValueList oprEntityList;
             for (ZODataEntity entity : zoDataEntities) {
                 WorkOrder item = new WorkOrder(entity);
                 entityValue = entity.getEntityValue();
-                ArrayList<Operation> workOrderOperations = new ArrayList<>();
+                //ArrayList<Operation> workOrderOperations = new ArrayList<>();
                 if (fetchOpr) {
                     oprEntityList = entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue);//Extracting the WorkOrder Operations from WorkOrder
                     for (EntityValue oprEntity : oprEntityList) {
-                        workOrderOperations.add(new Operation(oprEntity));
+                        //workOrderOperations.add(new Operation(oprEntity));
                         operations.add(new Operation(oprEntity));
                     }
                 }
                 onlineWo.add(item);
             }
+            if (zoDataEntities.isEmpty())
+                operations = new ArrayList<>();
+
             OnlineDataList.getInstance().setOnlineWorkOrderList(onlineWo);
             OnlineDataList.getInstance().setWorkOrdersOperationsList(operations);
             if (OnlineWoResult != null && WorkOrderObserver != null)
