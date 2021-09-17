@@ -2124,6 +2124,12 @@ public class Operation extends ZBaseEntity implements Serializable {
         return spinnerEqps;
     }
 
+    /**
+     * Fetch the all operations from WOOperationCollection based on the flag
+     *
+     * @param fetchUnAssinged
+     * @return operations
+     */
     public static ArrayList<Operation> getAllOperations(boolean fetchUnAssinged) {
         ArrayList<Operation> operationsList = new ArrayList<>();
         ResponseObject result = null;

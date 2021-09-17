@@ -75,17 +75,21 @@ public class OperationViewModel extends BaseViewModel {
     public void setAllWorkOrdersOprerationLiveData(List<WorkOrder> workOrderList) {
         ArrayList<Operation> operation = null;
         List<Operation> wowithOpr = new ArrayList<>();
-        operation = Operation.getAllOperations(fetchUnAssingedOpr);
-        wosoperationlistLiveData.setValue(operation);
-        /*for (int i = 0; i < workOrderList.size(); i++) {
-            ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrderList.get(i).getRefId());
-            operation = (ArrayList<Operation>) result.Content();
-            wowithOpr.addAll(operation);
-        }
-        if (wowithOpr != null) {
-            wosoperationlistLiveData.setValue(wowithOpr);
-        }*/
+       /* operation = Operation.getAllOperations(fetchUnAssingedOpr);
+        wosoperationlistLiveData.setValue(operation);*/
+        try {
+            for (int i = 0; i < workOrderList.size(); i++) {
+                ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrderList.get(i).getRefId());
+                operation = (ArrayList<Operation>) result.Content();
+                wowithOpr.addAll(operation);
+            }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            Log.e(TAG, "setAllWorkOrdersOprerationLiveData: ", e);
+        }
+        wosoperationlistLiveData.setValue(wowithOpr);
     }
 
     public MutableLiveData<Operation> getCurrentOperation() {
