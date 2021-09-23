@@ -37,6 +37,11 @@ public class FormSetModel extends ZBaseEntity {
     private String Theme;
     private String FormHTML;
 
+    private String FunctionalArea;
+    private String SubArea;
+    private String Category;
+
+
     public FormSetModel(ODataEntity entity) {
         create(entity);
     }
@@ -251,6 +256,31 @@ public class FormSetModel extends ZBaseEntity {
     public void setActive(boolean active) {
         Active = active;
     }
+
+    public String getFunctionalArea() {
+        return FunctionalArea;
+    }
+
+    public void setFunctionalArea(String functionalArea) {
+        FunctionalArea = functionalArea;
+    }
+
+    public String getSubArea() {
+        return SubArea;
+    }
+
+    public void setSubArea(String subArea) {
+        SubArea = subArea;
+    }
+
+    public String getCategory() {
+        return Category;
+    }
+
+    public void setCategory(String category) {
+        Category = category;
+    }
+
 
     @Override
     public String toString() {

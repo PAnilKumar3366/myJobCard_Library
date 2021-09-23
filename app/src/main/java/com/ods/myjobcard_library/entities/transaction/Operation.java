@@ -51,7 +51,7 @@ public class Operation extends ZBaseEntity implements Serializable {
     public boolean isOnline;   //Added by Anil
     //WO child elements
     private DataHelper dataHelper = null;
-    private ArrayList<StatusCategory> validStatuses = null;
+    public ArrayList<StatusCategory> validStatuses = null;
     private ZAppSettings.MobileStatus oprMobileStatus;
     private StatusCategory statusDetail;
     private String OperationNum;
@@ -84,7 +84,7 @@ public class Operation extends ZBaseEntity implements Serializable {
     private String TransferFlag;
     private String TransferReason;
     private String TransferPerson;
-    private ArrayList<PartnerAddress> partnerAddresses;
+    public ArrayList<PartnerAddress> partnerAddresses;
     private String PlannofOpera;
     private String Sequence;
     private String StdTextkey;
@@ -1985,76 +1985,38 @@ public class Operation extends ZBaseEntity implements Serializable {
         return intComponentsCount;
     }
 
-    private void deriveOperationStatus() {
-        ZAppSettings.MobileStatus mobileStatus = null;
-        String status = null;
-        //UserStatus = ZAppSettings.MobileStatus.Created.getMobileStatusCode();//todo remove this after testing
+    /**
+     * Fetch the all operations from WOOperationCollection based on the flag
+     *
+     * @param fetchUnAssinged
+     * @return operations
+     */
+    public static ArrayList<Operation> getAllOperations(boolean fetchUnAssinged) {
+        ArrayList<Operation> operationsList = new ArrayList<>();
+        ResponseObject result = null;
+        String resPath = "";
+        String strEntitySet = ZCollections.OPR_COLLECTION;
+        String strOrderByURI = "&$orderby=OperationNum,SubOperation";
         try {
-            if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
-                status = SystemStatus;
-                switch (status.startsWith("CNF") ? "CNF" : status.equals("REL") ? "REL" : status.startsWith("DLT") ? "DLT" : status.equals("INCP") ? "INCP" : status.startsWith("PCNF") ? "PCNF" : "") {
-                    case "REL":
-                        mobileStatus = ZAppSettings.MobileStatus.Released;
-                        break;
-                    case "CNF":
-                        mobileStatus = ZAppSettings.MobileStatus.CONFIRMED;
-                        break;
-                    case "PCNF":
-                        mobileStatus = ZAppSettings.MobileStatus.PARTIALCONFIRMED;
-                        break;
-                    case "DLT":
-                        mobileStatus = ZAppSettings.MobileStatus.Deleted;
-                        break;
-                    case "INCP":
-                        mobileStatus = ZAppSettings.MobileStatus.InComplete;
-                        break;
-                    default:
-                        mobileStatus = ZAppSettings.MobileStatus.NotSet;
-                        break;
-                }
-                status = mobileStatus.getMobileStatusCode();
-                StatusCategory statusDetail = StatusCategory.getStatusDetails(status, getOrderType(), ZConfigManager.Fetch_Object_Type.Operation);
-                if (statusDetail != null) {
-                    this.statusDetail = statusDetail;
-                }
-                if (getStatusDetail().woOprStatus.equals(ZAppSettings.MobileStatus.NotSet))
-                    getStatusDetail().woOprStatus = mobileStatus;
-            } else {
-                status = MobileStatus != null ? MobileStatus : "";
-                if (!status.isEmpty() && !isOnline && ZConfigManager.DEFAULT_STATUS_TO_CHANGE.contains(status)) {
-                    StatusCategory receivedStatus = StatusCategory.getStatusDetails(ZConfigManager.DEFAULT_STATUS_TO_SEND, getOrderType(), ZConfigManager.Fetch_Object_Type.Operation);
-                    if (receivedStatus != null) {
-                        this.statusDetail = receivedStatus;
-                        //Update the Operation to offlinestore with MOBI status
-                        UpdateStatus(receivedStatus, null, null, false, null);
-                        return;
-                    }
-                }
-                if (!status.isEmpty()) {
-                    StatusCategory statusDetail = StatusCategory.getStatusDetails(status, getOrderType(), ZConfigManager.Fetch_Object_Type.Operation);
-                    if (statusDetail != null) {
-                        this.statusDetail = statusDetail;
-                        getAllowedStatus(statusDetail);
-                    }
+            if (fetchUnAssinged)
+                resPath = strEntitySet + "?$filter=( EnteredBy eq '' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,EnteredBy" + strOrderByURI;
+            else
+                resPath = strEntitySet + "?$filter=( EnteredBy ne '' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,EnteredBy" + strOrderByURI;
+            //resPath = strEntitySet + "?$filter=startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true&$orderby=";
+            ResponseObject response = DataHelper.getInstance().getEntities(strEntitySet, resPath);
+            if (response != null && !response.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) response.Content();
+                if (entities != null && entities.size() > 0) {
+                    response = FromEntity(entities, ZAppSettings.FetchLevel.List);
+                    operationsList = (ArrayList<Operation>) response.Content();
                 }
             }
-            /*if (mobileStatus == null && status != null) {
-                for (ZAppSettings.MobileStatus mobilestatus : ZAppSettings.MobileStatus.values()) {
-                    if (mobilestatus.getMobileStatusCode().equalsIgnoreCase(status)) {
-                        mobileStatus = mobilestatus;
-                        break;
-                    }
-                }
-            }
-            if (mobileStatus == null) {
-                mobileStatus = ZAppSettings.MobileStatus.NotSet;
-            }*/
         } catch (Exception e) {
-            DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
-            //mobileStatus = ZAppSettings.MobileStatus.NotSet;
+            e.printStackTrace();
+            DliteLogger.WriteLog(Operation.class, AppSettings.LogLevel.Error, e.getMessage());
+            Log.e(Operation.class.getName(), "getAllOperations: ", e);
         }
-        //setMobileStatus(mobileStatus.getMobileStatusCode());
-        //return mobileStatus;
+        return operationsList;
     }
 
     public String getTruncatedOprNum(String trucOprNum) {
@@ -2124,37 +2086,75 @@ public class Operation extends ZBaseEntity implements Serializable {
         return spinnerEqps;
     }
 
-    /**
-     * Fetch the all operations from WOOperationCollection based on the flag
-     *
-     * @param fetchUnAssinged
-     * @return operations
-     */
-    public static ArrayList<Operation> getAllOperations(boolean fetchUnAssinged) {
-        ArrayList<Operation> operationsList = new ArrayList<>();
-        ResponseObject result = null;
-        String resPath = "";
-        String strEntitySet = ZCollections.OPR_COLLECTION;
-        String strOrderByURI = "&$orderby=OperationNum,SubOperation";
+    protected void deriveOperationStatus() {
+        ZAppSettings.MobileStatus mobileStatus = null;
+        String status = null;
+        //UserStatus = ZAppSettings.MobileStatus.Created.getMobileStatusCode();//todo remove this after testing
         try {
-            if (fetchUnAssinged)
-                resPath = strEntitySet + "?$filter=( EnteredBy eq '' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,EnteredBy" + strOrderByURI;
-            else
-                resPath = strEntitySet + "?$filter=( EnteredBy ne '' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,EnteredBy" + strOrderByURI;
-            //resPath = strEntitySet + "?$filter=startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true&$orderby=";
-            ResponseObject response = DataHelper.getInstance().getEntities(strEntitySet, resPath);
-            if (response != null && !response.isError()) {
-                List<ODataEntity> entities = (List<ODataEntity>) response.Content();
-                if (entities != null && entities.size() > 0) {
-                    response = FromEntity(entities, ZAppSettings.FetchLevel.List);
-                    operationsList = (ArrayList<Operation>) response.Content();
+            if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
+                status = SystemStatus;
+                switch (status.startsWith("CNF") ? "CNF" : status.equals("REL") ? "REL" : status.startsWith("DLT") ? "DLT" : status.equals("INCP") ? "INCP" : status.startsWith("PCNF") ? "PCNF" : "") {
+                    case "REL":
+                        mobileStatus = ZAppSettings.MobileStatus.Released;
+                        break;
+                    case "CNF":
+                        mobileStatus = ZAppSettings.MobileStatus.CONFIRMED;
+                        break;
+                    case "PCNF":
+                        mobileStatus = ZAppSettings.MobileStatus.PARTIALCONFIRMED;
+                        break;
+                    case "DLT":
+                        mobileStatus = ZAppSettings.MobileStatus.Deleted;
+                        break;
+                    case "INCP":
+                        mobileStatus = ZAppSettings.MobileStatus.InComplete;
+                        break;
+                    default:
+                        mobileStatus = ZAppSettings.MobileStatus.NotSet;
+                        break;
+                }
+                status = mobileStatus.getMobileStatusCode();
+                StatusCategory statusDetail = StatusCategory.getStatusDetails(status, getOrderType(), ZConfigManager.Fetch_Object_Type.Operation);
+                if (statusDetail != null) {
+                    this.statusDetail = statusDetail;
+                }
+                if (getStatusDetail().woOprStatus.equals(ZAppSettings.MobileStatus.NotSet))
+                    getStatusDetail().woOprStatus = mobileStatus;
+            } else {
+                status = MobileStatus != null ? MobileStatus : "";
+                if (!status.isEmpty() && !isOnline && ZConfigManager.DEFAULT_STATUS_TO_CHANGE.contains(status)) {
+                    StatusCategory receivedStatus = StatusCategory.getStatusDetails(ZConfigManager.DEFAULT_STATUS_TO_SEND, getOrderType(), ZConfigManager.Fetch_Object_Type.Operation);
+                    if (receivedStatus != null) {
+                        this.statusDetail = receivedStatus;
+                        //Update the Operation to offlinestore with MOBI status
+                        UpdateStatus(receivedStatus, null, null, false, null);
+                        return;
+                    }
+                }
+                if (!status.isEmpty()) {
+                    StatusCategory statusDetail = StatusCategory.getStatusDetails(status, getOrderType(), ZConfigManager.Fetch_Object_Type.Operation);
+                    if (statusDetail != null) {
+                        this.statusDetail = statusDetail;
+                        getAllowedStatus(statusDetail);
+                    }
                 }
             }
+            /*if (mobileStatus == null && status != null) {
+                for (ZAppSettings.MobileStatus mobilestatus : ZAppSettings.MobileStatus.values()) {
+                    if (mobilestatus.getMobileStatusCode().equalsIgnoreCase(status)) {
+                        mobileStatus = mobilestatus;
+                        break;
+                    }
+                }
+            }
+            if (mobileStatus == null) {
+                mobileStatus = ZAppSettings.MobileStatus.NotSet;
+            }*/
         } catch (Exception e) {
-            e.printStackTrace();
-            DliteLogger.WriteLog(Operation.class, AppSettings.LogLevel.Error, e.getMessage());
-            Log.e(Operation.class.getName(), "getAllOperations: ", e);
+            DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            //mobileStatus = ZAppSettings.MobileStatus.NotSet;
         }
-        return operationsList;
+        //setMobileStatus(mobileStatus.getMobileStatusCode());
+        //return mobileStatus;
     }
 }

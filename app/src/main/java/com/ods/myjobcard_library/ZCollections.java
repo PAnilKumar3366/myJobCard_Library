@@ -4,7 +4,6 @@ import com.ods.ods_sdk.Collections;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 
 public class ZCollections extends Collections {
 
@@ -99,6 +98,9 @@ public class ZCollections extends Collections {
 
 	public static final String WO_COLLECTION = "WoHeaderSet";// "WoHeaderServiceSet";//"WoHeaderSet";// "WOHeaderCollection";
 	public static final String OPR_COLLECTION = "WOOperationCollection";// "WOOperationCollection";
+	public static final String UNASSIGNED_OPR_ENTITY_SET = "UnAssignedOperationSet";
+	public static final String UNASSIGNED_OPR_ENTITY_TYPE = "UnAssignedOperation";
+
 	public static final String PRT_COLLECTION = "WOPRTCollection";
 	public static final String PARTNER_ADDR_COLLECTION = "WoPartnerAddressSet";
 	public static final String ADDR_COLLECTION = "AddressSet";
@@ -159,6 +161,7 @@ public class ZCollections extends Collections {
 
 	public static final String WO_ENTITY_TYPE =  Service_Name + "WoHeader";//"ZODS_WORKMANAGER_TEST_SRV_01.WOHeader";// "ZWOGETBAPI_SRV.WOHeader";
 	public static final String OPR_ENTITY_TYPE1 = Service_Name + "WOOperation";//"ZODS_WORKMANAGER_TEST_SRV_01.WOOperation"; //"ZWOGETBAPI_SRV.WOOperation";
+
 	public static final String PRT_ENTITY_TYPE = Service_Name + "WOPRT";
 	public static final String COMPONENT_ENTITY_TYPE = Service_Name + "WOComponent";
 	public static final String WO_HISTORY_ENTITY_TYPE = Service_Name + "WOHistory";
@@ -429,7 +432,7 @@ public class ZCollections extends Collections {
 	//OnlineSearch
 	public static boolean isUnAssigned = false;
 	public static HashMap<String, String> REFRESH_SERVICES = new HashMap<>();
-	public static UUID OneTimeRequestId;
+
 	public static final String GenericNetworkError = "Unknown Network Error";
 
 	public static final String FORM_MASTER_METADATA_ENTITY_SET = "FormMasterMetadataSet";
