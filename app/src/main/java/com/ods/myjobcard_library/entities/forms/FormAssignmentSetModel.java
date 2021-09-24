@@ -133,7 +133,7 @@ public class FormAssignmentSetModel extends ZBaseEntity {
             String strResPath = null;
             String entitySetName = ZCollections.FORM_ASSIGNMENT_COLLECTION;
             if (equipCategory != null && !equipCategory.isEmpty())
-                strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (EquipCategory eq '" + equipCategory + "' and ControlKey eq '' and OrderType eq '' and TaskListType eq '' and Group eq '' and GroupCounter eq '' and InternalCounter eq '')&$orderby=FlowSequence asc,Mandatory desc";
+                strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (EquipCategory eq '" + equipCategory + "')&$orderby=FlowSequence asc,Mandatory desc";
             ResponseObject result = getObjectsFromEntity(entitySetName, strResPath);
             if (!result.isError())
                 return (ArrayList<FormAssignmentSetModel>) result.Content();
@@ -151,7 +151,7 @@ public class FormAssignmentSetModel extends ZBaseEntity {
             String strResPath = null;
             String entitySetName = ZCollections.FORM_ASSIGNMENT_COLLECTION;
             if (funcLocCategory != null && !funcLocCategory.isEmpty())
-                strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (FuncLocCategory eq '" + funcLocCategory + "' and ControlKey eq '' and OrderType eq '' and TaskListType eq '' and Group eq '' and GroupCounter eq '' and InternalCounter eq '')&$orderby=FlowSequence asc,Mandatory desc";
+                strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (FuncLocCategory eq '" + funcLocCategory + "')&$orderby=FlowSequence asc,Mandatory desc";
             ResponseObject result = getObjectsFromEntity(entitySetName, strResPath);
             if (!result.isError())
                 return (ArrayList<FormAssignmentSetModel>) result.Content();
@@ -163,13 +163,13 @@ public class FormAssignmentSetModel extends ZBaseEntity {
 
     /*getting form based on TaskList type of form assignmenttype
      * */
-    public static ArrayList<FormAssignmentSetModel> getFormAssignmentData_TaskListType(String orderType, String controlKey, String taskListType, String group, String groupCounter, String internalCounter) {
+    public static ArrayList<FormAssignmentSetModel> getFormAssignmentData_TaskListType(String taskListType, String group, String groupCounter, String internalCounter) {
         ArrayList<FormAssignmentSetModel> assignedForms = new ArrayList<>();
         try {
             String strResPath = null;
             String entitySetName = ZCollections.FORM_ASSIGNMENT_COLLECTION;
-            if (!orderType.isEmpty() && !controlKey.isEmpty() && !taskListType.isEmpty() && !group.isEmpty() && !groupCounter.isEmpty() && !internalCounter.isEmpty())
-                strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (ControlKey eq '" + controlKey + "' and OrderType eq '" + orderType + "' and TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "')&$orderby=FlowSequence asc,Mandatory desc";
+            if (!taskListType.isEmpty() && !group.isEmpty() && !groupCounter.isEmpty() && !internalCounter.isEmpty())
+                strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "')&$orderby=FlowSequence asc,Mandatory desc";
             ResponseObject result = getObjectsFromEntity(entitySetName, strResPath);
             if (!result.isError())
                 return (ArrayList<FormAssignmentSetModel>) result.Content();
