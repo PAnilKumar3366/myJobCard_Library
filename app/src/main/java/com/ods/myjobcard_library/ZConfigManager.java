@@ -218,6 +218,14 @@ public class ZConfigManager extends ConfigManager {
     * */
     public static boolean NETWORK_CONSTRAINTS = true;
 
+    /**
+     * Added new config flag to indicate whether user to cancel the final confirmation for the operation or not
+     */
+    public static boolean ENABLE_CANCEL_FINAL_CONFIRMATION = false;
+    public static String CANCELLED_FINAL_CNF_TEXT="Cancelled confirmation";
+    public static String REVERT_FINAL_CNF_TEXT="To Revert Final Confirmation";
+
+
     private boolean preDefinedForm;
     private boolean manualForm;
     private boolean woManulaFormAssigned;

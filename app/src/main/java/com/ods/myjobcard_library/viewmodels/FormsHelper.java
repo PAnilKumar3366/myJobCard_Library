@@ -118,25 +118,21 @@ public class FormsHelper {
                 ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                 for (Operation operation : totalOperations) {
                     list.clear();
-                    orderType = operation.getOrderType();
-                    controlKey = operation.getControlKey();
                     taskListType = operation.getTaskListType();
                     group = operation.getGroup();
                     groupCounter = operation.getGroupCounter();
                     internalCounter = operation.getInternalCounter();
-                    list.addAll(FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter));
+                    list.addAll(FormAssignmentSetModel.getFormAssignmentData_TaskListType(taskListType, group, groupCounter, internalCounter));
                     getFormItemsList(list,operation.getOperationNum());
                     //list = FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter);
                 }
                 return formItemsList;
             } else {
-                orderType = workOrder.getCurrentOperation().getOrderType();
-                controlKey = workOrder.getCurrentOperation().getControlKey();
                 taskListType = workOrder.getCurrentOperation().getTaskListType();
                 group = workOrder.getCurrentOperation().getGroup();
                 groupCounter = workOrder.getCurrentOperation().getGroupCounter();
                 internalCounter = workOrder.getCurrentOperation().getInternalCounter();
-                list.addAll(FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter));
+                list.addAll(FormAssignmentSetModel.getFormAssignmentData_TaskListType(taskListType, group, groupCounter, internalCounter));
                 getFormItemsList(list,workOrder.getCurrentOperation().getOperationNum());
                 return formItemsList;
                 //list = FormAssignmentSetModel.getFormAssignmentData_TaskListType(orderType, controlKey, taskListType, group, groupCounter, internalCounter);

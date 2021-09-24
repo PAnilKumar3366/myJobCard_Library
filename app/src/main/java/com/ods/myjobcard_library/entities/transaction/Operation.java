@@ -1410,11 +1410,9 @@ public class Operation extends ZBaseEntity implements Serializable {
 
     public ResponseObject markInComplete(boolean autoFlush) {
         ResponseObject result = null;
-        WOConfirmation confirmation;
+        WOConfirmation confirmation=null;
         try {
             StatusCategory status = StatusCategory.getStatusDetails(ZConfigManager.OPERATION_STATUS_TO_MARK_INCOMPLETE, getOrderType(), ZConfigManager.Fetch_Object_Type.Operation);
-            //get the final confirmation for the operation to mark it cancel
-            confirmation = WOConfirmation.getOperationFinalConfirmation(getOperationNum(), getWorkOrderNum());
             //Set Operation flag as complete
             setMobileStatus(ZConfigManager.OPERATION_STATUS_TO_MARK_INCOMPLETE);
             setSystemStatus(ZAppSettings.MobileStatus.Released.getMobileStatusCode());
@@ -1424,16 +1422,68 @@ public class Operation extends ZBaseEntity implements Serializable {
             } else
                 setMobileObjectType("X");
             setMode(ZAppSettings.EntityMode.Update);
-            result = SaveToStore(confirmation == null);
-
-            //Create confirmation for the Operation if operation is updated as completed
+            result = SaveToStore(true);//confirmation == null
             if (!result.isError()) {
+                if (ZConfigManager.ENABLE_CANCEL_FINAL_CONFIRMATION) {
+                    //get the final confirmation for the operation to mark it cancel
+                    confirmation = WOConfirmation.getOperationFinalConfirmation(getOperationNum(), getWorkOrderNum());
+                    if (confirmation != null) {
+                        //Create confirmation for the Operation if operation is updated as completed
+                        confirmation.setConfText(ZConfigManager.CANCELLED_FINAL_CNF_TEXT);
+                        confirmation.setMode(ZAppSettings.EntityMode.Update);
+                        result = confirmation.SaveToStore(autoFlush);
+                    }
+                } else {
+                    int intCount=0;
+                    confirmation = new WOConfirmation();
+                    try {
+                        result = confirmation.getConfirmations(ZAppSettings.FetchLevel.Count, getWorkOrderNum(), getOperationNum(), getConfNo());
+                        if (!result.isError()) {
+                            intCount = (int) result.Content();
+                        }
+                    } catch (Exception e) {
+                        DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+                    }
+                    confirmation.setWorkOrderNum(getWorkOrderNum());
+                    confirmation.setOperationNum(getOperationNum());
+                    confirmation.setConfNo(getConfNo());
+                    confirmation.setConfCounter(String.format("%08d", Integer.valueOf(intCount + 1)));
+                    confirmation.setActWork(new BigDecimal(0));
+                    confirmation.setUnWork("H");
+                    confirmation.setClearRes(false);
+                    confirmation.setPostgDate(ZCommon.getDeviceDateTime());
+                    confirmation.setPlant(getPlant());
+                    confirmation.setWorkCntr(getWorkCenter());
+                    confirmation.setSubOper(getSubOperation());
+                    String personnelNum = getPersonnelNo();
+                    try {
+                        if (personnelNum == null || personnelNum.isEmpty() || Integer.parseInt(personnelNum) == 0)
+                            personnelNum = UserTable.getUserPersonnelNumber();
+                    } catch (Exception e) {
+                        DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+                    }
+                    confirmation.setPersNo(personnelNum);
+                    confirmation.setExCreatedBy(ZAppSettings.strUser);
+                    confirmation.setExCreatedTime(new Time(ZCommon.getDeviceTime().getTime()));
+                    confirmation.setExecStartDate(ZCommon.getDeviceDateTime());
+                    confirmation.setExecStartTime(new Time(ZCommon.getDeviceTime().getTime()));
+                    confirmation.setExecFinDate(ZCommon.getDeviceDateTime());
+                    confirmation.setExecFinTime(new Time(ZCommon.getDeviceTime().getTime()));
+                    confirmation.setFinConf("");
+                    confirmation.setComplete("");
+                    confirmation.setConfText(ZConfigManager.REVERT_FINAL_CNF_TEXT);
+                    confirmation.setMode(ZAppSettings.EntityMode.Create);
+                    result = confirmation.SaveToStore(autoFlush);
+                }
+            }
+
+            /*if (!result.isError()) {
                 if (confirmation != null) {
                     confirmation.setConfText("Cancelled confirmation");
                     confirmation.setMode(ZAppSettings.EntityMode.Update);
                     result = confirmation.SaveToStore(autoFlush);
                 }
-            }
+            }*/
 
         } catch (Exception e) {
             DliteLogger.WriteLog(Operation.class, ZAppSettings.LogLevel.Error, e.getMessage());

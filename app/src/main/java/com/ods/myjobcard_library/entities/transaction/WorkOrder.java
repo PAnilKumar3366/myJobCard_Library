@@ -2741,7 +2741,7 @@ public class WorkOrder extends ZBaseEntity {
                         ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, getWorkOrderNum());
                         ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                         for (Operation operation : totalOperations) {
-                            predefinedFormlist = FormAssignmentSetModel.getFormAssignmentData_TaskListType(operation.getOrderType(), operation.getControlKey(), operation.getTaskListType(), operation.getGroup(), operation.getGroupCounter(), operation.getInternalCounter());
+                            predefinedFormlist = FormAssignmentSetModel.getFormAssignmentData_TaskListType(operation.getTaskListType(), operation.getGroup(), operation.getGroupCounter(), operation.getInternalCounter());
                         }
                     /*} else {
                         predefinedFormlist = FormAssignmentSetModel.getFormAssignmentData_TaskListType(workOrder.getCurrentOperation().getOrderType(), workOrder.getCurrentOperation().getControlKey(), workOrder.getCurrentOperation().getTaskListType(), workOrder.getCurrentOperation().getGroup(), workOrder.getCurrentOperation().getGroupCounter(), workOrder.getCurrentOperation().getInternalCounter());
