@@ -88,20 +88,22 @@ public class UnAssignedOperationsHelper {
      * @param oprNum   UnAssginedOperationNumber
      * @return Single UnAssignedOperation Number
      */
-    public ZODataEntity fetchSingleUnAssignedOpr(String orderNum, String oprNum) {
-        return getSingleUnAssignedOpr(orderNum, oprNum);
+    public ZODataEntity fetchSingleUnAssignedOpr(String orderNum, String oprNum, String subOprNum) {
+        return getSingleUnAssignedOpr(orderNum, oprNum, subOprNum);
     }
 
     /**
-     * @param orderNum WorkOrder number
-     * @param oprNum   UnAssginedOperationNumber
+     * @param orderNum  WorkOrder number
+     * @param oprNum    UnAssginedOperationNumber
+     * @param subOprNum UnAssignedSubOpr
      * @return Single UnAssignedOperation Number
      */
-    private ZODataEntity getSingleUnAssignedOpr(String orderNum, String oprNum) {
+    private ZODataEntity getSingleUnAssignedOpr(String orderNum, String oprNum, String subOprNum) {
         ZODataEntity zoDataEntities = null;
         ResponseObject result = new ResponseObject(ConfigManager.Status.Success);
-        String resPath = ZCollections.UNASSIGNED_OPR_ENTITY_SET + "?$filter=WorkOrderNum eq '" + orderNum + "' and OperationNum eq '" + oprNum + "' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true" +
-                "&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo";
+        String resPath = ZCollections.UNASSIGNED_OPR_ENTITY_SET + "?$filter=(WorkOrderNum eq '" + orderNum + "' and OperationNum eq '" + oprNum + "' and SubOperation eq '" + subOprNum + "')";
+        /*String resPath = ZCollections.UNASSIGNED_OPR_ENTITY_SET + "?$filter=WorkOrderNum eq '" + orderNum + "' and OperationNum eq '" + oprNum + "' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true" +
+                "&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo";*/
         result = DataHelper.getInstance().getEntities(ZCollections.UNASSIGNED_OPR_ENTITY_SET, resPath);
         try {
             if (result != null) {

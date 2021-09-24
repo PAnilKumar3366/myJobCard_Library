@@ -143,10 +143,10 @@ public class OperationViewModel extends BaseViewModel {
      * @param OrderNum
      * @param OprNum
      */
-    public void setCurrentUnAssignedOpr(String OrderNum, String OprNum) {
+    public void setCurrentUnAssignedOpr(String OrderNum, String OprNum, String subOprNum) {
         if (unAssignedOperationsHelper == null)
             unAssignedOperationsHelper = new UnAssignedOperationsHelper();
-        UnAssignedOperation unAssignedOperation = onFetchSinlgeUnAssignedOpr(unAssignedOperationsHelper.fetchSingleUnAssignedOpr(OrderNum, OprNum));
+        UnAssignedOperation unAssignedOperation = onFetchSinlgeUnAssignedOpr(unAssignedOperationsHelper.fetchSingleUnAssignedOpr(OrderNum, OprNum, subOprNum));
         selectedUnOpr.setValue(unAssignedOperation);
     }
 
