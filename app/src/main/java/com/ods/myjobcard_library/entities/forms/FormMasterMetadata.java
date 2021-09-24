@@ -5,8 +5,6 @@ import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.sap.smp.client.odata.ODataEntity;
 
-import java.util.Collection;
-
 /**
  * This Model class reading the data from Service and contains the Actual data
  */
@@ -19,6 +17,9 @@ public class FormMasterMetadata extends ZBaseEntity {
     private boolean Active;
     private String CreatedBy;
     private String FormCategory;
+    private String FunctionalArea;
+    private String SubArea;
+
 
     public FormMasterMetadata(ODataEntity entity) {
         create(entity);
@@ -92,4 +93,21 @@ public class FormMasterMetadata extends ZBaseEntity {
     public void setFormCategory(String formCategory) {
         FormCategory = formCategory;
     }
+
+    public String getFunctionalArea() {
+        return FunctionalArea;
+    }
+
+    public void setFunctionalArea(String functionalArea) {
+        FunctionalArea = functionalArea;
+    }
+
+    public String getSubArea() {
+        return SubArea;
+    }
+
+    public void setSubArea(String subArea) {
+        SubArea = subArea;
+    }
+
 }
