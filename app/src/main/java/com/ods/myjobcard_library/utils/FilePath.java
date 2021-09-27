@@ -51,9 +51,14 @@ public class FilePath {
                 else if (isDownloadsDocument(uri)) {
 
                     final String id = DocumentsContract.getDocumentId(uri);
-                    final Uri contentUri = ContentUris.withAppendedId(
-                            Uri.parse("content://downloads/public_downloads"),
-                            Long.valueOf(id));
+                    final Uri contentUri;
+
+                    if (id.startsWith("raw:")) {
+                        return id.replaceFirst("raw:", "");
+                    }
+                        contentUri = ContentUris.withAppendedId(
+                                Uri.parse("content://downloads/public_downloads"),
+                                Long.valueOf(id));
                     String[] contentUriPrefixesToTry = new String[]{
                             "content://downloads/public_downloads",
                             "content://downloads/my_downloads",
