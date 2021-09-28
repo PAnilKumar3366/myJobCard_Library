@@ -158,7 +158,7 @@ public class FormResponseApprovalStatus extends ZBaseEntity {
         ApproverMasterHelper helper = new ApproverMasterHelper();
         ApproverMasterData approver = helper.fetchApproverName(this.ApproverID);
         if (approver != null) {
-            return approver.getFirstName() + approver.getLastName();
+            return approver.getFirstName() + " " + approver.getLastName();
         }
         return "";
     }
