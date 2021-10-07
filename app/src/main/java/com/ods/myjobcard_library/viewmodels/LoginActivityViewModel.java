@@ -115,7 +115,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         Log.d("LoginVM: ", s + " : " + s1);
         editor = preferences.edit();
         editor.putString(s, s1);
-        editor.commit();
+        editor.apply();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         Log.d("LoginVM: ", s + " : " + aBoolean);
         editor = preferences.edit();
         editor.putBoolean(s, aBoolean);
-        editor.commit();
+        editor.apply();
     }
 
     @Override
@@ -131,7 +131,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
         Log.d("LoginVM: ", s + " : " + aLong);
         editor = preferences.edit();
         editor.putLong(s, aLong);
-        editor.commit();
+        editor.apply();
     }
 
     @Override
@@ -219,6 +219,7 @@ public class LoginActivityViewModel extends BaseViewModel implements RegisterHel
                     ZConfigManager.setAppConfigurations();
                     if(saml2Auth && ZConfigManager.BackEndUser != null && !ZConfigManager.BackEndUser.isEmpty()){
                         ZAppSettings.strUser = ZConfigManager.BackEndUser;
+                        putSharedPreferences(ZCollections.ARG_SAML_USER_ID, ZConfigManager.BackEndUser);
                     }
                 }
             }

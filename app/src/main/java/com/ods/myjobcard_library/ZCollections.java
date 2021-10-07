@@ -450,6 +450,8 @@ public class ZCollections extends Collections {
 	public static final String FORM_IMAGE_ENTITY_SET = "FormImageSet";
 	public static final String FORM_IMAGE_ENTITY_TYPE = getFormsEngineServiceName() + "FormImage";
 
+	public static final String ARG_SAML_USER_ID = "SAML_USER_ID";
+
 	public static String getEditResourcePath(String collection, String key) {
 		return String.format("%s('%s')", collection, key);
 
