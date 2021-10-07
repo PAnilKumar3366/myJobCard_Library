@@ -188,6 +188,10 @@ public class FormsHelper {
                         f1.getMultipleSub(), filledForms, instanceId, f1.isGridTheme());
                 ob.setIsDraft(isDraft);
                 ob.setOprNum(oprNum);
+                ob.setDescription(f2.getDescription());
+                ob.setFunctionalArea(f2.getFunctionalArea());
+                ob.setFormCategory(f2.getCategory());
+                ob.setSubArea(f2.getSubArea());
                 formItemsList.add(ob);
                 break;
             }
@@ -212,6 +216,10 @@ public class FormsHelper {
                             f1.getVersion(), f1.getMandatory(), f1.getOccurInt(),
                             f1.getMultipleSub(), 0, "", f1.isGridTheme());
                     ob.setIsDraft("");
+                    ob.setDescription(f2.getDescription());
+                    ob.setFunctionalArea(f2.getFunctionalArea());
+                    ob.setFormCategory(f2.getCategory());
+                    ob.setSubArea(f2.getSubArea());
                     generalFormItemsList.add(ob);
                     break;
                 }
@@ -258,6 +266,10 @@ public class FormsHelper {
                                 f1.getMultipleSub(), filledForms, instanceId, f1.isGridTheme());
                         ob.setIsDraft(isDraft);
                         ob.setOprNum(opr_Num);
+                        ob.setDescription(formSetModel.getDescription());
+                        ob.setFunctionalArea(formSetModel.getFunctionalArea());
+                        ob.setFormCategory(formSetModel.getCategory());
+                        ob.setSubArea(formSetModel.getSubArea());
 
                         formFilledItemsList.add(ob);
 

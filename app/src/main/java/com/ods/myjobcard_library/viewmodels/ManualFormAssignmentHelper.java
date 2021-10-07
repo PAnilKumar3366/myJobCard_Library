@@ -103,6 +103,10 @@ public class ManualFormAssignmentHelper
                         f1.getVersion(), f1.getMandatory(), f1.getOccurInt(),
                         f1.getMultipleSub(), filledForms, instanceId, f1.isGridTheme(),f1.getOprNum());
                 ob.setIsDraft(isDraft);
+                ob.setDescription(f2.getDescription());
+                ob.setFunctionalArea(f2.getFunctionalArea());
+                ob.setFormCategory(f2.getCategory());
+                ob.setSubArea(f2.getSubArea());
                 formItemsList.add(ob);
                 break;
             }

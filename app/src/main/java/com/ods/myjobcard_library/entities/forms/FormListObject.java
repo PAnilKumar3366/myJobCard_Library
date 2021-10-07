@@ -27,6 +27,10 @@ public class FormListObject {
     private boolean isGridTheme;
     private String oprNum;
     private int approversCount;
+    private String Description;
+    private String FormCategory;
+    private String FunctionalArea;
+    private String SubArea;
 
     public int getApproversCount() {
         return approversCount;
@@ -116,5 +120,37 @@ public class FormListObject {
 
     public void setOprNum(String oprNum) {
         this.oprNum = oprNum;
+    }
+
+    public String getDescription() {
+        return Description;
+    }
+
+    public void setDescription(String description) {
+        Description = description;
+    }
+
+    public String getFormCategory() {
+        return FormCategory;
+    }
+
+    public void setFormCategory(String formCategory) {
+        FormCategory = formCategory;
+    }
+
+    public String getFunctionalArea() {
+        return FunctionalArea;
+    }
+
+    public void setFunctionalArea(String functionalArea) {
+        FunctionalArea = functionalArea;
+    }
+
+    public String getSubArea() {
+        return SubArea;
+    }
+
+    public void setSubArea(String subArea) {
+        SubArea = subArea;
     }
 }
