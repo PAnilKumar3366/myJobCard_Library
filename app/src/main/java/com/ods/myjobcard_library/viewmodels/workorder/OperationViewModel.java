@@ -29,7 +29,7 @@ public class OperationViewModel extends BaseViewModel {
     protected Boolean fetchUnAssingedOpr = false;
     private MutableLiveData<ArrayList<UnAssignedOperation>> UnAssignedOperationList = new MutableLiveData<>();
     private UnAssignedOperationsHelper unAssignedOperationsHelper;
-    private MutableLiveData<UnAssignedOperation> selectedUnOpr = new MutableLiveData<>();
+    protected MutableLiveData<UnAssignedOperation> selectedUnOpr = new MutableLiveData<>();
 
     public OperationViewModel(@NonNull Application application) {
         super(application);

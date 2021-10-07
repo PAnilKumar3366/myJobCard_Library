@@ -40,6 +40,19 @@ public class UnAssignedOperation extends Operation {
 
     }
 
+    public UnAssignedOperation(ZODataEntity entity, ZAppSettings.FetchLevel fetchLevel, boolean fetchAddress) {
+        try {
+            partnerAddresses = new ArrayList<PartnerAddress>();
+            validStatuses = new ArrayList<>();
+            initializeEntityProperties();
+            create(entity, fetchLevel);
+        } catch (Exception e) {
+            DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+
+        }
+
+    }
+
     private void initializeEntityProperties() {
         this.setEntitySetName(ZCollections.UNASSIGNED_OPR_ENTITY_SET);
         this.setEntityType(ZCollections.UNASSIGNED_OPR_ENTITY_TYPE);
