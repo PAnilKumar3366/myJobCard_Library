@@ -41,6 +41,9 @@ public class FormListObject {
     }
 
 
+    public FormListObject(){
+
+    }
     public FormListObject(String formname, String formid, String version, String mandatory,
                           int occur, String multipleSub, int filledForm, String instanceId, boolean isGridTheme) {
 
