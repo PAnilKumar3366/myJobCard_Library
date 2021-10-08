@@ -183,7 +183,9 @@ public class ZAppSettings extends AppSettings {
         HOLD("HOLD", 0),
         REJECT("REJECT", 1),
         TRANSFER("TRANSFER", 2),
-        NONE("NONE", 3),
+        MRJC("MRJC", 3),
+        ORJC("ORJC", 4),
+        NONE("NONE", 5),
         ;
 
         private String typeDesc;
