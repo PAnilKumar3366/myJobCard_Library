@@ -483,6 +483,7 @@ public class ZCollections extends Collections {
 		ArrayList<String> options = new ArrayList<>();
 		options.add(SEARCH_FORM_NAME);
 		options.add(SEARCH_FORM_CATEGORY);
+		options.add(SEARCH_OPTION_DESCRIPTION);
 		return options;
 	}
 }
