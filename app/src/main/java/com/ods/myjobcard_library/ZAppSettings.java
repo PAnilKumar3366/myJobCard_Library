@@ -183,7 +183,6 @@ public class ZAppSettings extends AppSettings {
         HOLD("HOLD", 0),
         REJECT("REJECT", 1),
         TRANSFER("TRANSFER", 2),
-        NOTIFICATION_REJECT("NOTIFICATION_REJECT", 3),
         NONE("NONE", 5),
         ;
 
