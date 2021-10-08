@@ -12,6 +12,7 @@ import com.ods.myjobcard_library.entities.transaction.UnAssignedOperation;
 import com.ods.myjobcard_library.entities.transaction.WorkOrder;
 import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.myjobcard_library.viewmodels.UnAssignedOperationsHelper;
+import com.ods.myjobcard_library.viewmodels.WorkOrderHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -51,15 +52,25 @@ public class OperationViewModel extends BaseViewModel {
         return currentOpetationWorkOrder;
     }
 
-    public void setCurrentOpetationWorkOrder(String workOrdernum) {
-        ResponseObject result = WorkOrder.getWorkOrders(ZAppSettings.FetchLevel.Single, workOrdernum, null);
+    public void setCurrentOpetationWorkOrder(String orderNum) {
+        WorkOrder currOrder = null;
+        WorkOrderHelper workOrderHelper = new WorkOrderHelper();
+        try {
+            ZODataEntity zoDataEntity = workOrderHelper.fetchSingleWorkOrder(orderNum);
+            currOrder = onFetchSingleWoEntity(zoDataEntity);
+            WorkOrder.setCurrWo(currOrder);
+            currentOpetationWorkOrder.setValue(currOrder);
+        } catch (Exception e) {
+            DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+       /* ResponseObject result = WorkOrder.getWorkOrders(ZAppSettings.FetchLevel.Single, workOrdernum, null);
         if (result != null && !result.isError()) {
             ArrayList<WorkOrder> orders = (ArrayList<WorkOrder>) result.Content();
             if (orders != null && orders.size() > 0) {
                 currentOpetationWorkOrder.setValue(orders.get(0));
                 WorkOrder.setCurrWo(orders.get(0));
             }
-        }
+        }*/
     }
 
     public MutableLiveData<ArrayList<Operation>> getOperationlistLiveData() {
