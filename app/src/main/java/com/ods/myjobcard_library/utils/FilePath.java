@@ -17,6 +17,8 @@ import android.provider.MediaStore;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.ods_sdk.utils.DliteLogger;
 
+import java.io.File;
+
 @TargetApi(19)
 public class FilePath {
 
@@ -49,8 +51,21 @@ public class FilePath {
                 }
                 // DownloadsProvider
                 else if (isDownloadsDocument(uri)) {
+                    String fileName = getFilePath(context, uri);
+                    if (fileName != null) {
+                        return Environment.getExternalStorageDirectory().toString() + "/Download/" + fileName;
+                    }
 
-                    final String id = DocumentsContract.getDocumentId(uri);
+                    String id = DocumentsContract.getDocumentId(uri);
+                    if (id.startsWith("raw:")) {
+                        id = id.replaceFirst("raw:", "");
+                        File file = new File(id);
+                        if (file.exists())
+                            return id;
+                    }
+                    final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                    return getDataColumn(context, contentUri, null, null);
+                    /*final String id = DocumentsContract.getDocumentId(uri);
                     final Uri contentUri;
 
                     if (id.startsWith("raw:")) {
@@ -64,19 +79,18 @@ public class FilePath {
                             "content://downloads/my_downloads",
                             "content://downloads/all_downloads"
                     };
-
-             /*   for (String contentUriPrefix : contentUriPrefixesToTry) {
-                    Uri contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), Long.valueOf(id));
+                    for (String contentUriPrefix : contentUriPrefixesToTry) {
+                    Uri contentUri1 = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), Long.valueOf(id));
                     try {
-                        String path = getDataColumn(context, contentUri, null, null);
+                        String path = getDataColumn(context, contentUri1, null, null);
                         if (path != null) {
                             return path;
                         }
                     } catch (Exception e) {
                         DliteLogger.WriteLog(FilePath.class.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
                     }
-                }*/
-                    return getDataColumn(context, contentUri, null, null);
+                }
+                    return getDataColumn(context, contentUri, null, null);*/
                 }
                 // MediaProvider
                 else if (isMediaDocument(uri)) {
@@ -91,6 +105,13 @@ public class FilePath {
                         contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                     } else if ("audio".equals(type)) {
                         contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                    } else if ("document".equalsIgnoreCase(type)) {
+                        contentUri = MediaStore.Files.getContentUri("external");
+                        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            contentUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI;
+                        }
+                        return getPDFPath(uri,context);*/
+                        //contentUri=uri;
                     }
 
                     final String selection = "_id=?";
@@ -119,6 +140,29 @@ public class FilePath {
         return null;
     }
 
+    public static String getFilePath(Context context, Uri uri) {
+
+        Cursor cursor = null;
+        final String[] projection = {
+                MediaStore.MediaColumns.DISPLAY_NAME
+        };
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, null, null,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME);
+                return cursor.getString(index);
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(FilePath.class.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+
+        return null;
+    }
     /**
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.
@@ -193,7 +237,7 @@ public class FilePath {
         }
         return false;
     }
-
+    /**/
     /**
      * @param uri The Uri to check.
      * @return Whether the Uri authority is Google Photos.
