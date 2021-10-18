@@ -210,6 +210,7 @@ public class ZConfigManager extends ConfigManager {
     public static String POSTING_DURATION_UNIT="HR";
 
     public static String BackEndUser="";
+    public static String USER_PARAM_VALUE_DELIMINATOR=",";
 
     //flag to indicate whether to show the default timesheet entry of logged in user in resources list or not
     public static boolean SHOW_DEFAULT_TIMESHEET_ENTRY_IN_LIST = true;

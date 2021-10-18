@@ -106,7 +106,7 @@ public class ResponseMasterModel extends ZBaseEntity {
                 resourcePath += "?$filter=(InstanceID eq '" + instanceID + "')";
 
             if (!isResponseData)
-                resourcePath += "&$select=InstanceID,WoNum,OperationNum,FormID,Version,CreatedOn,IsDraft,Counter,ModifiedBy";
+                resourcePath += "&$select=InstanceID,WoNum,OperationNum,FormID,Version,CreatedOn,IsDraft,Counter,ModifiedBy,Remarks";
 
             result = DataHelper.getInstance().getEntities(entitySetName, resourcePath);
 
@@ -144,7 +144,7 @@ public class ResponseMasterModel extends ZBaseEntity {
                 resourcePath += "?$filter=(tolower(FormID) eq '" + formID.toLowerCase() + "' and Version eq '" + version + "' and NonObjType eq 'X')";
 
             if (!isResponseData)
-                resourcePath += "&$select=InstanceID,FormID,Version,CreatedOn,IsDraft,Counter";
+                resourcePath += "&$select=InstanceID,WoNum,OperationNum,FormID,Version,CreatedOn,IsDraft,Counter,ModifiedBy,Remarks";
 
             result = DataHelper.getInstance().getEntities(entitySetName, resourcePath);
             if (!result.isError()) {

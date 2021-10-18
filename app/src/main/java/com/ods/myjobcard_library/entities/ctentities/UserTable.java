@@ -4,7 +4,9 @@ package com.ods.myjobcard_library.entities.ctentities;
 import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
+import com.ods.myjobcard_library.entities.User;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -57,11 +59,12 @@ public class UserTable extends ZBaseEntity {
         try {
             dataHelper = DataHelper.getInstance();
             result = dataHelper.getEntities(ZCollections.USER_TABLE_COLLECTION, ZCollections.USER_TABLE_COLLECTION);
-            result = FromEntity((List<ODataEntity>) result.Content());
+            result = FromEntity(ZBaseEntity.setODataEntityList(result.Content()));
             //Set the User Details
             if (!result.isError()) {
                 UserInRole = ZConfigManager.USER_ROLE_TECHNICIAN;
                 ArrayList<UserTable> details = (ArrayList<UserTable>) result.Content();
+                resetUserDetails();
                 for (UserTable ut : details) {
                     if (ut.SettingName.equalsIgnoreCase("LASTNAME")) {
                         UserLastName = ut.SettingValue;
@@ -80,13 +83,13 @@ public class UserTable extends ZBaseEntity {
                         UserCntrlArea = ut.SettingValue;
                     }
                     if (ut.SettingName.equalsIgnoreCase("IWK")) {
-                        UserPlant = ut.SettingValue;
+                        UserPlant = UserPlant == null || UserPlant.isEmpty() ? ut.SettingValue : UserPlant;
                     }
                     if (ut.SettingName.equalsIgnoreCase("VAP")) {
-                        UserWorkCenter = ut.SettingValue;
+                        UserWorkCenter = UserWorkCenter == null || UserWorkCenter.isEmpty() ? ut.SettingValue : UserWorkCenter;
                     }
                     if (ut.SettingName.equalsIgnoreCase("AGR")) {
-                        UserOprWorkCenter = ut.SettingValue;
+                        UserOprWorkCenter = UserOprWorkCenter == null || UserOprWorkCenter.isEmpty() ? ut.SettingValue : UserOprWorkCenter;
                     }
                     if (ut.SettingName.equalsIgnoreCase("BUS_AREA")) {
                         UserBusArea = ut.SettingValue;
@@ -212,19 +215,55 @@ public class UserTable extends ZBaseEntity {
     public static String getUserPlant() {
         if (!isInitialized)
             getUserDetails();
+        /*if(UserPlant != null && UserPlant.contains(ZConfigManager.USER_PARAM_VALUE_DELIMINATOR)) {
+            try {
+                UserPlant = UserPlant.split(ZConfigManager.USER_PARAM_VALUE_DELIMINATOR)[0];
+            } catch (ArrayIndexOutOfBoundsException e){
+                DliteLogger.WriteLog(UserTable.class, AppSettings.LogLevel.Error, "Error while reading user's plant!");
+            }
+        }*/
         return UserPlant;
     }
 
     public static String getUserWorkCenter() {
         if (!isInitialized)
             getUserDetails();
+        UserWorkCenter = parseUserWorkCenter(UserWorkCenter);
         return UserWorkCenter;
     }
 
     public static String getUserOprWorkCenter() {
         if (!isInitialized)
             getUserDetails();
+        UserOprWorkCenter = parseUserWorkCenter(UserOprWorkCenter);
         return UserOprWorkCenter;
+    }
+
+    private static String parseUserWorkCenter(String valueFromStore){
+        String singleValue = valueFromStore;
+        /*if(valueFromStore != null && valueFromStore.contains(ZConfigManager.USER_PARAM_VALUE_DELIMINATOR)){
+            try {
+                singleValue = valueFromStore.split(ZConfigManager.USER_PARAM_VALUE_DELIMINATOR)[0];
+            } catch (ArrayIndexOutOfBoundsException e){
+                DliteLogger.WriteLog(UserTable.class, AppSettings.LogLevel.Error, "Error while reading user's workcenter!");
+            }
+        } else
+            singleValue = valueFromStore;*/
+        if(singleValue != null && singleValue.contains("*")){
+            try {
+                singleValue = singleValue.split("\\*")[0];
+                String resPath = ZCollections.WORK_CENTER_COLLECTION + "?$filter=(startswith(WorkCenter,'" + singleValue + "') eq true)&$top=1&$select=WorkCenter";
+                ResponseObject response = DataHelper.getInstance().getEntities(ZCollections.WORK_CENTER_COLLECTION, resPath);
+                if (response != null && !response.isError()) {
+                    List<ODataEntity> entities = ZBaseEntity.setODataEntityList(response.Content());
+                    if (entities.size() > 0)
+                        singleValue = entities.get(0).getProperties().get("WorkCenter").getValue().toString();
+                }
+            } catch (ArrayIndexOutOfBoundsException e){
+                DliteLogger.WriteLog(UserTable.class, AppSettings.LogLevel.Error, "Error while reading user's workcenter!");
+            }
+        }
+        return singleValue;
     }
 
     public static String getUserDashboard() {
