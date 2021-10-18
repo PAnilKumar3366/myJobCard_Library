@@ -2234,19 +2234,19 @@ public class WorkOrder extends ZBaseEntity {
                 if (ZConfigManager.MANDATORY_FORMS_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.WORKORDERFORM.getFeatureValue())) {
                     try {
                         String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
-                        HashMap<String,Integer> apprRejPredefinedFormCount=new HashMap<>();
+                        HashMap<String,Integer> apprRejCheckSheetCount=new HashMap<>();
                         if(ZCommon.isPredefinedFormVisible(formType)) {
-                            apprRejPredefinedFormCount=getTotalNumOfPredefinedApprovedandRejectedForms(formType);
+                            apprRejCheckSheetCount=getTotalNumOfPredefinedApprovedandRejectedForms(formType);
                             if(getTotalNumUnSubmittedMandatoryForms() > 0)
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
-                            else if(getPredefinedFormApproversCount()>0&&(apprRejPredefinedFormCount.get("APPROVE")==0||apprRejPredefinedFormCount.get("REJECT")>0))
+                            else if(getPredefinedFormApproversCount()>0&&(apprRejCheckSheetCount.get("APPROVE")==0||apprRejCheckSheetCount.get("REJECT")>0))
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
                         }
                         if(ZCommon.isManualAssignedFormsVisible(formType)) {
-                            apprRejPredefinedFormCount=getTotalNumOfManualApprovedandRejectedForms(formType);
+                            apprRejCheckSheetCount=getTotalNumOfManualApprovedandRejectedForms(formType);
                             if(getTotalNumUnSubmittedManualMandatoryForms() > 0)
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
-                            else if(getManualFormApproversCount()>0&&(apprRejPredefinedFormCount.get("APPROVE")==0||apprRejPredefinedFormCount.get("REJECT")>0))
+                            else if(getManualFormApproversCount()>0&&(apprRejCheckSheetCount.get("APPROVE")==0||apprRejCheckSheetCount.get("REJECT")>0))
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
                         }
                     } catch (Exception e) {
@@ -2605,7 +2605,8 @@ public class WorkOrder extends ZBaseEntity {
             //String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
             if(ZCommon.isPredefinedFormVisible(formType))
             {
-                list=fetchPredefinedForms(formType);
+                list=(ArrayList<FormAssignmentSetModel>)getFormEntities(true).Content();
+                //list=fetchPredefinedForms(formType);
                 ResponseObject response = new ResponseObject(ConfigManager.Status.Error);
                 String resourcePath = null;
                 ResponseMasterModel responseMasterModel=null;
@@ -2657,7 +2658,8 @@ public class WorkOrder extends ZBaseEntity {
             approverejectforms = new HashMap<>();
             ArrayList<ManualFormAssignmentSetModel> list;
             if(ZCommon.isManualAssignedFormsVisible(formType)){
-                list=fetchManulaForms(formType);
+                list=(ArrayList<ManualFormAssignmentSetModel>)getManualFormEntities(true).Content();
+                //list=fetchManulaForms(formType);
                 ResponseObject response = new ResponseObject(ConfigManager.Status.Error);
                 String resourcePath = null;
                 ResponseMasterModel responseMasterModel=null;
