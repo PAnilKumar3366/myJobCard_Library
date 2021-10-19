@@ -2890,22 +2890,20 @@ public class WorkOrder extends ZBaseEntity {
                     break;
                 case "3":
                     equipCat = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? WorkOrder.getCurrWo().getCurrentOperation().getEquipCategory().isEmpty() ? WorkOrder.getCurrWo().getEquipCategory() : WorkOrder.getCurrWo().getCurrentOperation().getEquipCategory() : WorkOrder.getCurrWo().getEquipCategory();
-                    strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (EquipCategory eq '" + equipCat + "' and OrderType eq '' and ControlKey eq '' and TaskListType eq '' and Group eq '' and GroupCounter eq '' and InternalCounter eq '' and tolower(Mandatory)"+strMandatoryChk+")";
+                    strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (EquipCategory eq '" + equipCat + "'and tolower(Mandatory)"+strMandatoryChk+")";
                     break;
                 case "4":
                     funcLocCat = ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED ? WorkOrder.getCurrWo().getCurrentOperation().getFuncLocCategory().isEmpty() ? WorkOrder.getCurrWo().getFuncLocCategory() : WorkOrder.getCurrWo().getCurrentOperation().getFuncLocCategory() : WorkOrder.getCurrWo().getFuncLocCategory();
-                    strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (FuncLocCategory eq '" + funcLocCat + "' and OrderType eq '' and ControlKey eq '' and TaskListType eq '' and Group eq '' and GroupCounter eq '' and InternalCounter eq '' and tolower(Mandatory)"+strMandatoryChk+")";
+                    strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (FuncLocCategory eq '" + funcLocCat + "' and tolower(Mandatory)"+strMandatoryChk+")";
                     break;
                 case "5":
                 case "10":
                     if(ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED){
-                        orderType = WorkOrder.getCurrWo().getCurrentOperation().getOrderType();
-                        controlKey = WorkOrder.getCurrWo().getCurrentOperation().getControlKey();
                         taskListType = WorkOrder.getCurrWo().getCurrentOperation().getTaskListType();
                         group = WorkOrder.getCurrWo().getCurrentOperation().getGroup();
                         groupCounter = WorkOrder.getCurrWo().getCurrentOperation().getGroupCounter();
                         internalCounter = WorkOrder.getCurrWo().getCurrentOperation().getInternalCounter();
-                        strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (OrderType eq '" + orderType + "' and ControlKey eq '" + controlKey + "' and TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "' and tolower(Mandatory)"+strMandatoryChk+")";
+                        strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "' and tolower(Mandatory)"+strMandatoryChk+")";
                         break;
                     }
                     else {
@@ -2913,13 +2911,11 @@ public class WorkOrder extends ZBaseEntity {
                         ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                         ArrayList<FormAssignmentSetModel> contentList = new ArrayList<FormAssignmentSetModel>();
                         for (Operation operation : totalOperations) {
-                            orderType = operation.getOrderType();
-                            controlKey = operation.getControlKey();
                             taskListType = operation.getTaskListType();
                             group = operation.getGroup();
                             groupCounter = operation.getGroupCounter();
                             internalCounter = operation.getInternalCounter();
-                            strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (OrderType eq '" + orderType + "' and ControlKey eq '" + controlKey + "' and TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "' and tolower(Mandatory)" + strMandatoryChk + ")";
+                            strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "?$filter= (TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "' and tolower(Mandatory)" + strMandatoryChk + ")";
                             responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
                             if (!responseObject.isError()) {
                                 rawData = responseObject.Content();
