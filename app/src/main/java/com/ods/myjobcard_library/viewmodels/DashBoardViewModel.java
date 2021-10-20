@@ -67,6 +67,7 @@ public class DashBoardViewModel extends BaseViewModel {
     public ArrayList<SpinnerItem> woInspLotSpinnerItems = new ArrayList<>();
     public ArrayList<SpinnerItem> woTechIdentifNoItems = new ArrayList<>();
     public ArrayList<SpinnerItem> noTechIdentifNoItems = new ArrayList<>();
+    public ArrayList<SpinnerItem> checkSheetSpinnerItems = new ArrayList<>();
     private boolean isWorkOrder = true;
     public String woSelectedCategory1 = "";
     public String woSelectedCategory2 = "";
@@ -219,6 +220,7 @@ public class DashBoardViewModel extends BaseViewModel {
             filterCategories.add(new SpinnerItem("FuncLocation", "Functional Location"));
             filterCategories.add(new SpinnerItem("Location", "Location"));
             filterCategories.add(new SpinnerItem("Date", "Date"));
+            filterCategories.add(new SpinnerItem("CheckSheetStatus","CheckSheet Status"));
             //filterCategories.add(new SpinnerItem("EquipNum", "TechIdentNo"));
             //filterCategories.add(new SpinnerItem("InspectionLot","InspectionLot"));
             ArrayList<SpinnerItem> woPriorities = getPriorities();
@@ -808,6 +810,14 @@ public class DashBoardViewModel extends BaseViewModel {
         return woInspLotSpinnerItems;
     }
 
+    public ArrayList<SpinnerItem> getCheckSheetStatusSpinnerItems() {
+        if(checkSheetSpinnerItems.size() == 0) {
+            checkSheetSpinnerItems.add(new SpinnerItem("0", "Approved"));
+            checkSheetSpinnerItems.add(new SpinnerItem("1", "Rejected"));
+            checkSheetSpinnerItems.add(new SpinnerItem("2", "Yet to be reviewed"));
+        }
+        return checkSheetSpinnerItems;
+    }
     /**
      * @return ArrayList of SpinnerItems for all distinct TechIdentification number for WorkOrder and  Notifications based on selected filter
      */
