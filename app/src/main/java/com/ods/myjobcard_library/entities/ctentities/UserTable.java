@@ -58,7 +58,7 @@ public class UserTable extends ZBaseEntity {
         ResponseObject result = null;
         try {
             dataHelper = DataHelper.getInstance();
-            result = dataHelper.getEntities(ZCollections.USER_TABLE_COLLECTION, ZCollections.USER_TABLE_COLLECTION);
+            result = dataHelper.getEntities(ZCollections.USER_TABLE_COLLECTION, ZCollections.USER_TABLE_COLLECTION+"?$orderby=RecordId asc");
             result = FromEntity(ZBaseEntity.setODataEntityList(result.Content()));
             //Set the User Details
             if (!result.isError()) {

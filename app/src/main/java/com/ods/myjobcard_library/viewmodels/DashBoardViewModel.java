@@ -35,8 +35,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import lecho.lib.hellocharts.model.SliceValue;
 
@@ -188,6 +190,7 @@ public class DashBoardViewModel extends BaseViewModel {
         this.woSysStatusSpinnerItems = new ArrayList<>();
         this.woTechIdentifNoItems=new ArrayList<>();
         this.noTechIdentifNoItems=new ArrayList<>();
+        this.checkSheetSpinnerItems=new ArrayList<>();
     }
 
     public HashMap<Integer, String> getSupOrderMap() {
@@ -417,7 +420,12 @@ public class DashBoardViewModel extends BaseViewModel {
                         filterQuery1 = "?$filter=" + item1.getId() + " eq '" + UserTable.getUserPersonnelNumber() + "'";
                     if (item1.getId().equalsIgnoreCase("MainWorkCtr"))
                         filterQuery1 = "?$filter=" + item1.getId() + " eq '" + UserTable.getUserWorkCenter() + "'";
-                } else
+                } else if(woSelectedCategory1.equalsIgnoreCase("CheckSheetStatus")){
+                    filterQuery1="";
+                    orderCount=getChecksheetStatusOrderCount(item1.getId());
+
+                }
+                else
                     filterQuery1 = "?$filter=" + woSelectedCategory1 + " eq '" + item1.getId() + "'";
                 if (woSelectedValues2.size() > 0) {
                     for (SpinnerItem item2 : woSelectedValues2) {
@@ -574,9 +582,54 @@ public class DashBoardViewModel extends BaseViewModel {
             filterQuery = "(" + ZCollections.WO_OPR_NAV_PROPERTY + "/all(d:indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_ENABLE_STATUS.toLowerCase() +"') ne -1 and indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_RESULT_RECORDED_STATUS.toLowerCase() +"') ne -1))";
         else if("1".equals(selectedValue)) // inspection pending
             filterQuery = "(" + ZCollections.WO_OPR_NAV_PROPERTY + "/all(d:indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_ENABLE_STATUS.toLowerCase() +"') ne -1 and indexof(tolower(d/SystemStatus),'"+ ZConfigManager.OPR_INSP_RESULT_RECORDED_STATUS.toLowerCase() +"') eq -1))";
-       return filterQuery;
+        return filterQuery;
     }
 
+    /** getting orderCount for selected checksheet status
+     * @return
+     */
+    private int getChecksheetStatusOrderCount(String selectedValue){
+        int orderCnt=0;
+        ResponseObject responseObject=null;
+        ArrayList<String> woNumbersList=new ArrayList<>();
+        String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
+        HashMap<String,Integer> apprRejCheckSheetCount=new HashMap<>();
+        ArrayList<WorkOrder> workOrders=new ArrayList<>();
+        responseObject = WorkOrder.getWorkOrders(ZAppSettings.FetchLevel.List, null, null);
+        workOrders = (ArrayList<WorkOrder>) responseObject.Content();
+        if(ZCommon.isPredefinedFormVisible(formType)) {
+            for(WorkOrder workOrder:workOrders){
+                apprRejCheckSheetCount=WorkOrder.getPredefinedApprovedandRejectedFormsCount(formType,workOrder.getWorkOrderNum(),workOrder.getOrderType(),true);
+                if("0".equals(selectedValue))
+                    orderCnt=orderCnt+apprRejCheckSheetCount.get("APPROVE");
+                else if("1".equals(selectedValue))
+                    orderCnt=orderCnt+apprRejCheckSheetCount.get("REJECT");
+                else
+                    orderCnt=orderCnt+apprRejCheckSheetCount.get("YET TO BE REVIEWED");
+                woNumbersList.add(workOrder.getWorkOrderNum());
+            }
+            if(orderCnt>0) {
+                Set<String> woStr = new HashSet<String>(woNumbersList);
+                woNumbersList.addAll(woStr);
+            }
+        }
+        if(ZCommon.isManualAssignedFormsVisible(formType)){
+            for(WorkOrder workOrder:workOrders){
+                apprRejCheckSheetCount=WorkOrder.getManualApprovedandRejectedFormsCount(formType,workOrder.getWorkOrderNum(),true);
+                if("0".equals(selectedValue))
+                    orderCnt=orderCnt+apprRejCheckSheetCount.get("APPROVE");
+                else if("1".equals(selectedValue))
+                    orderCnt=orderCnt+apprRejCheckSheetCount.get("REJECT");
+                else
+                    orderCnt=orderCnt+apprRejCheckSheetCount.get("YET TO BE REVIEWED");
+                if(orderCnt>0) {
+                    Set<String> woStr = new HashSet<String>(woNumbersList);
+                    woNumbersList.addAll(woStr);
+                }
+            }
+        }
+        return orderCnt;
+    }
     private List<SliceValue> getSupervisorsData() {
         pieData = new ArrayList<SliceValue>();
         int supOrderCount;
