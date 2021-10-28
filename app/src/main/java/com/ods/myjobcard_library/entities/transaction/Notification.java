@@ -1770,7 +1770,7 @@ public class Notification extends ZBaseEntity {
             if (orderTypeFeature.getFeature().contains(ZAppSettings.Features.ITEMCAUSE.getFeatureValue()) && getTotalNumItemCauses(isWONotification) == 0) {
                 errorMessages.add("Please provide cause details for the notification");
             }
-            if (orderTypeFeature.getFeature().contains(ZAppSettings.Features.MALFUNCTION_ENDDATE.getFeatureValue())&& (getMalfunctEnd() == null || getMalfunctEndTime() == null)) //getBreakdown().equalsIgnoreCase("x")
+            if (orderTypeFeature.getFeature().contains(ZAppSettings.Features.MALFUNCTION_ENDDATE.getFeatureValue())&&getBreakdown().equalsIgnoreCase("x")&& (getMalfunctEnd() == null || getMalfunctEndTime() == null))
             {
                 errorMessages.add("Please provide the malfunction end date time as the breakdown is notified for the notification");
             }
