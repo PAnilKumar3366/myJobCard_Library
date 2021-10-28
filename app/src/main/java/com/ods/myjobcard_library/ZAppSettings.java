@@ -536,6 +536,7 @@ public class ZAppSettings extends AppSettings {
         NOTIFICATION("NOTIFICATION", "NOTIFICATION"),
         ITEM("ITEM", "ITEM"),
         ITEMCAUSE("ITEMCAUSE", "ITEMCAUSE"),
+        MALFUNCTION_ENDDATE("MALFUNCTION_ENDDATE", "MALFUNCTION_ENDDATE"),
         ;
 
         private String featureName, featureValue;
