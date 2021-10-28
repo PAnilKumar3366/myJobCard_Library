@@ -13,9 +13,13 @@ import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZCommon;
 import com.ods.myjobcard_library.ZConfigManager;
+import com.ods.myjobcard_library.entities.ResponseMasterModel;
+import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.ctentities.SpinnerItem;
 import com.ods.myjobcard_library.entities.ctentities.UserTable;
 import com.ods.myjobcard_library.entities.ctentities.WorkCenter;
+import com.ods.myjobcard_library.entities.forms.FormApproverSetModel;
+import com.ods.myjobcard_library.entities.forms.FormResponseApprovalStatus;
 import com.ods.myjobcard_library.entities.supervisor.SupervisorWorkOrder;
 import com.ods.myjobcard_library.entities.transaction.Notification;
 import com.ods.myjobcard_library.entities.transaction.NotificationItem;
@@ -25,9 +29,11 @@ import com.ods.myjobcard_library.viewmodels.online.OnlineDataList;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.client.odata.v4.EntityValue;
 import com.sap.client.odata.v4.EntityValueList;
+import com.sap.smp.client.odata.ODataEntity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -420,11 +426,8 @@ public class DashBoardViewModel extends BaseViewModel {
                         filterQuery1 = "?$filter=" + item1.getId() + " eq '" + UserTable.getUserPersonnelNumber() + "'";
                     if (item1.getId().equalsIgnoreCase("MainWorkCtr"))
                         filterQuery1 = "?$filter=" + item1.getId() + " eq '" + UserTable.getUserWorkCenter() + "'";
-                } else if(woSelectedCategory1.equalsIgnoreCase("CheckSheetStatus")){
-                    filterQuery1="";
-                    orderCount=getChecksheetStatusOrderCount(item1.getId());
-
-                }
+                } else if(woSelectedCategory1.equalsIgnoreCase("CheckSheetStatus"))
+                    filterQuery1 = "?$filter=(" + getChecksheetStatusOrderCount(item1.getId()) + ")";
                 else
                     filterQuery1 = "?$filter=" + woSelectedCategory1 + " eq '" + item1.getId() + "'";
                 if (woSelectedValues2.size() > 0) {
@@ -446,12 +449,14 @@ public class DashBoardViewModel extends BaseViewModel {
                             filterQuery2 = filterQuery1 + " and (indexof(" + woSelectedCategory2 + ", '" + item2.getId() + "') ne -1)";
                         else if (woSelectedCategory2.equalsIgnoreCase("CreatedBy")) {
                             if (item2.getId().equalsIgnoreCase("EnteredBy"))
-                                filterQuery2 = "?$filter=" + item2.getId() + " eq '" + ZAppSettings.strUser + "'";
+                                filterQuery2 = filterQuery1 + " and " + item2.getId() + " eq '" + ZAppSettings.strUser + "'";
                             else if (item2.getId().equalsIgnoreCase("PersonResponsible"))
-                                filterQuery2 = "?$filter=" + item2.getId() + " eq '" + UserTable.getUserPersonnelNumber() + "'";
+                                filterQuery2 = filterQuery1 + " and " + item2.getId() + " eq '" + UserTable.getUserPersonnelNumber() + "'";
                             if (item2.getId().equalsIgnoreCase("MainWorkCtr"))
-                                filterQuery2 = "?$filter=" + item2.getId() + " eq '" + UserTable.getUserWorkCenter() + "'";
-                        } else {
+                                filterQuery2 = filterQuery1 + " and " + item2.getId() + " eq '" + UserTable.getUserWorkCenter() + "'";
+                        } else if(woSelectedCategory2.equalsIgnoreCase("CheckSheetStatus"))
+                            filterQuery2 = filterQuery1 + " and (" + getChecksheetStatusOrderCount(item2.getId()) + ")";
+                        else {
                             filterQuery2 = filterQuery1 + " and (" + woSelectedCategory2 + " eq '" + item2.getId() + "')";
                         }
                         orderCount = WorkOrder.getWorkOrdersCount(filterQuery2);
@@ -588,15 +593,64 @@ public class DashBoardViewModel extends BaseViewModel {
     /** getting orderCount for selected checksheet status
      * @return
      */
-    private int getChecksheetStatusOrderCount(String selectedValue){
-        int orderCnt=0;
-        ResponseObject responseObject=null;
+    private String getChecksheetStatusOrderCount(String selectedValue){
+        StringBuilder filterQuery = new StringBuilder();
+        ResponseObject response=null;
+        HashSet<String> workOrders = new HashSet<>();
+        String formStatusToBeChecked = "";
+        if(selectedValue.equals("0"))
+            formStatusToBeChecked = "APPROVE";
+        else if(selectedValue.equals("1") || selectedValue.equals("3"))
+            formStatusToBeChecked = "REJECT";
+        String entitySetName = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION;
+        String resPath = entitySetName + "?$filter=IsDraft eq ''&$select=FormID,Version,InstanceID,Counter,WoNum";
+        response = DataHelper.getInstance().getEntities(entitySetName, resPath);
+        if(response != null && !response.isError()) {
+            List<ODataEntity> entities = ZBaseEntity.setODataEntityList(response.Content());
+            for(ODataEntity entity : entities) {
+                ResponseMasterModel formResponse = new ResponseMasterModel(entity);
+                entitySetName = ZCollections.FROM_APPROVER_ENTITY_SET;
+                resPath = entitySetName + "?$filter=WorkOrderNum eq '"+ formResponse.getWoNum() +"' and FormID eq '"+ formResponse.getFormID() +"' and Version eq '"+ formResponse.getVersion() +"' &$select=ApproverID";
+                response = DataHelper.getInstance().getEntities(entitySetName, resPath);
+                if(response != null && !response.isError()){
+                    List<ODataEntity> reviewerEntities = ZBaseEntity.setODataEntityList(response.Content());
+                    entitySetName = ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET;
+                    for(ODataEntity reviewerEntity : reviewerEntities){
+                        FormApproverSetModel formReviewer = new FormApproverSetModel(new ZODataEntity(reviewerEntity));
+                        resPath = entitySetName + "?$filter=(FormID eq '"+ formResponse.getFormID() +"' and Version eq '"+ formResponse.getVersion() +"' and FormInstanceID eq '"+ formResponse.getInstanceID() +"' and Counter eq '"+ formResponse.getCounter() +"' and ApproverID eq '"+ formReviewer.getApproverID() +"')&$select=FormContentStatus,IterationRequired";
+                        response = DataHelper.getInstance().getEntities(entitySetName, resPath);
+                        if(response != null && !response.isError()) {
+                            List<ODataEntity> statusEntities = ZBaseEntity.setODataEntityList(response.Content());
+                            if(statusEntities.size() > 0) {
+                                FormResponseApprovalStatus statusEntity = new FormResponseApprovalStatus(statusEntities.get(0));
+                                if(!formStatusToBeChecked.isEmpty() && statusEntity.getFormContentStatus().equalsIgnoreCase(formStatusToBeChecked)){
+                                    if((selectedValue.equals("3") && statusEntity.getIterationRequired().equalsIgnoreCase("x")) || selectedValue.equals("0") || (selectedValue.equals("1") && statusEntity.getIterationRequired().isEmpty()))
+                                        workOrders.add(formResponse.getWoNum());
+                                }
+                            } else if(selectedValue.equals("2")){
+                                workOrders.add(formResponse.getWoNum());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(workOrders.size() > 0) {
+            for (String order : workOrders) {
+                filterQuery.append((filterQuery.length() == 0) ? "" : " or ");
+                filterQuery.append("WorkOrderNum eq '").append(order).append("'");
+            }
+        } else {
+            filterQuery.append("WorkOrderNum eq ''");
+        }
+
+        /*int orderCnt=0;
         ArrayList<String> woNumbersList=new ArrayList<>();
         String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
         HashMap<String,Integer> apprRejCheckSheetCount=new HashMap<>();
         ArrayList<WorkOrder> workOrders=new ArrayList<>();
-        responseObject = WorkOrder.getWorkOrders(ZAppSettings.FetchLevel.List, null, null);
-        workOrders = (ArrayList<WorkOrder>) responseObject.Content();
+        response = WorkOrder.getWorkOrders(ZAppSettings.FetchLevel.List, null, null);
+        workOrders = (ArrayList<WorkOrder>) response.Content();
         if(ZCommon.isPredefinedFormVisible(formType)) {
             for(WorkOrder workOrder:workOrders){
                 apprRejCheckSheetCount=WorkOrder.getPredefinedApprovedandRejectedFormsCount(formType,workOrder.getWorkOrderNum(),workOrder.getOrderType(),true);
@@ -605,7 +659,7 @@ public class DashBoardViewModel extends BaseViewModel {
                 else if("1".equals(selectedValue))
                     orderCnt=orderCnt+apprRejCheckSheetCount.get("REJECT");
                 else
-                    orderCnt=orderCnt+apprRejCheckSheetCount.get("YET TO BE REVIEWED");
+                    orderCnt=orderCnt+apprRejCheckSheetCount.get("Not reviewed");
                 woNumbersList.add(workOrder.getWorkOrderNum());
             }
             if(orderCnt>0) {
@@ -621,14 +675,14 @@ public class DashBoardViewModel extends BaseViewModel {
                 else if("1".equals(selectedValue))
                     orderCnt=orderCnt+apprRejCheckSheetCount.get("REJECT");
                 else
-                    orderCnt=orderCnt+apprRejCheckSheetCount.get("YET TO BE REVIEWED");
+                    orderCnt=orderCnt+apprRejCheckSheetCount.get("Not reviewed");
                 if(orderCnt>0) {
                     Set<String> woStr = new HashSet<String>(woNumbersList);
                     woNumbersList.addAll(woStr);
                 }
             }
-        }
-        return orderCnt;
+        }*/
+        return filterQuery.toString();
     }
     private List<SliceValue> getSupervisorsData() {
         pieData = new ArrayList<SliceValue>();
@@ -867,7 +921,9 @@ public class DashBoardViewModel extends BaseViewModel {
         if(checkSheetSpinnerItems.size() == 0) {
             checkSheetSpinnerItems.add(new SpinnerItem("0", "Approved"));
             checkSheetSpinnerItems.add(new SpinnerItem("1", "Rejected"));
-            checkSheetSpinnerItems.add(new SpinnerItem("2", "Yet to be reviewed"));
+            checkSheetSpinnerItems.add(new SpinnerItem("2", "Not reviewed"));
+            checkSheetSpinnerItems.add(new SpinnerItem("3", "Correction Required"));
+            //checkSheetSpinnerItems.add(new SpinnerItem("4", "Not submitted"));
         }
         return checkSheetSpinnerItems;
     }
