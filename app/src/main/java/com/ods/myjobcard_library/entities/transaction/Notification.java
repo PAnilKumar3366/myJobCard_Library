@@ -337,7 +337,7 @@ public class Notification extends ZBaseEntity {
     public static ArrayList<Notification> searchNotifications(String searchedTxt, ArrayList<Notification> notifications) {
         ArrayList<Notification> searchedNotifs = new ArrayList<Notification>();
         for (Notification notification : notifications) {
-            if (notification.getNotification().toLowerCase().contains(searchedTxt.toLowerCase()) || notification.getShortText().toLowerCase().contains(searchedTxt.toString().toLowerCase()) || notification.getEquipment().toLowerCase().contains(searchedTxt.toString().toLowerCase()) || notification.getFunctionalLoc().contains(searchedTxt.toString().toLowerCase()) || notification.getPostalCode() != null && notification.getPostalCode().contains(searchedTxt.toString().toUpperCase()))
+            if (notification.getNotification().toLowerCase().contains(searchedTxt.toLowerCase()) || notification.getShortText().toLowerCase().contains(searchedTxt.toString().toLowerCase()) || notification.getEquipment().toLowerCase().contains(searchedTxt.toString().toLowerCase()) || notification.getFunctionalLoc().toLowerCase().contains(searchedTxt.toString().toLowerCase()) || notification.getPostalCode() != null && notification.getPostalCode().contains(searchedTxt.toString().toUpperCase()))
                 searchedNotifs.add(notification);
         }
         return searchedNotifs;
