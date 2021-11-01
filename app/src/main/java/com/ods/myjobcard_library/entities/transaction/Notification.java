@@ -16,6 +16,7 @@ import com.ods.myjobcard_library.entities.appsettings.StatusCategory;
 import com.ods.myjobcard_library.entities.ctentities.OrderTypeFeature;
 import com.ods.myjobcard_library.entities.ctentities.SpinnerItem;
 import com.ods.myjobcard_library.entities.ctentities.UserTable;
+import com.ods.myjobcard_library.entities.ctentities.WorkCenter;
 import com.ods.myjobcard_library.entities.ctentities.WorkOrderStatus;
 import com.ods.ods_sdk.StoreHelpers.BaseEntity;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
@@ -1476,16 +1477,21 @@ public class Notification extends ZBaseEntity {
         boolean result = false, isPartner = false;
         try {
             if (UserTable.getUserNotificationAssignmentType().equalsIgnoreCase("2")) {
-                String workCenterObjId = com.ods.myjobcard_library.entities.ctentities.WorkCenter.getWorkCenterObjId(UserTable.getUserWorkCenter());
-                return result = this.WorkCenter.equalsIgnoreCase(workCenterObjId);
+                ResponseObject response = com.ods.myjobcard_library.entities.ctentities.WorkCenter.getWorkCenter(this.WorkCenter);
+                if(response != null && !response.isError()){
+                    com.ods.myjobcard_library.entities.ctentities.WorkCenter center = (com.ods.myjobcard_library.entities.ctentities.WorkCenter) response.Content();
+                    if(center != null){
+                        return UserTable.getUserWorkCenters().contains(center.getWorkCenter());
+                    }
+                }
             }
             if (Partner != null && !Partner.isEmpty())
-                return isPartner = Integer.valueOf(Partner).equals(Integer.valueOf(UserTable.getUserPersonnelNumber()));
+                return Integer.valueOf(Partner).equals(Integer.valueOf(UserTable.getUserPersonnelNumber()));
         } catch (NumberFormatException e) {
             e.printStackTrace();
             DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
         }
-        return isPartner;
+        return false;
     }
 
     public boolean isActive() {
