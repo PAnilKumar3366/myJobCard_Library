@@ -324,12 +324,7 @@ public class DashBoardViewModel extends BaseViewModel {
             else if (woSelectedCategory1.equalsIgnoreCase("WorkCenter"))
                 filterQuery1 = "?$filter=" + woSelectedCategory1 + " eq '" + item1.getObjectID() + "'";
             else if (woSelectedCategory1.equalsIgnoreCase("CreatedBy")) {
-                if (item1.getId().equalsIgnoreCase("EnteredBy"))
-                    filterQuery1 = "?$filter=" + item1.getId() + " eq '" + ZAppSettings.strUser + "'";
-                else if (item1.getId().equalsIgnoreCase("Partner"))
-                    filterQuery1 = "?$filter=" + "Partner" + " eq '" + Integer.valueOf(UserTable.getUserPersonnelNumber()) + "'";
-                else if (item1.getId().equalsIgnoreCase("WorkCenter"))
-                    filterQuery1 = "?$filter=" + item1.getId() + " eq '" + CurrentUserWorkCenter + "'";
+                filterQuery1 = "?$filter=" + getNotificationAssignmentQuery(item1.getId());
             } else
                 filterQuery1 = "?$filter=" + woSelectedCategory1 + " eq '" + item1.getId() + "'";
             if (woSelectedValues2.size() > 0) {
@@ -346,12 +341,7 @@ public class DashBoardViewModel extends BaseViewModel {
                     else if (woSelectedCategory2.equalsIgnoreCase("WorkCenter"))
                         filterQuery2 = filterQuery1 + " and (" + woSelectedCategory2 + " eq '" + item2.getObjectID() + "')";
                     else if (woSelectedCategory2.equalsIgnoreCase("CreatedBy")) {
-                        if (item2.getId().equalsIgnoreCase("EnteredBy"))
-                            filterQuery1 = "?$filter=" + item2.getId() + " eq '" + ZAppSettings.strUser + "'";
-                        else if (item2.getId().equalsIgnoreCase("Partner"))
-                            filterQuery1 = "?$filter=" + "Partner" + " eq '" + Integer.valueOf(UserTable.getUserPersonnelNumber()) + "'";
-                        else if (item2.getId().equalsIgnoreCase("WorkCenter"))
-                            filterQuery1 = "?$filter=" + item2.getId() + " eq '" + CurrentUserWorkCenter + "'";
+                        filterQuery2 = filterQuery1 + " and " + getNotificationAssignmentQuery(item2.getId());
                     } else {
                         filterQuery2 = filterQuery1 + " and (" + woSelectedCategory2 + " eq '" + item2.getId() + "')";
                     }
@@ -420,12 +410,7 @@ public class DashBoardViewModel extends BaseViewModel {
                 else if (woSelectedCategory1.equalsIgnoreCase("FuncLocation"))
                     filterQuery1 = "?$filter=indexof(" + woSelectedCategory1 + ", '" + item1.getId() + "') ne -1";
                 else if (woSelectedCategory1.equalsIgnoreCase("CreatedBy")) {
-                    if (item1.getId().equalsIgnoreCase("EnteredBy"))
-                        filterQuery1 = "?$filter=" + item1.getId() + " eq '" + ZAppSettings.strUser + "'";
-                    else if (item1.getId().equalsIgnoreCase("PersonResponsible"))
-                        filterQuery1 = "?$filter=" + item1.getId() + " eq '" + UserTable.getUserPersonnelNumber() + "'";
-                    if (item1.getId().equalsIgnoreCase("MainWorkCtr"))
-                        filterQuery1 = "?$filter=" + item1.getId() + " eq '" + UserTable.getUserWorkCenter() + "'";
+                    filterQuery1 = "?$filter=" + getOrderAssignmentQuery(item1.getId());
                 } else if(woSelectedCategory1.equalsIgnoreCase("CheckSheetStatus"))
                     filterQuery1 = "?$filter=(" + getChecksheetStatusOrderCount(item1.getId()) + ")";
                 else
@@ -448,12 +433,7 @@ public class DashBoardViewModel extends BaseViewModel {
                         else if (woSelectedCategory2.equalsIgnoreCase("FuncLocation"))
                             filterQuery2 = filterQuery1 + " and (indexof(" + woSelectedCategory2 + ", '" + item2.getId() + "') ne -1)";
                         else if (woSelectedCategory2.equalsIgnoreCase("CreatedBy")) {
-                            if (item2.getId().equalsIgnoreCase("EnteredBy"))
-                                filterQuery2 = filterQuery1 + " and " + item2.getId() + " eq '" + ZAppSettings.strUser + "'";
-                            else if (item2.getId().equalsIgnoreCase("PersonResponsible"))
-                                filterQuery2 = filterQuery1 + " and " + item2.getId() + " eq '" + UserTable.getUserPersonnelNumber() + "'";
-                            if (item2.getId().equalsIgnoreCase("MainWorkCtr"))
-                                filterQuery2 = filterQuery1 + " and " + item2.getId() + " eq '" + UserTable.getUserWorkCenter() + "'";
+                            filterQuery2 = filterQuery1 + " and " + getOrderAssignmentQuery(item2.getId());
                         } else if(woSelectedCategory2.equalsIgnoreCase("CheckSheetStatus"))
                             filterQuery2 = filterQuery1 + " and (" + getChecksheetStatusOrderCount(item2.getId()) + ")";
                         else {
@@ -684,6 +664,46 @@ public class DashBoardViewModel extends BaseViewModel {
         }*/
         return filterQuery.toString();
     }
+
+    private String getOrderAssignmentQuery(String selectedValue){
+        StringBuilder query = new StringBuilder();
+
+        if (selectedValue.equalsIgnoreCase("EnteredBy"))
+            query = new StringBuilder("(" + selectedValue + " eq '" + ZAppSettings.strUser + "')");
+        else if (selectedValue.equalsIgnoreCase("PersonResponsible"))
+            query = new StringBuilder("(" + selectedValue + " eq '" + UserTable.getUserPersonnelNumber() + "')");
+        else if (selectedValue.equalsIgnoreCase("MainWorkCtr")) {
+            if(!UserTable.getUserWorkCenters().isEmpty()) {
+                for (String workCenter : UserTable.getUserWorkCenters()) {
+                    query.append((query.length() == 0) ? "(" : " or ");
+                    query.append(selectedValue).append(" eq '").append(workCenter).append("'");
+                }
+                query.append(")");
+            }
+        }
+
+        return query.toString();
+    }
+
+    private String getNotificationAssignmentQuery(String selectedValue){
+        StringBuilder query = new StringBuilder();
+
+        if (selectedValue.equalsIgnoreCase("EnteredBy"))
+            query = new StringBuilder("(" + selectedValue + " eq '" + ZAppSettings.strUser + "')");
+        else if (selectedValue.equalsIgnoreCase("Partner"))
+            query = new StringBuilder("(" + selectedValue + " eq '" + Integer.valueOf(UserTable.getUserPersonnelNumber()) + "')");
+        else if (selectedValue.equalsIgnoreCase("WorkCenter")) {
+            if(!UserTable.getUserWorkCenterObjectIds().isEmpty()) {
+                for (String objectId : UserTable.getUserWorkCenterObjectIds()) {
+                    query.append((query.length() == 0) ? "(" : " or ");
+                    query.append(selectedValue).append(" eq '").append(objectId).append("'");
+                }
+                query.append(")");
+            }
+        }
+        return query.toString();
+    }
+
     private List<SliceValue> getSupervisorsData() {
         pieData = new ArrayList<SliceValue>();
         int supOrderCount;

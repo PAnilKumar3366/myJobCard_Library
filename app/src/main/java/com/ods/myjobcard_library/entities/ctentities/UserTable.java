@@ -13,6 +13,7 @@ import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.smp.client.odata.ODataEntity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -42,7 +43,8 @@ public class UserTable extends ZBaseEntity {
     private String SettingName;
     private String SettingValue;
     private String EnteredBy;
-
+    private static HashSet<String> UserWorkCenters;
+    private static HashSet<String> UserWorkCenterObjectIds;
 
     public UserTable() {
         initializeEntityProperties();
@@ -87,6 +89,14 @@ public class UserTable extends ZBaseEntity {
                     }
                     if (ut.SettingName.equalsIgnoreCase("VAP")) {
                         UserWorkCenter = UserWorkCenter == null || UserWorkCenter.isEmpty() ? ut.SettingValue : UserWorkCenter;
+                        if(UserWorkCenters == null)
+                            UserWorkCenters = new HashSet<>();
+                        if(!UserWorkCenters.contains(ut.SettingValue)){
+                            if(UserWorkCenterObjectIds == null)
+                                UserWorkCenterObjectIds = new HashSet<>();
+                            UserWorkCenterObjectIds.add(WorkCenter.getWorkCenterObjId(ut.SettingValue));
+                        }
+                        UserWorkCenters.add(ut.SettingValue);
                     }
                     if (ut.SettingName.equalsIgnoreCase("AGR")) {
                         UserOprWorkCenter = UserOprWorkCenter == null || UserOprWorkCenter.isEmpty() ? ut.SettingValue : UserOprWorkCenter;
@@ -159,6 +169,8 @@ public class UserTable extends ZBaseEntity {
             UserAddAssignmentType = null;
             UserBusArea = null;
             UserCostCenter = null;
+            UserWorkCenters = null;
+            UserWorkCenterObjectIds = null;
             isInitialized = false;
             result = new ResponseObject(ZConfigManager.Status.Success, "", null);
         } catch (Exception e) {
@@ -306,6 +318,22 @@ public class UserTable extends ZBaseEntity {
         if (!isInitialized)
             getUserDetails();
         return UserCostCenter;
+    }
+
+    public static ArrayList<String> getUserWorkCenters(){
+        if(!isInitialized)
+            getUserDetails();
+        if(UserWorkCenters == null)
+            UserWorkCenters = new HashSet<>();
+        return new ArrayList<>(UserWorkCenters);
+    }
+
+    public static ArrayList<String> getUserWorkCenterObjectIds(){
+        if(!isInitialized)
+            getUserDetails();
+        if(UserWorkCenterObjectIds == null)
+            UserWorkCenterObjectIds = new HashSet<>();
+        return new ArrayList<>(UserWorkCenterObjectIds);
     }
 
     public static ResponseObject setUserDetails(PersonResponsible user) {
