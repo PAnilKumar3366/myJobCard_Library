@@ -224,13 +224,13 @@ public class DashBoardViewModel extends BaseViewModel {
             filterCategories.add(new SpinnerItem("UserStatus", "User Status"));
             filterCategories.add(new SpinnerItem("SysStatus", "System Status"));
             filterCategories.add(new SpinnerItem("MainWorkCtr", "WorkCenter"));
-            filterCategories.add(new SpinnerItem("MaintActivityType", "Mant. Activity Type"));
+            filterCategories.add(new SpinnerItem("MaintActivityType", "Maint. Activity Type"));
             filterCategories.add(new SpinnerItem("InspectionLot", "Inspection Lot"));
             filterCategories.add(new SpinnerItem("FuncLocation", "Functional Location"));
             filterCategories.add(new SpinnerItem("Location", "Location"));
             filterCategories.add(new SpinnerItem("Date", "Date"));
             filterCategories.add(new SpinnerItem("CheckSheetStatus","CheckSheet Status"));
-            //filterCategories.add(new SpinnerItem("EquipNum", "TechIdentNo"));
+            filterCategories.add(new SpinnerItem("EquipNum", "Technical Id No."));
             //filterCategories.add(new SpinnerItem("InspectionLot","InspectionLot"));
             ArrayList<SpinnerItem> woPriorities = getPriorities();
             ArrayList<SpinnerItem> woStatuses = getStatuses();
@@ -262,7 +262,7 @@ public class DashBoardViewModel extends BaseViewModel {
             filterCategories.add(new SpinnerItem("WOConversion", "Order Conversion"));
             filterCategories.add(new SpinnerItem("Location", "Location"));
             filterCategories.add(new SpinnerItem("Date", "Date"));
-            //filterCategories.add(new SpinnerItem("Equipment", "TechIdentNo"));
+            filterCategories.add(new SpinnerItem("Equipment", "Technical Id No."));
             ArrayList<SpinnerItem> noPriorities = getPriorities();
             ArrayList<SpinnerItem> noStatuses = getStatuses();
             woSelectedCategory1 = "Priority";
@@ -528,7 +528,7 @@ public class DashBoardViewModel extends BaseViewModel {
             date.add(Calendar.DAY_OF_MONTH, -ZConfigManager.DASHBOARD_FILTER_NO_OVERDUE_FOR_LAST_DAYS);
             currDate.add(Calendar.DAY_OF_MONTH, 1);
             formattedDate = dateFormat.format(new Date(date.getTimeInMillis()));
-            filterQuery = "(RequiredEndDate gt datetime'" + formattedDate + "' and RequiredEndDate le datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
+            filterQuery = "(RequiredEndDate gt datetime'" + formattedDate + "' and RequiredEndDate lt datetime'" + dateFormat.format(new Date(currDate.getTimeInMillis())) + "')";
         } else if ("4".equals(selectedDateFilterValue)) {
             date.add(Calendar.DAY_OF_MONTH, -7);
             currDate.add(Calendar.DAY_OF_MONTH, 1);
