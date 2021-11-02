@@ -202,7 +202,7 @@ public class Operation extends ZBaseEntity implements Serializable {
             switch (fetchLevel) {
                 case List:
                 case ListWithStatusAllowed:
-                    resPath = resPath + "$select=OperationNum,SubOperation,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,OrderType" + "&" + orderByUrl;
+                    resPath = resPath + "$select=OperationNum,SubOperation,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,OrderType,PlanningPlant" + "&" + orderByUrl;
                     //resPath += "$select=WorkOrderNum,OrderType,Status,Priority,ShortText,BasicStrtDate,MobileObjStatus,TempID,UserStatus,BasicFnshDate,EquipNum,FuncLocation,ErrorEntity,MainWorkCtr" + "&" + orderByUrl;
                     break;
                 /*case ListMap:
@@ -256,9 +256,9 @@ public class Operation extends ZBaseEntity implements Serializable {
                     if (OrderNum != null && OrderNum.length() > 0) {
 
                         if (OrderNum.startsWith(ZCollections.TEMP_ID_PREFIX)) {
-                            resPath = strEntitySet + "?$filter=(TempID%20eq%20%27" + OrderNum + "%27 and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true and (SubOperation eq '' or SubOperation eq null))&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,OpObjectNum,OrderType" + strOrderByURI;
+                            resPath = strEntitySet + "?$filter=(TempID%20eq%20%27" + OrderNum + "%27 and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true and (SubOperation eq '' or SubOperation eq null))&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,OpObjectNum,OrderType,PlanningPlant" + strOrderByURI;
                         } else {
-                            resPath = strEntitySet + "?$filter=(WorkOrderNum%20eq%20%27" + OrderNum + "%27 and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true and (SubOperation eq '' or SubOperation eq null))&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,OpObjectNum,OrderType" + strOrderByURI;
+                            resPath = strEntitySet + "?$filter=(WorkOrderNum%20eq%20%27" + OrderNum + "%27 and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true and (SubOperation eq '' or SubOperation eq null))&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,OpObjectNum,OrderType,PlanningPlant" + strOrderByURI;
                         }
                     }
                     break;
@@ -312,9 +312,9 @@ public class Operation extends ZBaseEntity implements Serializable {
                     if (OrderNum != null && OrderNum.length() > 0) {
 
                         if (OrderNum.startsWith(ZCollections.TEMP_ID_PREFIX)) {
-                            resPath = strEntitySet + "?$filter=(TempID%20eq%20%27" + OrderNum + "%27 and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work" + strOrderByURI;
+                            resPath = strEntitySet + "?$filter=(TempID%20eq%20%27" + OrderNum + "%27 and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,PlanningPlant" + strOrderByURI;
                         } else {
-                            resPath = strEntitySet + "?$filter=(WorkOrderNum%20eq%20%27" + OrderNum + "%27 and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work" + strOrderByURI;
+                            resPath = strEntitySet + "?$filter=(WorkOrderNum%20eq%20%27" + OrderNum + "%27 and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,PlanningPlant" + strOrderByURI;
                         }
                     }
                     break;
@@ -407,7 +407,7 @@ public class Operation extends ZBaseEntity implements Serializable {
                 case List:
                     if (OrderNum != null && OrderNum.length() > 0) {
                         //resPath = strEntitySet + "?$filter=(WorkOrderNum%20eq%20%27" + OrderNum + "%27 and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,ControlKey,ShortText,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus" + strOrderByURI;
-                        resPath = strEntitySet + "?$filter=(WorkOrderNum%20eq%20%27" + OrderNum + "%27 and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,ControlKey,ShortText,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,SubOperation" + strOrderByURI;
+                        resPath = strEntitySet + "?$filter=(WorkOrderNum%20eq%20%27" + OrderNum + "%27 and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,ControlKey,ShortText,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,SubOperation,PlanningPlant" + strOrderByURI;
                     }
                     break;
                 case ListSpinner:
@@ -442,7 +442,7 @@ public class Operation extends ZBaseEntity implements Serializable {
             String resPath;
             List<ODataEntity> entities = new ArrayList<>();
             resPath = ZCollections.OPR_COLLECTION + "?$filter=WorkOrderNum eq '" + orderNum + "' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true" +
-                    "&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo" +
+                    "&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,PlanningPlant" +
                     "&$orderby=OperationNum,SubOperation";
             result = DataHelper.getInstance().getEntities(ZCollections.OPR_COLLECTION, resPath);
             if (result != null && !result.isError()) {
@@ -2049,9 +2049,9 @@ public class Operation extends ZBaseEntity implements Serializable {
         String strOrderByURI = "&$orderby=OperationNum,SubOperation";
         try {
             if (fetchUnAssinged)
-                resPath = strEntitySet + "?$filter=( EnteredBy eq '' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,EnteredBy" + strOrderByURI;
+                resPath = strEntitySet + "?$filter=( EnteredBy eq '' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,EnteredBy,PlanningPlant" + strOrderByURI;
             else
-                resPath = strEntitySet + "?$filter=( EnteredBy ne '' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,EnteredBy" + strOrderByURI;
+                resPath = strEntitySet + "?$filter=( EnteredBy ne '' and startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true)&$select=OperationNum,WorkOrderNum,PlannofOpera,Counter,ControlKey,ShortText,MobileStatus,EarlSchStartExecDate,EarlSchStartExecTime,EarlSchFinishExecDate,EarlSchFinishExecTime,SystemStatus,UserStatus,ActivityType,SubOperation,ConfNo,ActivityType,Plant,WorkCenter,PersonnelNo,OpObjectNum,Equipment,FuncLoc,OrderType,TaskListType,Group,GroupCounter,InternalCounter,ActualWork,Work,EnteredBy,PlanningPlant" + strOrderByURI;
             //resPath = strEntitySet + "?$filter=startswith(SystemStatus, '" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true&$orderby=";
             ResponseObject response = DataHelper.getInstance().getEntities(strEntitySet, resPath);
             if (response != null && !response.isError()) {
