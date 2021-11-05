@@ -49,7 +49,7 @@ public class CheckSheetStatusHelper {
             if (submittedBy != null && !submittedBy.isEmpty())
                 resPath = entitySet + "?$filter=FormID eq '" + formID + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "'and tolower(FormSubmittedBy) eq'" + submittedBy.toLowerCase() + "' and  Counter eq '" + counter + "' and tolower(ApproverID) eq '"+ approverID.toLowerCase() +"'";
             else
-                resPath = entitySet + "?$filter=FormID eq '" + formID + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "' and  Counter eq '" + counter + "' and ApproverID eq '"+ approverID.toLowerCase() +"'";
+                resPath = entitySet + "?$filter=FormID eq '" + formID + "' and Version eq '" + version + "' and FormInstanceID eq '" + instanceID + "' and  Counter eq '" + counter + "' and tolower(ApproverID) eq '"+ approverID.toLowerCase() +"'";
             result = DataHelper.getInstance().getEntities(entitySet, resPath);
             if (result != null && !result.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
