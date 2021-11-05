@@ -583,7 +583,7 @@ public class DashBoardViewModel extends BaseViewModel {
         else if(selectedValue.equals("1") || selectedValue.equals("3"))
             formStatusToBeChecked = "REJECT";
         String entitySetName = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION;
-        String resPath = entitySetName + "?$filter=IsDraft eq ''&$select=FormID,Version,InstanceID,Counter,WoNum";
+        String resPath = entitySetName + "?$filter=" + (selectedValue.equals("3") ? "tolower(IsDraft) eq 'x'" : "IsDraft eq ''") + "&$select=FormID,Version,InstanceID,Counter,WoNum";
         response = DataHelper.getInstance().getEntities(entitySetName, resPath);
         if(response != null && !response.isError()) {
             List<ODataEntity> entities = ZBaseEntity.setODataEntityList(response.Content());
