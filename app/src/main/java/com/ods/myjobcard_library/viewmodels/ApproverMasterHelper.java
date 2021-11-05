@@ -35,8 +35,19 @@ public class ApproverMasterHelper {
             if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_OPTION_ID))
                 resPath += "?$filter=(indexof(UserSystemID, '" + searchText + "') ne -1)";
             else if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_OPTION_NAME)) {
-                searchText = searchText.replace(" ", "");
-                resPath += "?$filter=indexof(tolower(concat(FirstName,LastName)),'" + searchText.toLowerCase() + "') ne -1";
+                if(searchText.contains(" ")){
+                    StringBuilder query = new StringBuilder();
+                    String[] nameParts = searchText.split(" ");
+                    for(String part: nameParts){
+                        query.append((query.length() == 0) ? "?$filter=(" : " and ");
+                        query.append("indexof(tolower(concat(trim(FirstName),trim(LastName))),'").append(part.toLowerCase()).append("') ne -1");
+                    }
+                    query.append(")");
+                    resPath += query.toString();
+                } else {
+                    //searchText = searchText.contains(" ") ? searchText.replace(" ", "") : searchText;
+                    resPath += "?$filter=indexof(tolower(concat(trim(FirstName),trim(LastName))),'" + searchText.toLowerCase() + "') ne -1";
+                }
                 //resPath += "?$filter=(indexof(FirstName, '" + searchText + "') ne -1 or indexof(LastName, '" + searchText + "'))";
             } else if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_APPROVER_DEPT))
                 resPath += "?$filter=(indexof(DepartmentID, '" + searchText + "') ne -1)";
