@@ -242,20 +242,20 @@ public class Equipment extends ZBaseEntity {
     public static ResponseObject getEquipments(int skipValue, int numRecords, String funcLocation) {
         DataHelper dataHelper = null;
         ResponseObject result = null;
-        String strQuery;
-        String filterQry = "&$filter=";
+        String resPath = "";
         try {
             dataHelper = DataHelper.getInstance();
-            strQuery = ZCollections.EQUIPMENT_COLLECTION + "?$skip=" + skipValue + " &$top=" + numRecords;
-            String finalFilterQry = filterQry;
+            String entitySet = ZCollections.EQUIPMENT_COLLECTION;
+            resPath = entitySet;
             if (funcLocation != null && !funcLocation.isEmpty())
-                finalFilterQry += "FuncLocation eq '" + funcLocation + "'";
+                resPath += "?$filter=FuncLocation eq '" + funcLocation + "'";
+            if(numRecords > 0){
+                resPath += (resPath.equalsIgnoreCase(entitySet) ? "?" : "&");
+                resPath += ("$skip=" + skipValue + " &$top=" + numRecords);
+            }
 
-            if (!finalFilterQry.equalsIgnoreCase(filterQry))
-                strQuery += finalFilterQry;
-
-            result = dataHelper.getEntities(ZCollections.EQUIPMENT_COLLECTION, strQuery);
-            result = FromEntity((List<ODataEntity>) result.Content());
+            result = dataHelper.getEntities(entitySet, resPath);
+            result = FromEntity(ZBaseEntity.setODataEntityList(result.Content()));
             if (result == null)
                 result = new ResponseObject(ZConfigManager.Status.Error);
         } catch (Exception e) {

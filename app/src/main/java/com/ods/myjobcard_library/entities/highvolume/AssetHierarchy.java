@@ -57,6 +57,47 @@ public class AssetHierarchy extends ZBaseEntity {
     }
 
     /**
+     * Fetching the list of Root level Assets by skipping and picking the top records as per passed values
+     *
+     * @return List of Asset Hierarchies.
+     */
+    public static ArrayList<AssetHierarchy> getRootAssets(int top, int skip) {
+        ArrayList<AssetHierarchy> hierarchies = new ArrayList<>();
+        try {
+            String entitySetName = ZCollections.ASSET_HIERARCHY_ENTITY_SET;
+            String resPath = entitySetName + "?$filter=HierLevel eq 0&$skip="+skip+"&$top="+top;
+            ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                hierarchies = fromEntity(ZBaseEntity.setODataEntityList(result.Content()));
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(AssetMapping.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return hierarchies;
+    }
+
+    /**
+     * Fetch the list of Child Assets
+     * @param requiredLevel the level of children
+     * @param parentId object id of the parent of the children
+     * @return ArrayList of Child AssetHierarchy based on passed Hierarchy Level and Parent Id
+     */
+    public static ArrayList<AssetHierarchy> getChildAssets(int requiredLevel, String parentId) {
+        ArrayList<AssetHierarchy> hierarchies = new ArrayList<>();
+        try {
+            String entitySetName = ZCollections.ASSET_HIERARCHY_ENTITY_SET;
+            String resPath = entitySetName + "?$filter=HierLevel eq "+ requiredLevel +" and ParentId eq '"+ parentId +"'";
+            ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                hierarchies = fromEntity(ZBaseEntity.setODataEntityList(result.Content()));
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(AssetMapping.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return hierarchies;
+    }
+
+    /**
      * Fetching the Asset Hierarchy Object.
      *
      * @param objectId Object Id.
