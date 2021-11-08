@@ -33,7 +33,7 @@ public class ApproverMasterHelper {
             String entitySetName = ZCollections.APPROVER_MASTER_DATA_ENTITY_SET;
             String resPath = entitySetName;
             if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_OPTION_ID))
-                resPath += "?$filter=(indexof(UserSystemID, '" + searchText + "') ne -1)";
+                resPath += "?$filter=(indexof(tolower(UserSystemID), '" + searchText.toLowerCase() + "') ne -1)";
             else if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_OPTION_NAME)) {
                 if(searchText.contains(" ")){
                     StringBuilder query = new StringBuilder();
