@@ -368,13 +368,14 @@ public class WorkOrder extends ZBaseEntity {
         ArrayList<WorkOrder> searchedWOs = null;
         try {
             searchedWOs = new ArrayList<WorkOrder>();
+            String queryText = searchedText.toString().toLowerCase();
             for (WorkOrder workOrder : workorders) {
-                if (workOrder.getWorkOrderNum().toLowerCase().contains(searchedText.toString().toLowerCase()) || workOrder.getShortText().toLowerCase().contains(searchedText.toString().toLowerCase()) || workOrder.getEquipNum().equalsIgnoreCase(searchedText.toString()) || workOrder.getFuncLocation().toLowerCase().startsWith(searchedText.toString().toLowerCase().trim()) || workOrder.getPostalCode() != null && workOrder.getPostalCode().contains(searchedText.toString().toUpperCase()))
+                if (workOrder.getWorkOrderNum().toLowerCase().contains(queryText) || workOrder.getShortText().toLowerCase().contains(queryText) || workOrder.getEquipNum().toLowerCase().contains(queryText) || workOrder.getFuncLocation().toLowerCase().contains(queryText.trim()) || workOrder.getPostalCode() != null && workOrder.getPostalCode().toLowerCase().contains(queryText))
                     searchedWOs.add(workOrder);
                 else {
                     String entitySetName = ZCollections.OPR_COLLECTION;
                     String resPath = entitySetName;
-                    resPath += "/$count?$filter=WorkOrderNum eq '" + workOrder.getWorkOrderNum() + "' and startswith(SystemStatus,'" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true and (endswith(Equipment, '" + searchedText + "') eq true or FuncLoc eq '" + searchedText + "') and (SubOperation eq '' or SubOperation eq null)";
+                    resPath += "/$count?$filter=WorkOrderNum eq '" + workOrder.getWorkOrderNum() + "' and startswith(SystemStatus,'" + ZAppSettings.MobileStatus.Deleted.getMobileStatusCode() + "') ne true and (indexof(tolower(Equipment), '" + queryText + "') ne -1 or indexof(tolower(FuncLoc),'" + queryText + "') ne -1) and (SubOperation eq '' or SubOperation eq null)";
                     ResponseObject response = DataHelper.getInstance().getEntities(entitySetName, resPath);
                     if (response != null && !response.isError()) {
                         int count = Integer.parseInt(String.valueOf(response.Content()));

@@ -219,13 +219,13 @@ public class Equipment extends ZBaseEntity {
         try {
             String resPath = ZCollections.EQUIPMENT_COLLECTION;
             if (searchOptions.equalsIgnoreCase(ZCollections.SEARCH_OPTION_ID))
-                resPath += "?$filter=(indexof(Equipment, '" + searchText + "') ne -1)";
+                resPath += "?$filter=(indexof(tolower(Equipment), '" + searchText.toLowerCase() + "') ne -1)";
             else if (searchOptions.equalsIgnoreCase(ZCollections.SEARCH_OPTION_DESCRIPTION))
-                resPath += "?$filter=(indexof(EquipDescription, '" + searchText + "') ne -1)";
+                resPath += "?$filter=(indexof(tolower(EquipDescription), '" + searchText.toLowerCase() + "') ne -1)";
             else if (searchOptions.equalsIgnoreCase(ZCollections.SEARCH_OPTION_TECH_ID))
-                resPath += "?$filter=(indexof(TechIdentNo, '" + searchText + "') ne -1)";
+                resPath += "?$filter=(indexof(tolower(TechIdentNo), '" + searchText.toLowerCase() + "') ne -1)";
             if (functionalLocation != null && !functionalLocation.isEmpty()) {
-                resPath = resPath.substring(0, resPath.lastIndexOf(")")) + " and FuncLocation eq '" + functionalLocation + "')";
+                resPath = resPath.substring(0, resPath.lastIndexOf(")")) + " and tolower(FuncLocation) eq '" + functionalLocation.toLowerCase() + "')";
             }
             resPath += "&$skip=" + skipValue + "&$top=" + numRecords;
             result = DataHelper.getInstance().getEntities(ZCollections.EQUIPMENT_COLLECTION, resPath);
@@ -248,7 +248,7 @@ public class Equipment extends ZBaseEntity {
             String entitySet = ZCollections.EQUIPMENT_COLLECTION;
             resPath = entitySet;
             if (funcLocation != null && !funcLocation.isEmpty())
-                resPath += "?$filter=FuncLocation eq '" + funcLocation + "'";
+                resPath += "?$filter=tolower(FuncLocation) eq '" + funcLocation.toLowerCase() + "'";
             if(numRecords > 0){
                 resPath += (resPath.equalsIgnoreCase(entitySet) ? "?" : "&");
                 resPath += ("$skip=" + skipValue + " &$top=" + numRecords);
@@ -350,13 +350,13 @@ public class Equipment extends ZBaseEntity {
             strQuery = ZCollections.EQUIPMENT_COLLECTION;
             String finalFilterQry = filterQry;
             if (funcLocation != null && !funcLocation.isEmpty())
-                finalFilterQry += "FuncLocation eq '" + funcLocation + "' and ";
+                finalFilterQry += "tolower(FuncLocation) eq '" + funcLocation.toLowerCase() + "' and ";
             if (searchOption.equalsIgnoreCase(ZCollections.SEARCH_OPTION_ID))
-                finalFilterQry += "(Equipment eq '" + searchText.toLowerCase() + "')";
+                finalFilterQry += "(indexof(tolower(Equipment), '" + searchText.toLowerCase() + "') ne -1)";
             else if (searchOption.equalsIgnoreCase(ZCollections.SEARCH_OPTION_DESCRIPTION))
-                finalFilterQry += "(EquipDescription eq '" + searchText.toLowerCase() + "')";
+                finalFilterQry += "(indexof(tolower(EquipDescription), '" + searchText.toLowerCase() + "') ne -1)";
             else if (searchOption.equalsIgnoreCase(ZCollections.SEARCH_OPTION_TECH_ID))
-                finalFilterQry += "(TechIdentNo eq '" + searchText.toLowerCase() + "')";
+                finalFilterQry += "(indexof(tolower(TechIdentNo), '" + searchText.toLowerCase() + "') ne -1)";
 
             //finalFilterQry += "indexof(tolower("+ (searchOption.equalsIgnoreCase(Collections.SEARCH_OPTION_ID) ? "Equipment" : searchOption.equalsIgnoreCase(Collections.SEARCH_OPTION_DESCRIPTION)?"EquipDescription": searchOption.equalsIgnoreCase(Collections.SEARCH_OPTION_TECH_ID)?"TechIdentNo":"" +"),'"+ searchText.toLowerCase() +"') ne -1&$select=Equipment,EquipDescription,TechIdentNo");
             //finalFilterQry += "indexof(tolower("+ (searchOption.equalsIgnoreCase(Collections.SEARCH_OPTION_ID) ? "Equipment" : "EquipDescription") +"),'"+ searchText.toLowerCase() +"') ne -1&$select=Equipment,EquipDescription";

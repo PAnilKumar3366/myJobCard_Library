@@ -129,9 +129,9 @@ public class FunctionalLocation extends ZBaseEntity {
         try {
             String resPath = ZCollections.FL_COLLECTION;
             if (searchOptions.equalsIgnoreCase(ZCollections.SEARCH_OPTION_ID))
-                resPath += "?$filter=indexof(FunctionalLoc, '" + searchText + "') ne -1&$skip=" + skipValue + "&$top=" + numRecords;
+                resPath += "?$filter=indexof(tolower(FunctionalLoc), '" + searchText.toLowerCase() + "') ne -1&$skip=" + skipValue + "&$top=" + numRecords;
             else if (searchOptions.equalsIgnoreCase(ZCollections.SEARCH_OPTION_DESCRIPTION))
-                resPath += "?$filter=indexof(Description, '" + searchText + "') ne -1&$skip=" + skipValue + "&$top=" + numRecords;
+                resPath += "?$filter=indexof(tolower(Description), '" + searchText.toLowerCase() + "') ne -1&$skip=" + skipValue + "&$top=" + numRecords;
             result = DataHelper.getInstance().getEntities(ZCollections.FL_COLLECTION, resPath);
             result = FromEntity((List<ODataEntity>) result.Content());
             if (result != null && !result.isError()) {
