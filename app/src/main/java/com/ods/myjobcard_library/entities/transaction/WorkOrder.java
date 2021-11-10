@@ -953,7 +953,9 @@ public class WorkOrder extends ZBaseEntity {
             ResponseObject response = DataHelper.getInstance().getEntities(ZCollections.EQUIPMENT_COLLECTION, resPath);
             if (response != null && !response.isError()) {
                 ODataEntity entity = (ODataEntity) response.Content();
-                spinnerEqps.add(new SpinnerItem(equipment, String.valueOf(entity.getProperties().get("TechIdentNo").getValue())));
+                String value = String.valueOf(entity.getProperties().get("TechIdentNo").getValue());
+                if(value != null && !value.isEmpty())
+                    spinnerEqps.add(new SpinnerItem(equipment, String.valueOf(entity.getProperties().get("TechIdentNo").getValue())));
             }
         }
         return spinnerEqps;
