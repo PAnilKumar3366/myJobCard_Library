@@ -21,6 +21,17 @@ public class ApproverMasterData extends ZBaseEntity {
     private String ApproverLevel;
     private String Plant;
 
+    private String WorkCenter;
+
+    public String getWorkCenter() {
+        return WorkCenter;
+    }
+
+    public void setWorkCenter(String workCenter) {
+        WorkCenter = workCenter;
+    }
+
+
     public String getEmailID() {
         return EmailID;
     }

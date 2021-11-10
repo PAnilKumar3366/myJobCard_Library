@@ -49,8 +49,10 @@ public class ApproverMasterHelper {
                     resPath += "?$filter=indexof(tolower(concat(trim(FirstName),trim(LastName))),'" + searchText.toLowerCase() + "') ne -1";
                 }
                 //resPath += "?$filter=(indexof(FirstName, '" + searchText + "') ne -1 or indexof(LastName, '" + searchText + "'))";
-            } else if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_APPROVER_DEPT))
-                resPath += "?$filter=(indexof(DepartmentID, '" + searchText + "') ne -1)";
+            } else if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_APPROVER_PLANT))
+                resPath += "?$filter=(indexof(tolower(Plant), '" + searchText.toLowerCase() + "') ne -1)";
+            else if (searchKey.equalsIgnoreCase(ZCollections.SEARCH_APPROVER_WORKCENTER))
+                resPath += "?$filter=(indexof(tolower(WorkCenter), '" + searchText.toLowerCase() + "') ne -1)";
 
             /*if (searchbyID)
                 resPath += "?$filter=(indexof(UserSystemID, '" + searchText + "') ne -1)";
