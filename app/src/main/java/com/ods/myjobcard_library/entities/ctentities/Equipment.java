@@ -157,7 +157,7 @@ public class Equipment extends ZBaseEntity {
 
     public static ArrayList<Equipment> getInstalledEquipments(String superiorEquipId, String funcLocationId) {
         DataHelper dataHelper = null;
-        ResponseObject result = null;
+        ResponseObject result = new ResponseObject(ZConfigManager.Status.Error);
         ArrayList<Equipment> installedEqps = new ArrayList<>();
         String resPath = ZCollections.EQUIPMENT_COLLECTION;
         try {

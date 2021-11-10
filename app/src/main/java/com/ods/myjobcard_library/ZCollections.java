@@ -403,6 +403,8 @@ public class ZCollections extends Collections {
 	public static final String SEARCH_FORM_NAME = "Form Name";
 	public static final String SEARCH_FORM_CATEGORY = "Category";
 	public static final String SEARCH_APPROVER_DEPT = "Department";
+	public static final String SEARCH_APPROVER_PLANT = "Plant";
+	public static final String SEARCH_APPROVER_WORKCENTER = "WorkCenter";
 	//public static final String INVALID_STORE_ID = "Invalid";
 	public static final boolean ENABLE_BG_SYNC = true;
 	public static final String SUPERVISOR_USER_COLLECTIONS = "UserSet";
@@ -475,7 +477,8 @@ public class ZCollections extends Collections {
 		ArrayList<String> options = new ArrayList<>();
 		options.add(SEARCH_OPTION_ID);
 		options.add(SEARCH_OPTION_NAME);
-		options.add(SEARCH_APPROVER_DEPT);
+		options.add(SEARCH_APPROVER_PLANT);
+		options.add(SEARCH_APPROVER_WORKCENTER);
 		return options;
 	}
 

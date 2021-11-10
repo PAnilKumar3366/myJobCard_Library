@@ -108,7 +108,7 @@ public class FunctionalLocation extends ZBaseEntity {
     //get methods
     public static ResponseObject getFuncLocations(int skipValue, int numRecords) {
         DataHelper dataHelper = null;
-        ResponseObject result = null;
+        ResponseObject result = new ResponseObject(ZConfigManager.Status.Error);
         try {
             dataHelper = DataHelper.getInstance();
             String strQuery = ZCollections.FL_COLLECTION + "?$skip=" + skipValue + " &$top=" + numRecords;
