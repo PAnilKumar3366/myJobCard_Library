@@ -2247,8 +2247,12 @@ public class WorkOrder extends ZBaseEntity {
                             apprRejCheckSheetCount=getTotalNumOfManualApprovedandRejectedForms(formType);
                             if(getTotalNumUnSubmittedManualMandatoryForms() > 0)
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
-                            else if(getManualFormApproversCount()>0&&(apprRejCheckSheetCount.get("APPROVE")==0||apprRejCheckSheetCount.get("REJECT")>0))
-                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
+                            else if(getManualFormApproversCount()>0&&apprRejCheckSheetCount.get("APPROVE")!=getManualFormApproversCount()){
+                                if(getManualFormApproversCount()-(apprRejCheckSheetCount.get("APPROVE")+apprRejCheckSheetCount.get("REJECT"))>0||(apprRejCheckSheetCount.get("REJECT")>0&&apprRejCheckSheetCount.get("CORRECTIONNOTREQIRED")==0)){
+                                    errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
+                                }
+                            }
+
                         }
                     } catch (Exception e) {
                         DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
@@ -2651,7 +2655,7 @@ public class WorkOrder extends ZBaseEntity {
     public HashMap<String,Integer> getTotalNumOfManualApprovedandRejectedForms(String formType) {
         HashMap<String,Integer> approverejectforms= null;
         try {
-            int predefinedformsApprovedCount = 0,predefinedformsRejectCount = 0;
+            int predefinedformsApprovedCount = 0,predefinedformsRejectCount = 0,corrnotRequiredCnt=0;
             approverejectforms = new HashMap<>();
             ArrayList<ManualFormAssignmentSetModel> list;
             if(ZCommon.isManualAssignedFormsVisible(formType)){
@@ -2661,6 +2665,15 @@ public class WorkOrder extends ZBaseEntity {
                 String resourcePath = null;
                 ResponseMasterModel responseMasterModel=null;
                 for(ManualFormAssignmentSetModel manualFormAssignmentSetModel:list){
+                    String apprResPath = ZCollections.FROM_APPROVER_ENTITY_SET+"/$count?$filter= (tolower(FormID) eq '" + manualFormAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + manualFormAssignmentSetModel.getVersion() + "' and WorkOrderNum eq '" + manualFormAssignmentSetModel.getWorkOrderNum() + "')";
+                    ResponseObject apprResultObject = DataHelper.getInstance().getEntities(ZCollections.FROM_APPROVER_ENTITY_SET, apprResPath);
+                    int apprCnt=0;
+                    if (!apprResultObject.isError())
+                        try {
+                            apprCnt=Integer.parseInt(apprResultObject.Content().toString());
+                        } catch (Exception e) {
+                            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+                        }
                     String entitySetName = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION;
                     resourcePath = entitySetName;
                     //if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentWO.Value))
@@ -2683,9 +2696,16 @@ public class WorkOrder extends ZBaseEntity {
                                     FormResponseApprovalStatus formResponseApprovalStatus=new FormResponseApprovalStatus(zoDataEntity);
                                     if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("APPROVE"))
                                         predefinedformsApprovedCount++;
-                                    else
-                                        predefinedformsRejectCount++;
-                                    break;
+                                    /*else if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("REJECT")&&(apprCnt==1||formResponseApprovalStatus.getIterationRequired().equalsIgnoreCase("X")))
+                                        predefinedformsRejectCount++;*/
+
+                                    else if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("REJECT")){
+                                        if(apprCnt==1||formResponseApprovalStatus.getIterationRequired().equalsIgnoreCase("X"))
+                                            predefinedformsRejectCount++;
+                                        else
+                                            corrnotRequiredCnt++;
+                                    }
+
                                 }
                             }
                         }
@@ -2694,6 +2714,7 @@ public class WorkOrder extends ZBaseEntity {
             }
             approverejectforms.put("APPROVE",predefinedformsApprovedCount);
             approverejectforms.put("REJECT",predefinedformsRejectCount);
+            approverejectforms.put("CORRECTIONNOTREQIRED",corrnotRequiredCnt);
         } catch (Exception e) {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
@@ -3256,7 +3277,7 @@ public class WorkOrder extends ZBaseEntity {
 
         return approversCnt;
     }
-    /** geeting the count of Manual Form Arrovers
+    /** geeting the count of Manual Form Approvers
      * @return
      */
     public int getManualFormApproversCount(){
@@ -3276,7 +3297,8 @@ public class WorkOrder extends ZBaseEntity {
                         if (!responseObject.isError()) {
                             rawData = responseObject.Content();
                             if (Integer.parseInt(rawData.toString()) > 0) {
-                                approversCnt++;
+                                int tempcnt=Integer.parseInt(rawData.toString());
+                                approversCnt=approversCnt+tempcnt;
                             }
                         }
                     }
