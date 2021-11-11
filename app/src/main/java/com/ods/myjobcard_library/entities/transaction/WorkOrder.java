@@ -2606,7 +2606,7 @@ public class WorkOrder extends ZBaseEntity {
     public HashMap<String,Integer> getTotalNumOfPredefinedApprovedandRejectedForms(String formType) {
         HashMap<String,Integer> approverejectforms= null;
         try {
-            int predefinedformsApprovedCount = 0,predefinedformsRejectCount = 0;
+            int predefinedformsApprovedCount = 0,predefinedformsRejectCount = 0,corrnotRequiredCnt=0;
             approverejectforms = new HashMap<>();
             ArrayList<FormAssignmentSetModel> list;
             //String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
@@ -2618,6 +2618,16 @@ public class WorkOrder extends ZBaseEntity {
                 String resourcePath = null;
                 ResponseMasterModel responseMasterModel=null;
                 for(FormAssignmentSetModel formAssignmentSetModel:list){
+                    String apprResPath = ZCollections.FROM_APPROVER_ENTITY_SET+"/$count?$filter= (tolower(FormID) eq '" + formAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + formAssignmentSetModel.getVersion() + "' and WorkOrderNum eq '" + getWorkOrderNum() + "')";
+                    ResponseObject apprResultObject = DataHelper.getInstance().getEntities(ZCollections.FROM_APPROVER_ENTITY_SET, apprResPath);
+                    int apprCnt=0;
+                    if (!apprResultObject.isError())
+                        try {
+                            apprCnt=Integer.parseInt(apprResultObject.Content().toString());
+                        } catch (Exception e) {
+                            DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
+                        }
+
                     String entitySetName = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION;
                     resourcePath = entitySetName;
                     resourcePath += "?$filter=(tolower(FormID) eq '" + formAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + formAssignmentSetModel.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "')&$orderby=Counter desc";
@@ -2636,9 +2646,12 @@ public class WorkOrder extends ZBaseEntity {
                                     FormResponseApprovalStatus formResponseApprovalStatus=new FormResponseApprovalStatus(zoDataEntity);
                                     if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("APPROVE"))
                                         predefinedformsApprovedCount++;
-                                    else
-                                        predefinedformsRejectCount++;
-                                    break;
+                                    else if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("REJECT")){
+                                        if(apprCnt==1||formResponseApprovalStatus.getIterationRequired().equalsIgnoreCase("X"))
+                                            predefinedformsRejectCount++;
+                                        else
+                                            corrnotRequiredCnt++;
+                                    }
                                 }
                             }
                         }
@@ -2647,6 +2660,7 @@ public class WorkOrder extends ZBaseEntity {
             }
             approverejectforms.put("APPROVE",predefinedformsApprovedCount);
             approverejectforms.put("REJECT",predefinedformsRejectCount);
+            approverejectforms.put("CORRECTIONNOTREQIRED",corrnotRequiredCnt);
         } catch (Exception e) {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
@@ -2698,9 +2712,6 @@ public class WorkOrder extends ZBaseEntity {
                                     FormResponseApprovalStatus formResponseApprovalStatus=new FormResponseApprovalStatus(zoDataEntity);
                                     if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("APPROVE"))
                                         predefinedformsApprovedCount++;
-                                    /*else if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("REJECT")&&(apprCnt==1||formResponseApprovalStatus.getIterationRequired().equalsIgnoreCase("X")))
-                                        predefinedformsRejectCount++;*/
-
                                     else if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("REJECT")){
                                         if(apprCnt==1||formResponseApprovalStatus.getIterationRequired().equalsIgnoreCase("X"))
                                             predefinedformsRejectCount++;
