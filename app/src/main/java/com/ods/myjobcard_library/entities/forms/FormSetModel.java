@@ -59,8 +59,8 @@ public class FormSetModel extends ZBaseEntity {
             String entitySetName = ZCollections.FORMS_COLLECTION;
             resourcePath = entitySetName;
             resourcePath += "?$filter=(FormID eq '" + formID + "' and Version eq '" + version + "')";
-           /* if (!isFormData)
-                resourcePath += "&$select=FormName,Description,Active,FunctionalArea,SubArea,Category";*/ //Tempororily completed this line of code due to newly fileds are not available in petronas Dev system.Once enable then this line should be uncommented
+            if (!isFormData)
+                resourcePath += "&$select=FormName,Description,Active,FunctionalArea,SubArea,Category"; //Tempororily commented this line of code due to newly fileds are not available in petronas Dev system.Once enable then this line should be uncommented
 
             result = DataHelper.getInstance().getEntities(entitySetName, resourcePath);
             if (!result.isError()) {
