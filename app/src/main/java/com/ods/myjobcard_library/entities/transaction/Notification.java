@@ -13,6 +13,7 @@ import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.Address;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.appsettings.StatusCategory;
+import com.ods.myjobcard_library.entities.ctentities.NotificationTypes;
 import com.ods.myjobcard_library.entities.ctentities.OrderTypeFeature;
 import com.ods.myjobcard_library.entities.ctentities.SpinnerItem;
 import com.ods.myjobcard_library.entities.ctentities.UserTable;
@@ -1801,5 +1802,24 @@ public class Notification extends ZBaseEntity {
 
     public void setPlannerGroupDes(String plannerGroupDes) {
         PlannerGroupDes = plannerGroupDes;
+    }
+
+    /** Getting default CatalogProfile value from the NotificationType service by filtering with notificationType
+     * @return
+     */
+    public static String getDefaultCatalogProfile(String notificationType) {
+        String catalogProfile="";
+        try {
+            ResponseObject result = NotificationTypes.getNotificationType(notificationType);
+            if (result != null && !result.isError()) {
+                ArrayList<NotificationTypes> types = (ArrayList<NotificationTypes>) result.Content();
+                if (types != null && types.size() > 0) {
+                    catalogProfile = types.get(0).getCatalogProfile();
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(Notification.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return catalogProfile;
     }
 }
