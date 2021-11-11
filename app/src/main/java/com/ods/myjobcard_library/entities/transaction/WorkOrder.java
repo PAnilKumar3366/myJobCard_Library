@@ -2242,8 +2242,11 @@ public class WorkOrder extends ZBaseEntity {
                             apprRejCheckSheetCount=getTotalNumOfPredefinedApprovedandRejectedForms(formType);
                             if(getTotalNumUnSubmittedMandatoryForms() > 0)
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
-                            else if(getPredefinedFormApproversCount()>0&&(apprRejCheckSheetCount.get("APPROVE")==0||apprRejCheckSheetCount.get("REJECT")>0))
-                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
+                            else if(getPredefinedFormApproversCount()>0&&apprRejCheckSheetCount.get("APPROVE")!=getPredefinedFormApproversCount())
+                                if(getPredefinedFormApproversCount()-(apprRejCheckSheetCount.get("APPROVE")+apprRejCheckSheetCount.get("REJECT"))>0||(apprRejCheckSheetCount.get("REJECT")>0&&apprRejCheckSheetCount.get("CORRECTIONNOTREQIRED")==0)){
+                                    errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
+                                }
+
                         }
                         if(ZCommon.isManualAssignedFormsVisible(formType)) {
                             apprRejCheckSheetCount=getTotalNumOfManualApprovedandRejectedForms(formType);
@@ -3278,7 +3281,8 @@ public class WorkOrder extends ZBaseEntity {
                         if (!responseObject.isError()) {
                             rawData = responseObject.Content();
                             if (Integer.parseInt(rawData.toString()) > 0) {
-                                approversCnt++;
+                                int tempcnt=Integer.parseInt(rawData.toString());
+                                approversCnt=approversCnt+tempcnt;
                             }
                         }
                     }
