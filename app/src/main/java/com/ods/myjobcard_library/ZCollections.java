@@ -395,7 +395,7 @@ public class ZCollections extends Collections {
 	public static final String SEARCH_OPTION_ID = "Id";
 	public static final String SEARCH_OPTION_DESCRIPTION = "Description";
 	public static final String SEARCH_OPTION_NAME = "Name";
-	public static final String SEARCH_OPTION_TECH_ID = "TechnicalId No";
+	public static final String SEARCH_OPTION_TECH_ID = "Technical Id No.";
 	public static final String SEARCH_ITEM_PLANT = "Plant";
 	public static final String SEARCH_ITEM_STORAGE = "Storage Location";
 	public static final String INVALID_SERVICE_URL = "Invalid";
