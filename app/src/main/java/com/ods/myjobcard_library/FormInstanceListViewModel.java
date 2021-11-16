@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
+import com.ods.myjobcard_library.entities.ResponseMasterModel;
 import com.ods.myjobcard_library.entities.forms.FormApproverSetModel;
 import com.ods.myjobcard_library.viewmodels.BaseViewModel;
 import com.ods.myjobcard_library.viewmodels.FormApproversHelper;
@@ -20,6 +21,16 @@ public class FormInstanceListViewModel extends BaseViewModel {
 
     FormApproversHelper formApproversHelper;
     MutableLiveData<ArrayList<FormApproverSetModel>> woFormApproversLiveData = new MutableLiveData<>();
+
+    MutableLiveData<ResponseMasterModel> selectedInstance = new MutableLiveData<>();
+
+    public MutableLiveData<ResponseMasterModel> getSelectedInstance() {
+        return selectedInstance;
+    }
+
+    public void setSelectedInstance(ResponseMasterModel selectedInstance) {
+        this.selectedInstance.setValue(selectedInstance);
+    }
 
     public FormInstanceListViewModel(@NonNull @NotNull Application application) {
         super(application);

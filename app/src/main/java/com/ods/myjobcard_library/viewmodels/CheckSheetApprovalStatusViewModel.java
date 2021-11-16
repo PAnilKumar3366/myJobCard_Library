@@ -34,7 +34,7 @@ public class CheckSheetApprovalStatusViewModel extends BaseViewModel {
     public void setReviewerCheckSheetLog(String FormID, String FormVersion, String FormInstance, String ApproverID, String submittedBy) {
         try {
             ArrayList<ZODataEntity> zoDataEntityArrayList = helper.fetchFormApprovalStatus(FormID, FormInstance, FormVersion, submittedBy, "", ApproverID);
-            ArrayList<FormResponseApprovalStatus> statusList = onFetchApproverEntities(zoDataEntityArrayList);
+            ArrayList<FormResponseApprovalStatus> statusList = onFetchApproverStatusEntities(zoDataEntityArrayList);
             ArrayList<String> logAuditTextList = new ArrayList<>();
             //<Status> on <Date> <Time> with remarks: <Remarks>
             for (FormResponseApprovalStatus status : statusList) {
@@ -66,7 +66,7 @@ public class CheckSheetApprovalStatusViewModel extends BaseViewModel {
 
     public void setCheckInstanceStatus(String FormId, String FormVersion, String FormInstance, String counter, String submittedBy, String approverID) {
         ArrayList<ZODataEntity> zoDataEntityArrayList = helper.fetchFormApprovalStatus(FormId, FormInstance, FormVersion, submittedBy, counter, approverID);
-        checkSheetInstanceStatus.setValue(onFetchApproverEntities(zoDataEntityArrayList));
+        checkSheetInstanceStatus.setValue(onFetchApproverStatusEntities(zoDataEntityArrayList));
     }
 
     public MutableLiveData<ArrayList<FormResponseApprovalStatus>> getCheckSheetInstanceStatus() {
@@ -74,16 +74,16 @@ public class CheckSheetApprovalStatusViewModel extends BaseViewModel {
     }
 
 
-    protected ArrayList<FormResponseApprovalStatus> onFetchApproverEntities(ArrayList<ZODataEntity> zODataEntities) {
-        ArrayList<FormResponseApprovalStatus> approverMasterList = new ArrayList<>();
+    protected ArrayList<FormResponseApprovalStatus> onFetchApproverStatusEntities(ArrayList<ZODataEntity> zODataEntities) {
+        ArrayList<FormResponseApprovalStatus> approvalStatuses = new ArrayList<>();
         try {
             for (ZODataEntity entity : zODataEntities) {
-                FormResponseApprovalStatus approverMasterData = new FormResponseApprovalStatus(entity);
-                approverMasterList.add(approverMasterData);
+                FormResponseApprovalStatus approvalStatus = new FormResponseApprovalStatus(entity);
+                approvalStatuses.add(approvalStatus);
             }
         } catch (Exception e) {
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
         }
-        return approverMasterList;
+        return approvalStatuses;
     }
 }
