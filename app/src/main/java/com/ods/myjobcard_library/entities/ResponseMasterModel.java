@@ -5,6 +5,7 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
+import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.smp.client.odata.ODataEntity;
 
@@ -44,6 +45,11 @@ public class ResponseMasterModel extends ZBaseEntity {
     private String Remarks;
 
     public ResponseMasterModel(ODataEntity entity) {
+        initializeEntityProperties();
+        create(entity);
+    }
+
+    public ResponseMasterModel(ZODataEntity entity) {
         initializeEntityProperties();
         create(entity);
     }

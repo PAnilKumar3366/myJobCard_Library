@@ -226,8 +226,6 @@ public class ZConfigManager extends ConfigManager {
     public static String CANCELLED_FINAL_CNF_TEXT="Cancelled confirmation";
     public static String REVERT_FINAL_CNF_TEXT="To Revert Final Confirmation";
 
-    public static boolean TEMP_CHECKSHEET_NEW_FEILDS_ENABLED=false;
-
     private boolean preDefinedForm;
     private boolean manualForm;
     private boolean woManulaFormAssigned;

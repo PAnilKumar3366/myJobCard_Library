@@ -1845,9 +1845,9 @@ public class Operation extends ZBaseEntity implements Serializable {
                     try {
                         String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
                         if(ZCommon.isPredefinedFormVisible(formType)&&getTotalNumUnSubmittedMandatoryForms() > 0)
-                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
+                                errorMessages.add(context.getString(R.string.msgAllMandatoryPredefinedFormsAreRequired));
                         if(ZCommon.isManualAssignedFormsVisible(formType)&&getTotalNumUnSubmittedManualMandatoryForms() > 0)
-                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
+                                errorMessages.add(context.getString(R.string.msgAllMandatoryManualFormsAreRequired));
                     } catch (Exception e) {
                         DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
                     }

@@ -60,7 +60,7 @@ public class FormSetModel extends ZBaseEntity {
             resourcePath = entitySetName;
             resourcePath += "?$filter=(FormID eq '" + formID + "' and Version eq '" + version + "')";
 
-            if (ZConfigManager.TEMP_CHECKSHEET_NEW_FEILDS_ENABLED&&!isFormData)
+            if (!isFormData)
                 resourcePath += "&$select=FormName,Description,Active,FunctionalArea,SubArea,Category"; //Tempororily commented this line of code due to newly fileds are not available in petronas QA system.Once enable then this line should be uncommented
 
             result = DataHelper.getInstance().getEntities(entitySetName, resourcePath);

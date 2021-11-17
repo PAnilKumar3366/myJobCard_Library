@@ -2237,27 +2237,42 @@ public class WorkOrder extends ZBaseEntity {
                 if (ZConfigManager.MANDATORY_FORMS_REQUIRED && orderTypeFeature.getFeature().equalsIgnoreCase(ZAppSettings.Features.WORKORDERFORM.getFeatureValue())) {
                     try {
                         String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
-                        HashMap<String,Integer> apprRejCheckSheetCount=new HashMap<>();
+                        ArrayList<HashMap<String,Integer>> mapArrayList=new ArrayList<>();
                         if(ZCommon.isPredefinedFormVisible(formType)) {
-                            apprRejCheckSheetCount=getTotalNumOfPredefinedApprovedandRejectedForms(formType);
+                            mapArrayList.clear();
+                            mapArrayList=getTotalNumOfPredefinedApprovedandRejectedForms(formType);
+                            int totApproversCnt=getPredefinedFormApproversCount();
                             if(getTotalNumUnSubmittedMandatoryForms() > 0)
-                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
-                            else if(getPredefinedFormApproversCount()>0&&apprRejCheckSheetCount.get("APPROVE")!=getPredefinedFormApproversCount())
-                                if(getPredefinedFormApproversCount()-(apprRejCheckSheetCount.get("APPROVE")+apprRejCheckSheetCount.get("REJECT"))>0||(apprRejCheckSheetCount.get("REJECT")>0&&apprRejCheckSheetCount.get("CORRECTIONNOTREQIRED")==0)){
-                                    errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
-                                }
-
-                        }
-                        if(ZCommon.isManualAssignedFormsVisible(formType)) {
-                            apprRejCheckSheetCount=getTotalNumOfManualApprovedandRejectedForms(formType);
-                            if(getTotalNumUnSubmittedManualMandatoryForms() > 0)
-                                errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequired));
-                            else if(getManualFormApproversCount()>0&&apprRejCheckSheetCount.get("APPROVE")!=getManualFormApproversCount()){
-                                if(getManualFormApproversCount()-(apprRejCheckSheetCount.get("APPROVE")+apprRejCheckSheetCount.get("REJECT"))>0||(apprRejCheckSheetCount.get("REJECT")>0&&apprRejCheckSheetCount.get("CORRECTIONNOTREQIRED")==0)){
-                                    errorMessages.add(context.getString(R.string.msgAllMandatoryFormsAreRequiredToApprove));
+                                errorMessages.add(context.getString(R.string.msgAllMandatoryPredefinedFormsAreRequired));
+                            else{
+                                for (HashMap<String,Integer> hashMap : mapArrayList) {
+                                    if(totApproversCnt>0&&hashMap.get("APPROVE")!=totApproversCnt){
+                                        if (hashMap.get("CORRECTIONNOTREQIRED") == 0) {
+                                            if (totApproversCnt - (hashMap.get("APPROVE") + hashMap.get("REJECT")) > 0||hashMap.get("REJECT")>0) {
+                                                errorMessages.add(context.getString(R.string.msgAllMandatoryPredefinedFormsAreRequiredToApprove));
+                                            }
+                                        }
+                                    }
                                 }
                             }
-
+                        }
+                        if(ZCommon.isManualAssignedFormsVisible(formType)) {
+                            mapArrayList.clear();
+                            mapArrayList=getTotalNumOfManualApprovedandRejectedForms(formType);
+                            int totApproversCnt=getManualFormApproversCount();
+                            if(getTotalNumUnSubmittedManualMandatoryForms() > 0)
+                                errorMessages.add(context.getString(R.string.msgAllMandatoryManualFormsAreRequired));
+                            else{
+                                for (HashMap<String,Integer> hashMap : mapArrayList) {
+                                    if(totApproversCnt>0&&hashMap.get("APPROVE")!=totApproversCnt) {
+                                        if (hashMap.get("CORRECTIONNOTREQIRED") == 0) {
+                                            if (totApproversCnt - (hashMap.get("APPROVE") + hashMap.get("REJECT")) > 0||hashMap.get("REJECT")>0) {
+                                                errorMessages.add(context.getString(R.string.msgAllMandatoryManualFormsAreRequiredToApprove));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     } catch (Exception e) {
                         DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
@@ -2407,7 +2422,7 @@ public class WorkOrder extends ZBaseEntity {
                     }
                 }
                 return intComponentsCount;
-                }
+            }
             responseObject = DataHelper.getInstance().getEntities(ZCollections.COMPONENT_COLLECTION, strResPath);
             if (!responseObject.isError()) {
                 rawData = responseObject.Content();
@@ -2517,7 +2532,7 @@ public class WorkOrder extends ZBaseEntity {
     }
 
     /*get the count of the total assigned forms based on Form Assignment type
-    * */
+     * */
 
     public int getTotalNumForms() {
         int formsCount = 0;
@@ -2606,11 +2621,13 @@ public class WorkOrder extends ZBaseEntity {
      * @param formType
      * @return
      */
-    public HashMap<String,Integer> getTotalNumOfPredefinedApprovedandRejectedForms(String formType) {
+    public ArrayList<HashMap<String,Integer>> getTotalNumOfPredefinedApprovedandRejectedForms(String formType) {
         HashMap<String,Integer> approverejectforms= null;
+        ArrayList<HashMap<String,Integer>> hashMapArrayList=null;
         try {
-            int predefinedformsApprovedCount = 0,predefinedformsRejectCount = 0,corrnotRequiredCnt=0;
+            int predefinedformsApprovedCount = 0,predefinedformsRejectCount = 0,corrnotRequiredCnt=0,yetTobeReveiwed=0;
             approverejectforms = new HashMap<>();
+            hashMapArrayList=new ArrayList<>();
             ArrayList<FormAssignmentSetModel> list;
             //String formType=ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
             if(ZCommon.isPredefinedFormVisible(formType))
@@ -2638,22 +2655,47 @@ public class WorkOrder extends ZBaseEntity {
                     if (response != null && !response.isError()) {
                         List<ODataEntity> entities = (List<ODataEntity>) response.Content();
                         if (entities != null && entities.size() > 0) {
-                            responseMasterModel = new ResponseMasterModel(entities.get(0));
-                            ResponseObject result = new ResponseObject(ConfigManager.Status.Error);
-                            String resPath = ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET + "?$filter=FormID eq '" + responseMasterModel.getFormID() + "' and Version eq '" + responseMasterModel.getVersion() + "' and FormInstanceID eq '" + responseMasterModel.getInstanceID() + "' and  Counter eq '" + responseMasterModel.getCounter() + "'";
-                            result = DataHelper.getInstance().getEntities(ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET, resPath);
-                            if(result!=null&&!result.isError()){
-                                List<ODataEntity> entitis = ZBaseEntity.setODataEntityList(result.Content());
-                                for (ODataEntity entity : entitis) {
-                                    ZODataEntity  zoDataEntity = new ZODataEntity(entity);
-                                    FormResponseApprovalStatus formResponseApprovalStatus=new FormResponseApprovalStatus(zoDataEntity);
-                                    if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("APPROVE"))
-                                        predefinedformsApprovedCount++;
-                                    else if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("REJECT")){
-                                        if(apprCnt==1||formResponseApprovalStatus.getIterationRequired().equalsIgnoreCase("X"))
-                                            predefinedformsRejectCount++;
-                                        else
-                                            corrnotRequiredCnt++;
+                            for (ODataEntity Resentity : entities) {
+                                ZODataEntity zoDataEntityRespCap = new ZODataEntity(Resentity);
+                                responseMasterModel = new ResponseMasterModel(zoDataEntityRespCap);
+                                ResponseObject result = new ResponseObject(ConfigManager.Status.Error);
+                                String resPath = ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET + "?$filter=FormID eq '" + responseMasterModel.getFormID() + "' and Version eq '" + responseMasterModel.getVersion() + "' and FormInstanceID eq '" + responseMasterModel.getInstanceID() + "' and  Counter eq '" + responseMasterModel.getCounter() + "'";
+                                result = DataHelper.getInstance().getEntities(ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET, resPath);
+                                if (result != null && !result.isError()) {
+                                    List<ODataEntity> entitis = ZBaseEntity.setODataEntityList(result.Content());
+                                    if (entitis != null && entitis.size() > 0) {
+                                        for (ODataEntity entity : entitis) {
+                                            approverejectforms=new HashMap<>();
+                                            ZODataEntity zoDataEntity = new ZODataEntity(entity);
+                                            FormResponseApprovalStatus formResponseApprovalStatus = new FormResponseApprovalStatus(zoDataEntity);
+                                            if (formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("APPROVE"))
+                                                predefinedformsApprovedCount++;
+                                            else if (formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("REJECT")) {
+                                                if (apprCnt == 1 || formResponseApprovalStatus.getIterationRequired().equalsIgnoreCase("X"))
+                                                    predefinedformsRejectCount++;
+                                                else
+                                                    corrnotRequiredCnt++;
+                                            }
+                                            if(apprCnt==entitis.size())
+                                                yetTobeReveiwed=0;
+                                            else
+                                                yetTobeReveiwed++;
+                                            approverejectforms.put("APPROVE",predefinedformsApprovedCount);
+                                            approverejectforms.put("REJECT",predefinedformsRejectCount);
+                                            approverejectforms.put("CORRECTIONNOTREQIRED",corrnotRequiredCnt);
+                                            approverejectforms.put("YETTOBEREVEIWED",yetTobeReveiwed);
+                                        }
+                                        hashMapArrayList.add(approverejectforms);
+                                    }
+                                    else {
+                                        predefinedformsApprovedCount=0;predefinedformsRejectCount=0;corrnotRequiredCnt=0;
+                                        approverejectforms=new HashMap<>();
+                                        yetTobeReveiwed++;
+                                        approverejectforms.put("APPROVE",predefinedformsApprovedCount);
+                                        approverejectforms.put("REJECT",predefinedformsRejectCount);
+                                        approverejectforms.put("CORRECTIONNOTREQIRED",corrnotRequiredCnt);
+                                        hashMapArrayList.add(approverejectforms);
+                                        approverejectforms.put("YETTOBEREVEIWED",yetTobeReveiwed);
                                     }
                                 }
                             }
@@ -2661,20 +2703,19 @@ public class WorkOrder extends ZBaseEntity {
                     }
                 }
             }
-            approverejectforms.put("APPROVE",predefinedformsApprovedCount);
-            approverejectforms.put("REJECT",predefinedformsRejectCount);
-            approverejectforms.put("CORRECTIONNOTREQIRED",corrnotRequiredCnt);
         } catch (Exception e) {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
 
-        return approverejectforms;
+        return hashMapArrayList;
     }
 
-    public HashMap<String,Integer> getTotalNumOfManualApprovedandRejectedForms(String formType) {
+    public ArrayList<HashMap<String,Integer>> getTotalNumOfManualApprovedandRejectedForms(String formType) {
         HashMap<String,Integer> approverejectforms= null;
+        ArrayList<HashMap<String,Integer>> hashMapArrayList=null;
         try {
-            int predefinedformsApprovedCount = 0,predefinedformsRejectCount = 0,corrnotRequiredCnt=0;
+            int predefinedformsApprovedCount = 0,predefinedformsRejectCount = 0,corrnotRequiredCnt=0,yetTobeReveiwed=0;
+            hashMapArrayList=new ArrayList<>();
             approverejectforms = new HashMap<>();
             ArrayList<ManualFormAssignmentSetModel> list;
             if(ZCommon.isManualAssignedFormsVisible(formType)){
@@ -2696,7 +2737,7 @@ public class WorkOrder extends ZBaseEntity {
                     String entitySetName = ZCollections.FORMS_RESPONSE_CAPTURE_COLLECTION;
                     resourcePath = entitySetName;
                     //if (formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentWO.Value))
-                        resourcePath += "?$filter=(tolower(FormID) eq '" + manualFormAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + manualFormAssignmentSetModel.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "'  and OperationNum eq '" + manualFormAssignmentSetModel.getOprNum() + "')&$orderby=Counter desc";
+                    resourcePath += "?$filter=(tolower(FormID) eq '" + manualFormAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + manualFormAssignmentSetModel.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "'  and OperationNum eq '" + manualFormAssignmentSetModel.getOprNum() + "')&$orderby=Counter desc";
                     /*else if(formType.equals(ZAppSettings.FormAssignmentType.ManualAssignmentOPR.Value)||formType.equals(ZAppSettings.FormAssignmentType.TaskTypeWithManualAssignOPR.Value))
                         resourcePath += "?$filter=(tolower(FormID) eq '" + manualFormAssignmentSetModel.getFormID().toLowerCase() + "' and Version eq '" + manualFormAssignmentSetModel.getVersion() + "' and WoNum eq '" + getWorkOrderNum() + "')&$orderby=Counter desc";
                     */
@@ -2704,37 +2745,58 @@ public class WorkOrder extends ZBaseEntity {
                     if (response != null && !response.isError()) {
                         List<ODataEntity> entities = (List<ODataEntity>) response.Content();
                         if (entities != null && entities.size() > 0) {
-                            responseMasterModel = new ResponseMasterModel(entities.get(0));
-                            ResponseObject result = new ResponseObject(ConfigManager.Status.Error);
-                            String resPath = ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET + "?$filter=FormID eq '" + responseMasterModel.getFormID() + "' and Version eq '" + responseMasterModel.getVersion() + "' and FormInstanceID eq '" + responseMasterModel.getInstanceID() + "' and  Counter eq '" + responseMasterModel.getCounter() + "'";
-                            result = DataHelper.getInstance().getEntities(ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET, resPath);
-                            if(result!=null&&!result.isError()){
-                                List<ODataEntity> entitis = ZBaseEntity.setODataEntityList(result.Content());
-                                for (ODataEntity entity : entitis) {
-                                    ZODataEntity  zoDataEntity = new ZODataEntity(entity);
-                                    FormResponseApprovalStatus formResponseApprovalStatus=new FormResponseApprovalStatus(zoDataEntity);
-                                    if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("APPROVE"))
-                                        predefinedformsApprovedCount++;
-                                    else if(formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("REJECT")){
-                                        if(apprCnt==1||formResponseApprovalStatus.getIterationRequired().equalsIgnoreCase("X"))
-                                            predefinedformsRejectCount++;
-                                        else
-                                            corrnotRequiredCnt++;
+                            for (ODataEntity Resentity : entities) {
+                                ZODataEntity zoDataEntityRespCap = new ZODataEntity(Resentity);
+                                responseMasterModel = new ResponseMasterModel(zoDataEntityRespCap);
+                                ResponseObject result = new ResponseObject(ConfigManager.Status.Error);
+                                String resPath = ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET + "?$filter=FormID eq '" + responseMasterModel.getFormID() + "' and Version eq '" + responseMasterModel.getVersion() + "' and FormInstanceID eq '" + responseMasterModel.getInstanceID() + "' and  Counter eq '" + responseMasterModel.getCounter() + "'";
+                                result = DataHelper.getInstance().getEntities(ZCollections.FORM_RESPONSE_APPROVAL_STATUS_ENTITY_SET, resPath);
+                                if (result != null && !result.isError()) {
+                                    List<ODataEntity> entitis = ZBaseEntity.setODataEntityList(result.Content());
+                                    if (entitis != null && entitis.size() > 0) {
+                                        for (ODataEntity entity : entitis) {
+                                            approverejectforms=new HashMap<>();
+                                            ZODataEntity zoDataEntity = new ZODataEntity(entity);
+                                            FormResponseApprovalStatus formResponseApprovalStatus = new FormResponseApprovalStatus(zoDataEntity);
+                                            if (formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("APPROVE"))
+                                                predefinedformsApprovedCount++;
+                                            else if (formResponseApprovalStatus.getFormContentStatus().equalsIgnoreCase("REJECT")) {
+                                                if (apprCnt == 1 || formResponseApprovalStatus.getIterationRequired().equalsIgnoreCase("X"))
+                                                    predefinedformsRejectCount++;
+                                                else
+                                                    corrnotRequiredCnt++;
+                                            }
+                                            if(apprCnt==entitis.size())
+                                                yetTobeReveiwed=0;
+                                            else
+                                                yetTobeReveiwed++;
+                                            approverejectforms.put("APPROVE",predefinedformsApprovedCount);
+                                            approverejectforms.put("REJECT",predefinedformsRejectCount);
+                                            approverejectforms.put("CORRECTIONNOTREQIRED",corrnotRequiredCnt);
+                                            approverejectforms.put("YETTOBEREVEIWED",yetTobeReveiwed);
+                                        }
+                                        hashMapArrayList.add(approverejectforms);
                                     }
-
+                                    else {
+                                        predefinedformsApprovedCount=0;predefinedformsRejectCount=0;corrnotRequiredCnt=0;
+                                        approverejectforms=new HashMap<>();
+                                        yetTobeReveiwed++;
+                                        approverejectforms.put("APPROVE",predefinedformsApprovedCount);
+                                        approverejectforms.put("REJECT",predefinedformsRejectCount);
+                                        approverejectforms.put("CORRECTIONNOTREQIRED",corrnotRequiredCnt);
+                                        approverejectforms.put("YETTOBEREVEIWED",yetTobeReveiwed);
+                                        hashMapArrayList.add(approverejectforms);
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-            approverejectforms.put("APPROVE",predefinedformsApprovedCount);
-            approverejectforms.put("REJECT",predefinedformsRejectCount);
-            approverejectforms.put("CORRECTIONNOTREQIRED",corrnotRequiredCnt);
         } catch (Exception e) {
             DliteLogger.WriteLog(WorkOrder.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
-        return approverejectforms;
+        return hashMapArrayList;
     }
 
     public static ArrayList<FormAssignmentSetModel> fetchPredefinedForms(String typeValue, String orderType, boolean mandatoryFormChk) {
@@ -2827,7 +2889,7 @@ public class WorkOrder extends ZBaseEntity {
                     break;
                 case "7":
                 case "10":
-                     if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
+                    if (!ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED) {
                         manualFormlist.clear();
                         ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, workOrderNum);
                         ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
@@ -2860,17 +2922,17 @@ public class WorkOrder extends ZBaseEntity {
         }
         return manualFormlist;
     }
-/* get the count of the un-submitted Manadatory forms based on Form Assignment type
-* */
+    /* get the count of the un-submitted Manadatory forms based on Form Assignment type
+     * */
     public int getTotalNumUnSubmittedMandatoryForms() {
         int unSubmittedFormsCount = 0;
         ResponseObject responseObject = null;
         String strResPath = "";
         Object rawData = null;
         try {
-           // strResPath = getFormResPath(true);
+            // strResPath = getFormResPath(true);
             responseObject=getFormEntities(true);
-           // responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
+            // responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
             if (!responseObject.isError()) {
                 rawData = responseObject.Content();
                 ArrayList<FormAssignmentSetModel> forms = (ArrayList<FormAssignmentSetModel>) rawData;
@@ -2896,8 +2958,8 @@ public class WorkOrder extends ZBaseEntity {
         }
         return unSubmittedFormsCount;
     }
-/* getting the forms data for manadatory check based on Form Assignment type
-* */
+    /* getting the forms data for manadatory check based on Form Assignment type
+     * */
     public ResponseObject getFormEntities(boolean mandatoryFormChk) {
         ResponseObject responseObject = null;
         String formAssignType = ZAppSettings.FormAssignmentType.getFormAssignmentType(ZConfigManager.FORM_ASSIGNMENT_TYPE);
@@ -3025,28 +3087,28 @@ public class WorkOrder extends ZBaseEntity {
                     break;
                 case "7":
                 case "10":
-                     if(ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED){
-                         strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
-                         break;
+                    if(ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED){
+                        strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
+                        break;
                     }
                     else {
-                    ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, WorkOrder.getCurrWo().getWorkOrderNum());
-                    ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
-                         ArrayList<ManualFormAssignmentSetModel> contentList = new ArrayList<ManualFormAssignmentSetModel>();
-                         for (Operation operation : totalOperations) {
-                             strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + operation.getWorkOrderNum() + "' and OprNum eq '" + operation.getOperationNum() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
-                             responseObject = ManualFormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
-                             if (!responseObject.isError()) {
-                                 rawData = responseObject.Content();
-                                 //contentList = (ArrayList<FormAssignmentSetModel>) rawData;
-                                 if (rawData != null) {
-                                     contentList.addAll((ArrayList<ManualFormAssignmentSetModel>) rawData);
-                                 }
-                             }
-                         }
-                         responseObject.setContent(contentList);
-                         return responseObject;
-                }
+                        ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, WorkOrder.getCurrWo().getWorkOrderNum());
+                        ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
+                        ArrayList<ManualFormAssignmentSetModel> contentList = new ArrayList<ManualFormAssignmentSetModel>();
+                        for (Operation operation : totalOperations) {
+                            strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + operation.getWorkOrderNum() + "' and OprNum eq '" + operation.getOperationNum() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
+                            responseObject = ManualFormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
+                            if (!responseObject.isError()) {
+                                rawData = responseObject.Content();
+                                //contentList = (ArrayList<FormAssignmentSetModel>) rawData;
+                                if (rawData != null) {
+                                    contentList.addAll((ArrayList<ManualFormAssignmentSetModel>) rawData);
+                                }
+                            }
+                        }
+                        responseObject.setContent(contentList);
+                        return responseObject;
+                    }
                 case "8":
                     strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (Equipment eq '" + WorkOrder.getCurrWo().getEquipNum() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
                     break;
@@ -3107,25 +3169,25 @@ public class WorkOrder extends ZBaseEntity {
                         break;
                     }
                     else {*/
-                        ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, getWorkOrderNum());
-                        ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
-                        ArrayList<FormAssignmentSetModel> contentList = new ArrayList<FormAssignmentSetModel>();
-                        for (Operation operation : totalOperations) {
-                            orderType = operation.getOrderType();
-                            controlKey = operation.getControlKey();
-                            taskListType = operation.getTaskListType();
-                            group = operation.getGroup();
-                            groupCounter = operation.getGroupCounter();
-                            internalCounter = operation.getInternalCounter();
-                            strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "/$count?$filter= (OrderType eq '" + orderType + "' and ControlKey eq '" + controlKey + "' and TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "')";
-                            responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
-                            //responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
-                            if (!responseObject.isError()) {
-                                rawData = responseObject.Content();
-                                if (rawData != null) {
-                                    totpredefinedFormsCount += Integer.valueOf(String.valueOf(rawData));
-                                }
+                    ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, getWorkOrderNum());
+                    ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
+                    ArrayList<FormAssignmentSetModel> contentList = new ArrayList<FormAssignmentSetModel>();
+                    for (Operation operation : totalOperations) {
+                        orderType = operation.getOrderType();
+                        controlKey = operation.getControlKey();
+                        taskListType = operation.getTaskListType();
+                        group = operation.getGroup();
+                        groupCounter = operation.getGroupCounter();
+                        internalCounter = operation.getInternalCounter();
+                        strResPath = ZCollections.FORM_ASSIGNMENT_COLLECTION + "/$count?$filter= (OrderType eq '" + orderType + "' and ControlKey eq '" + controlKey + "' and TaskListType eq '" + taskListType + "' and Group eq '" + group + "' and GroupCounter eq '" + groupCounter + "' and InternalCounter eq '" + internalCounter + "')";
+                        responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
+                        //responseObject = FormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_ASSIGNMENT_COLLECTION, strResPath);
+                        if (!responseObject.isError()) {
+                            rawData = responseObject.Content();
+                            if (rawData != null) {
+                                totpredefinedFormsCount += Integer.valueOf(String.valueOf(rawData));
                             }
+                        }
                         //}
                         return totpredefinedFormsCount;
                     }
@@ -3169,21 +3231,21 @@ public class WorkOrder extends ZBaseEntity {
                         break;
                     }
                     else {*/
-                        ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, getWorkOrderNum());
-                        ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
-                        for (Operation operation : totalOperations) {
-                            strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and OprNum eq '" + operation.getOperationNum() + "')";
-                            //responseObject = ManualFormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
-                            responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
-                            if (!responseObject.isError()) {
-                                rawData = responseObject.Content();
-                                if (rawData != null) {
-                                    totManualFormsCount += Integer.valueOf(String.valueOf(rawData));
-                                }
+                    ResponseObject result = Operation.getAllWorkOrderOperations(ZAppSettings.FetchLevel.List, getWorkOrderNum());
+                    ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
+                    for (Operation operation : totalOperations) {
+                        strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "/$count?$filter= (WorkOrderNum eq '" + getWorkOrderNum() + "' and OprNum eq '" + operation.getOperationNum() + "')";
+                        //responseObject = ManualFormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
+                        responseObject = DataHelper.getInstance().getEntities(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
+                        if (!responseObject.isError()) {
+                            rawData = responseObject.Content();
+                            if (rawData != null) {
+                                totManualFormsCount += Integer.valueOf(String.valueOf(rawData));
                             }
                         }
-                        return totManualFormsCount;
-                    //}
+                    }
+                    return totManualFormsCount;
+                //}
                 case "8":
                     strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "/$count?$filter= (Equipment eq '" + getEquipNum() + "')";
                     break;
@@ -3191,7 +3253,7 @@ public class WorkOrder extends ZBaseEntity {
                     strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "/$count?$filter= (FunctionalLocation eq '" + getFuncLocation() + "')";
                     break;
                 /*case "10":
-                    *//*if(ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED){
+                 *//*if(ZConfigManager.OPERATION_LEVEL_ASSIGNMENT_ENABLED){
                         strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "/$count?$filter= (WorkOrderNum eq '" + WorkOrder.getCurrWo().getWorkOrderNum() + "' and OprNum eq '" + WorkOrder.getCurrWo().getCurrentOperation().getOperationNum() + "')";
                         break;
                     }
