@@ -98,6 +98,28 @@ public class AssetHierarchy extends ZBaseEntity {
     }
 
     /**
+     * Fetch the count of Child Assets
+     * @param requiredLevel the level of children
+     * @param parentId object id of the parent of the children
+     * @return Count of Child AssetHierarchy based on passed Hierarchy Level and Parent Id
+     */
+    public static int getChildAssetsCount(int requiredLevel, String parentId) {
+        int count = 0;
+        ArrayList<AssetHierarchy> hierarchies = new ArrayList<>();
+        try {
+            String entitySetName = ZCollections.ASSET_HIERARCHY_ENTITY_SET;
+            String resPath = entitySetName + "/$count?$filter=HierLevel eq "+ requiredLevel +" and ParentId eq '"+ parentId +"'";
+            ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                count = Integer.parseInt(String.valueOf(result.Content()));
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(AssetMapping.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return count;
+    }
+
+    /**
      * Fetching the Asset Hierarchy Object.
      *
      * @param objectId Object Id.
