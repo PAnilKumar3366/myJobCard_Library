@@ -7,6 +7,7 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.assettree.TreeViewData;
+import com.ods.myjobcard_library.entities.highvolume.AssetHierarchy;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -201,7 +202,7 @@ public class Equipment extends ZBaseEntity {
                 finalFilterQry += (finalFilterQry.equals(filterQry) ? " and (" : " or ") + "WorkCenter eq '" + workCenter + "'";
 
             finalFilterQry += finalFilterQry.equals(filterQry) ? "" : ")";
-            strQuery += finalFilterQry + selectQry;
+            strQuery += finalFilterQry + selectQry + "&$orderby=Equipment asc";
 
             result = dataHelper.getEntities(ZCollections.EQUIPMENT_COLLECTION, strQuery);
             result = FromEntity((List<ODataEntity>) result.Content());
@@ -227,7 +228,7 @@ public class Equipment extends ZBaseEntity {
             if (functionalLocation != null && !functionalLocation.isEmpty()) {
                 resPath = resPath.substring(0, resPath.lastIndexOf(")")) + " and tolower(FuncLocation) eq '" + functionalLocation.toLowerCase() + "')";
             }
-            resPath += "&$skip=" + skipValue + "&$top=" + numRecords;
+            resPath += "&$orderby=Equipment asc&$skip=" + skipValue + "&$top=" + numRecords;
             result = DataHelper.getInstance().getEntities(ZCollections.EQUIPMENT_COLLECTION, resPath);
             result = FromEntity((List<ODataEntity>) result.Content());
             if (result != null && !result.isError()) {
@@ -253,7 +254,7 @@ public class Equipment extends ZBaseEntity {
                 resPath += (resPath.equalsIgnoreCase(entitySet) ? "?" : "&");
                 resPath += ("$skip=" + skipValue + " &$top=" + numRecords);
             }
-
+            resPath += (resPath.equalsIgnoreCase(entitySet) ? "?" : "&") + "$orderby=Equipment asc";
             result = dataHelper.getEntities(entitySet, resPath);
             result = FromEntity(ZBaseEntity.setODataEntityList(result.Content()));
             if (result == null)
@@ -271,7 +272,7 @@ public class Equipment extends ZBaseEntity {
         String strQuery;
         try {
             dataHelper = DataHelper.getInstance();
-            strQuery = ZCollections.EQUIPMENT_COLLECTION + "?$select=Equipment,EquipDescription&$skip=" + skipValue + " &$top=" + numRecords;
+            strQuery = ZCollections.EQUIPMENT_COLLECTION + "?$orderby=Equipment asc&$select=Equipment,EquipDescription&$skip=" + skipValue + " &$top=" + numRecords;
             result = dataHelper.getEntities(ZCollections.EQUIPMENT_COLLECTION, strQuery);
             if (!result.isError()) {
                 result = FromEntity((List<ODataEntity>) result.Content());
@@ -360,7 +361,7 @@ public class Equipment extends ZBaseEntity {
 
             //finalFilterQry += "indexof(tolower("+ (searchOption.equalsIgnoreCase(Collections.SEARCH_OPTION_ID) ? "Equipment" : searchOption.equalsIgnoreCase(Collections.SEARCH_OPTION_DESCRIPTION)?"EquipDescription": searchOption.equalsIgnoreCase(Collections.SEARCH_OPTION_TECH_ID)?"TechIdentNo":"" +"),'"+ searchText.toLowerCase() +"') ne -1&$select=Equipment,EquipDescription,TechIdentNo");
             //finalFilterQry += "indexof(tolower("+ (searchOption.equalsIgnoreCase(Collections.SEARCH_OPTION_ID) ? "Equipment" : "EquipDescription") +"),'"+ searchText.toLowerCase() +"') ne -1&$select=Equipment,EquipDescription";
-            strQuery += finalFilterQry;
+            strQuery += finalFilterQry + "&$orderby=Equipment asc";
 
             result = dataHelper.getEntities(ZCollections.EQUIPMENT_COLLECTION, strQuery);
             result = FromEntity((List<ODataEntity>) result.Content());
@@ -501,6 +502,47 @@ public class Equipment extends ZBaseEntity {
             DliteLogger.WriteLog(Equipment.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return assetData;
+    }
+
+    public static int getEquipmentChildrenCount(String parentEquipmentId){
+        int count = 0;
+        try{
+            String entitySetName = ZCollections.EQUIPMENT_COLLECTION;
+            String resPath = entitySetName + "/$count?$filter=(SuperiorEquipment eq '" + parentEquipmentId + "')";
+            ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                count = Integer.parseInt(String.valueOf(result.Content()));
+            }
+        } catch (Exception e){
+            DliteLogger.WriteLog(Equipment.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return count;
+    }
+
+    public static ArrayList<AssetHierarchy> getEquipmentChildren(String parentEquipmentId){
+        ArrayList<AssetHierarchy> children = new ArrayList<>();
+        try {
+            String entitySetName = ZCollections.EQUIPMENT_COLLECTION;
+            String resPath = entitySetName + "?$filter=(SuperiorEquipment eq '" + parentEquipmentId + "')&$orderby=Equipment asc&$select=EquipDescription,Equipment";
+            ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
+                String description, eqp;
+                for (ODataEntity entity : entities) {
+                    eqp = String.valueOf(entity.getProperties().get("Equipment").getValue());
+                    description = String.valueOf(entity.getProperties().get("EquipDescription").getValue());
+                    AssetHierarchy hierarchy = new AssetHierarchy();
+                    hierarchy.setDescription(description);
+                    hierarchy.setObjectId(eqp);
+                    hierarchy.setType("EQ");
+                    hierarchy.setParentId(parentEquipmentId);
+                    children.add(hierarchy);
+                }
+            }
+        } catch (Exception e){
+            DliteLogger.WriteLog(Equipment.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return children;
     }
 
     public static String warrantyInfoMsg(String cusWarrantyStatus, String venWarrantyStatus) {

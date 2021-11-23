@@ -49,6 +49,7 @@ public class InspectionResultsGet extends ZBaseEntity {
     private String InputProcessing;
     private int DiffDeciPlaces;
     private String Description;
+    private String Counter;
 
     public InspectionResultsGet(ODataEntity entity) {
         initializeEntityProperties();
@@ -401,5 +402,13 @@ public class InspectionResultsGet extends ZBaseEntity {
 
     public void setDescription(String description) {
         Description = description;
+    }
+
+    public String getCounter() {
+        return Counter;
+    }
+
+    public void setCounter(String counter) {
+        Counter = counter;
     }
 }

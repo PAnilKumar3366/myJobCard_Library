@@ -65,7 +65,7 @@ public class AssetHierarchy extends ZBaseEntity {
         ArrayList<AssetHierarchy> hierarchies = new ArrayList<>();
         try {
             String entitySetName = ZCollections.ASSET_HIERARCHY_ENTITY_SET;
-            String resPath = entitySetName + "?$filter=HierLevel eq 0&$skip="+skip+"&$top="+top;
+            String resPath = entitySetName + "?$orderby=Type desc,ObjectId asc&$skip="+skip+"&$top="+top;
             ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
             if (result != null && !result.isError()) {
                 hierarchies = fromEntity(ZBaseEntity.setODataEntityList(result.Content()));
