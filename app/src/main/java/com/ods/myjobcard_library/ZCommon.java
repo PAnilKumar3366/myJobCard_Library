@@ -6,12 +6,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.Settings;
 import android.text.TextUtils;
 
 import com.ods.myjobcard_library.entities.appsettings.AppFeature;
 import com.ods.myjobcard_library.utils.DocsUtil;
+import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.StoreHelpers.StoreSettings;
 import com.ods.ods_sdk.StoreHelpers.TableConfigSet;
@@ -41,6 +41,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
+import static android.content.Context.MODE_PRIVATE;
 import static com.ods.ods_sdk.utils.DliteLogger.WriteLog;
 
 /**
@@ -636,14 +637,45 @@ public class ZCommon extends Common {
      */
     public static boolean isPredefinedFormVisible(String formAssignemntType){
         boolean active = false;
-        if(formAssignemntType=="1"||formAssignemntType=="2"||formAssignemntType=="4"||formAssignemntType=="5"||formAssignemntType=="10")
-            active=true;
+        if (formAssignemntType == "1" || formAssignemntType == "2" || formAssignemntType == "4" || formAssignemntType == "5" || formAssignemntType == "10")
+            active = true;
         return active;
     }
-    public static boolean isManualAssignedFormsVisible(String formAssignemntType){
+
+    public static boolean isManualAssignedFormsVisible(String formAssignemntType) {
         boolean active = false;
-        if(formAssignemntType=="6"||formAssignemntType=="7"||formAssignemntType=="8"||formAssignemntType=="9"||formAssignemntType=="10")
-            active=true;
+        if (formAssignemntType == "6" || formAssignemntType == "7" || formAssignemntType == "8" || formAssignemntType == "9" || formAssignemntType == "10")
+            active = true;
         return active;
+    }
+
+    public static ResponseObject StoreUploadFilePath(Context context, String filePath, String docId) {
+        ResponseObject result = new ResponseObject(ConfigManager.Status.Success);
+        try {
+            SharedPreferences preferences = context.getSharedPreferences("Upload", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(docId, filePath);
+            editor.apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null);
+            DliteLogger.WriteLog(ZCommon.class.getClass(), AppSettings.LogLevel.Error, e.getMessage());
+        }
+        return result;
+    }
+
+    public static ResponseObject ClearUploadFilePath(Context context, String filePath, String docId) {
+        ResponseObject result = new ResponseObject(ConfigManager.Status.Success);
+        try {
+            SharedPreferences preferences = context.getSharedPreferences("Upload", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.remove(docId);
+            editor.apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = new ResponseObject(ConfigManager.Status.Error, e.getMessage(), null);
+            DliteLogger.WriteLog(ZCommon.class.getClass(), AppSettings.LogLevel.Error, e.getMessage());
+        }
+        return result;
     }
 }

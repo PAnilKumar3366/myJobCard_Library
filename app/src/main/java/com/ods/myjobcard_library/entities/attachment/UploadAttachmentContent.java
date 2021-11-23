@@ -49,22 +49,25 @@ public class UploadAttachmentContent extends ZBaseEntity {
 
     public static ResponseObject UploadAttachment(String filePath, String fileName, boolean isImage, String description, WorkOrder workOrder, boolean autoFlush) {
         ResponseObject result = null;
+        UploadAttachmentContent uploadAttachmentFile;
+        String docID = "";
         try {
             File sourceFile = new File(filePath);
             String base64Content = "";
-            if(isImage)
+            if (isImage)
                 base64Content = DocsUtil.resizeFileContent(filePath);
             else {
                 ByteArrayOutputStream output = DocsUtil.convertToBase64(filePath, isImage);
                 base64Content = output.toString();
             }
             if (!base64Content.isEmpty()) {
-                UploadAttachmentContent uploadAttachmentFile;
+
                 uploadAttachmentFile = new UploadAttachmentContent();
                 uploadAttachmentFile.setFILE_NAME(fileName != null ? fileName : sourceFile.getName());
                 uploadAttachmentFile.setMIMETYPE(DocsUtil.getMimeTypeFromFile(sourceFile));
                 uploadAttachmentFile.setWorkOrderNum(workOrder.getWorkOrderNum());
-                uploadAttachmentFile.setDocID(ZConfigManager.LOCAL_ID + Common.getReqTimeStamp(16));
+                docID = ZConfigManager.LOCAL_ID + Common.getReqTimeStamp(16);
+                uploadAttachmentFile.setDocID(docID);
                 uploadAttachmentFile.setFILE_SIZE(String.valueOf(sourceFile.length()));
                 uploadAttachmentFile.setBINARY_FLG("1");
                 uploadAttachmentFile.setLine(base64Content);
@@ -83,6 +86,7 @@ public class UploadAttachmentContent extends ZBaseEntity {
             DliteLogger.WriteLog(UploadNotificationAttachmentContent.class, ZAppSettings.LogLevel.Error, e.getMessage());
             result = new ResponseObject(ZConfigManager.Status.Error);
         }
+        result.setContent(docID);
         return result;
     }
     //Setter & getter Methods
