@@ -5,6 +5,7 @@ import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
 import com.ods.myjobcard_library.entities.assettree.TreeViewData;
+import com.ods.myjobcard_library.entities.highvolume.AssetHierarchy;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.utils.DliteLogger;
@@ -111,7 +112,7 @@ public class FunctionalLocation extends ZBaseEntity {
         ResponseObject result = new ResponseObject(ZConfigManager.Status.Error);
         try {
             dataHelper = DataHelper.getInstance();
-            String strQuery = ZCollections.FL_COLLECTION + "?$skip=" + skipValue + " &$top=" + numRecords;
+            String strQuery = ZCollections.FL_COLLECTION + "?$orderby=FunctionalLoc asc&$skip=" + skipValue + " &$top=" + numRecords;
             result = dataHelper.getEntities(ZCollections.FL_COLLECTION, strQuery);
             result = FromEntity((List<ODataEntity>) result.Content());
             if (result == null)
@@ -129,9 +130,9 @@ public class FunctionalLocation extends ZBaseEntity {
         try {
             String resPath = ZCollections.FL_COLLECTION;
             if (searchOptions.equalsIgnoreCase(ZCollections.SEARCH_OPTION_ID))
-                resPath += "?$filter=indexof(tolower(FunctionalLoc), '" + searchText.toLowerCase() + "') ne -1&$skip=" + skipValue + "&$top=" + numRecords;
+                resPath += "?$filter=indexof(tolower(FunctionalLoc), '" + searchText.toLowerCase() + "') ne -1&$orderby=FunctionalLoc asc&$skip=" + skipValue + "&$top=" + numRecords;
             else if (searchOptions.equalsIgnoreCase(ZCollections.SEARCH_OPTION_DESCRIPTION))
-                resPath += "?$filter=indexof(tolower(Description), '" + searchText.toLowerCase() + "') ne -1&$skip=" + skipValue + "&$top=" + numRecords;
+                resPath += "?$filter=indexof(tolower(Description), '" + searchText.toLowerCase() + "') ne -1&$orderby=FunctionalLoc asc&$skip=" + skipValue + "&$top=" + numRecords;
             result = DataHelper.getInstance().getEntities(ZCollections.FL_COLLECTION, resPath);
             result = FromEntity((List<ODataEntity>) result.Content());
             if (result != null && !result.isError()) {
@@ -201,7 +202,7 @@ public class FunctionalLocation extends ZBaseEntity {
         ResponseObject result = null;
         try {
             dataHelper = DataHelper.getInstance();
-            String strQuery = ZCollections.FL_COLLECTION + "?$filter=indexof(tolower(" + (searchOption.equalsIgnoreCase(ZCollections.SEARCH_OPTION_ID) ? "FunctionalLoc" : "Description") + "),'" + searchText.toLowerCase() + "') ne -1&$select=FunctionalLoc,Description";
+            String strQuery = ZCollections.FL_COLLECTION + "?$filter=indexof(tolower(" + (searchOption.equalsIgnoreCase(ZCollections.SEARCH_OPTION_ID) ? "FunctionalLoc" : "Description") + "),'" + searchText.toLowerCase() + "') ne -1&$orderby=FunctionalLoc asc&$select=FunctionalLoc,Description";
             result = dataHelper.getEntities(ZCollections.FL_COLLECTION, strQuery);
             result = FromEntity((List<ODataEntity>) result.Content());
             if (result != null && !result.isError())
@@ -304,6 +305,70 @@ public class FunctionalLocation extends ZBaseEntity {
             DliteLogger.WriteLog(FunctionalLocation.class, ZAppSettings.LogLevel.Error, e.getMessage());
         }
         return assetData;
+    }
+
+    public static int getFLocChildrenCount(String parentFLocId){
+        int count = 0;
+        try{
+            String entitySetName = ZCollections.FL_COLLECTION;
+            String resPath = entitySetName + "/$count?$filter=SupFunctLoc eq '" + parentFLocId + "'";
+            ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                count = Integer.parseInt(String.valueOf(result.Content()));
+            }
+            entitySetName = ZCollections.EQUIPMENT_COLLECTION;
+            resPath = entitySetName + "/$count?$filter=FuncLocation eq '"+ parentFLocId +"' and (SuperiorEquipment eq null or SuperiorEquipment eq '')";
+            result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                count += Integer.parseInt(String.valueOf(result.Content()));
+            }
+        } catch (Exception e){
+            DliteLogger.WriteLog(FunctionalLocation.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return count;
+    }
+
+    public static ArrayList<AssetHierarchy> getFLocChildren(String parentFLocId){
+        ArrayList<AssetHierarchy> children = new ArrayList<>();
+        try {
+            String entitySetName = ZCollections.FL_COLLECTION;
+            String resPath = entitySetName + "?$filter=SupFunctLoc eq '" + parentFLocId + "'&$orderby=FunctionalLoc asc&$select=Description,FunctionalLoc";
+            ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
+                String description, fLoc;
+                for (ODataEntity entity : entities) {
+                    fLoc = String.valueOf(entity.getProperties().get("FunctionalLoc").getValue());
+                    description = String.valueOf(entity.getProperties().get("Description").getValue());
+                    AssetHierarchy hierarchy = new AssetHierarchy();
+                    hierarchy.setDescription(description);
+                    hierarchy.setObjectId(fLoc);
+                    hierarchy.setType("FL");
+                    hierarchy.setParentId(parentFLocId);
+                    children.add(hierarchy);
+                }
+            }
+            entitySetName = ZCollections.EQUIPMENT_COLLECTION;
+            resPath = entitySetName + "?$filter=FuncLocation eq '" + parentFLocId + "' and (SuperiorEquipment eq null or SuperiorEquipment eq '')&$orderby=Equipment asc&$select=EquipDescription,Equipment";
+            result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
+                String description, eqp;
+                for (ODataEntity entity : entities) {
+                    eqp = String.valueOf(entity.getProperties().get("Equipment").getValue());
+                    description = String.valueOf(entity.getProperties().get("EquipDescription").getValue());
+                    AssetHierarchy hierarchy = new AssetHierarchy();
+                    hierarchy.setDescription(description);
+                    hierarchy.setObjectId(eqp);
+                    hierarchy.setType("EQ");
+                    hierarchy.setParentId(parentFLocId);
+                    children.add(hierarchy);
+                }
+            }
+        } catch (Exception e){
+            DliteLogger.WriteLog(FunctionalLocation.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return children;
     }
 
     public boolean isEquipInstall() {
