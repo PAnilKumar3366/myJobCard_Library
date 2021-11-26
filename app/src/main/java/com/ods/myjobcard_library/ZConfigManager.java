@@ -220,6 +220,13 @@ public class ZConfigManager extends ConfigManager {
     public static boolean NETWORK_CONSTRAINTS = true;
 
     /**
+     * Config to show expand option dynamically for asset hierarchy.
+     * If set to False, the expand option will be shown always without checking count for children.
+     * Default value is True.
+     */
+    public static boolean ENABLE_DYNAMIC_HIERARCHY_EXPAND_OPTION = true;
+
+    /**
      * Added new config flag to indicate whether user to cancel the final confirmation for the operation or not
      */
     public static boolean ENABLE_CANCEL_FINAL_CONFIRMATION = false;
