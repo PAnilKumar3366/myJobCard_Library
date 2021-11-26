@@ -400,7 +400,7 @@ public class ZCollections extends Collections {
 	public static final String SEARCH_ITEM_STORAGE = "Storage Location";
 	public static final String INVALID_SERVICE_URL = "Invalid";
 	public static final String SEARCH_VERSION_ID = "Version";
-	public static final String SEARCH_FORM_NAME = "Form Name";
+	public static final String SEARCH_FORM_NAME = "CheckSheet Name";
 	public static final String SEARCH_FORM_CATEGORY = "Category";
 	public static final String SEARCH_APPROVER_DEPT = "Department";
 	public static final String SEARCH_APPROVER_PLANT = "Plant";
