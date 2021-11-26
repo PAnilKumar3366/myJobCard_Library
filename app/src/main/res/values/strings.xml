@@ -38,4 +38,5 @@
     <string name="msgAllReadingPointsAreMandatory">It is mandatory to record all the readings for this Job.</string>
     <string name="msgAtLeastOneReadingPointRequired">It is mandatory to record at least one reading for this Job.</string>
     <string name="msgInspectionLotDecisionPending">User decision is pending for inspection lot %1$s.</string>
+    <string name="msgInspectionResultPending">It is mandatory to capture the inspection results.</string>
 </resources>
