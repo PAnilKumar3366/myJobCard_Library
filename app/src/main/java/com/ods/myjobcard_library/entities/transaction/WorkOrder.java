@@ -2245,15 +2245,19 @@ public class WorkOrder extends ZBaseEntity {
                             if(getTotalNumUnSubmittedMandatoryForms() > 0)
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryPredefinedFormsAreRequired));
                             else{
+                                boolean isPredChkSheetErrorMsg=false;
                                 for (HashMap<String,Integer> hashMap : mapArrayList) {
                                     if(totApproversCnt>0&&hashMap.get("APPROVE")!=totApproversCnt){
                                         if (hashMap.get("CORRECTIONNOTREQIRED") == 0) {
                                             if (totApproversCnt - (hashMap.get("APPROVE") + hashMap.get("REJECT")) > 0||hashMap.get("REJECT")>0) {
-                                                errorMessages.add(context.getString(R.string.msgAllMandatoryPredefinedFormsAreRequiredToApprove));
+                                                isPredChkSheetErrorMsg=true;
                                             }
                                         }
                                     }
                                 }
+                                if(isPredChkSheetErrorMsg)
+                                    errorMessages.add(context.getString(R.string.msgAllMandatoryPredefinedFormsAreRequiredToApprove));
+
                             }
                         }
                         if(ZCommon.isManualAssignedFormsVisible(formType)) {
@@ -2263,15 +2267,18 @@ public class WorkOrder extends ZBaseEntity {
                             if(getTotalNumUnSubmittedManualMandatoryForms() > 0)
                                 errorMessages.add(context.getString(R.string.msgAllMandatoryManualFormsAreRequired));
                             else{
+                                boolean isManualChkSheetErrorMsg=false;
                                 for (HashMap<String,Integer> hashMap : mapArrayList) {
                                     if(totApproversCnt>0&&hashMap.get("APPROVE")!=totApproversCnt) {
                                         if (hashMap.get("CORRECTIONNOTREQIRED") == 0) {
                                             if (totApproversCnt - (hashMap.get("APPROVE") + hashMap.get("REJECT")) > 0||hashMap.get("REJECT")>0) {
-                                                errorMessages.add(context.getString(R.string.msgAllMandatoryManualFormsAreRequiredToApprove));
+                                                isManualChkSheetErrorMsg=true;
                                             }
                                         }
                                     }
                                 }
+                                if(isManualChkSheetErrorMsg)
+                                    errorMessages.add(context.getString(R.string.msgAllMandatoryManualFormsAreRequiredToApprove));
                             }
                         }
                     } catch (Exception e) {
