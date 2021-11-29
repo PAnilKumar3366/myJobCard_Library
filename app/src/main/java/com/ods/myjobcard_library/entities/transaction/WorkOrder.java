@@ -3103,13 +3103,15 @@ public class WorkOrder extends ZBaseEntity {
                         ArrayList<Operation> totalOperations = (ArrayList<Operation>) result.Content();
                         ArrayList<ManualFormAssignmentSetModel> contentList = new ArrayList<ManualFormAssignmentSetModel>();
                         for (Operation operation : totalOperations) {
-                            strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + operation.getWorkOrderNum() + "' and OprNum eq '" + operation.getOperationNum() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
-                            responseObject = ManualFormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
-                            if (!responseObject.isError()) {
-                                rawData = responseObject.Content();
-                                //contentList = (ArrayList<FormAssignmentSetModel>) rawData;
-                                if (rawData != null) {
-                                    contentList.addAll((ArrayList<ManualFormAssignmentSetModel>) rawData);
+                            if(operation.getSubOperation().isEmpty()) {
+                                strResPath = ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET + "?$filter= (WorkOrderNum eq '" + operation.getWorkOrderNum() + "' and OprNum eq '" + operation.getOperationNum() + "' and tolower(Mandatory)" + strMandatoryChk + ")";
+                                responseObject = ManualFormAssignmentSetModel.getObjectsFromEntity(ZCollections.FORM_MANUAL_ASSIGNMENT_ENTITY_SET, strResPath);
+                                if (!responseObject.isError()) {
+                                    rawData = responseObject.Content();
+                                    //contentList = (ArrayList<FormAssignmentSetModel>) rawData;
+                                    if (rawData != null) {
+                                        contentList.addAll((ArrayList<ManualFormAssignmentSetModel>) rawData);
+                                    }
                                 }
                             }
                         }
