@@ -1818,6 +1818,7 @@ public class Operation extends ZBaseEntity implements Serializable {
         ResponseObject result;
         ArrayList<String> errorMessages = new ArrayList<>();
         try {
+            ArrayList<String> notificationMsgs = new ArrayList<>();
             ArrayList<OrderTypeFeature> featureList = OrderTypeFeature.getMandatoryFeaturesByObjectType(WorkOrder.getCurrWo().getCurrentOperation().getOrderType());
             for (OrderTypeFeature orderTypeFeature : featureList) {
                 //Components
@@ -1882,15 +1883,15 @@ public class Operation extends ZBaseEntity implements Serializable {
                     if (response != null && !response.isError()) {
                         woNotification = ((ArrayList<Notification>) response.Content()).get(0);
                         if (woNotification != null) {
-                            ArrayList<String> notiPreCheckMsgs = woNotification.getPreCompletionMessages(true);
-                            if (notiPreCheckMsgs.size() > 0) {
-                                errorMessages.addAll(notiPreCheckMsgs);
-                            }
+                            notificationMsgs = woNotification.getPreCompletionMessages(true);
                         }
                     }
                 }
 
             }
+
+            if(notificationMsgs.size() > 0)
+                errorMessages.addAll(notificationMsgs);
 
             if (errorMessages.size() > 0) {
                 result = new ResponseObject(ZConfigManager.Status.Error, "Error", errorMessages);
