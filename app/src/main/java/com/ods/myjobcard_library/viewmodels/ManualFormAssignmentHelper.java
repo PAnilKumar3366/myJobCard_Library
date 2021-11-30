@@ -68,8 +68,10 @@ public class ManualFormAssignmentHelper
 
         Iterator<ManualFormAssignmentSetModel> it1 = list.iterator();
 
-        if (formItemsList.size() > 0)
+        if (formItemsList.size() > 0) {
             formItemsList.clear();
+            formMasterList.clear();
+        }
 
         while (it1.hasNext()) {
             int filledForms = 0;
@@ -96,19 +98,32 @@ public class ManualFormAssignmentHelper
             }
 
             formMasterList = FormSetModel.getFormsData(f1.getFormID(), f1.getVersion(), false);
-            Iterator<FormSetModel> it2 = formMasterList.iterator();
-            while (it2.hasNext()) {
-                FormSetModel f2 = it2.next();
-                FormListObject ob = new FormListObject(f2.getFormName(), f1.getFormID(),
+            if(formMasterList.size()>0) {
+                Iterator<FormSetModel> it2 = formMasterList.iterator();
+                while (it2.hasNext()) {
+                    FormSetModel f2 = it2.next();
+                    FormListObject ob = new FormListObject(f2.getFormName(), f1.getFormID(),
+                            f1.getVersion(), f1.getMandatory(), f1.getOccurInt(),
+                            f1.getMultipleSub(), filledForms, instanceId, f1.isGridTheme(), f1.getOprNum());
+                    ob.setIsDraft(isDraft);
+                    ob.setDescription(f2.getDescription());
+                    ob.setFunctionalArea(f2.getFunctionalArea());
+                    ob.setFormCategory(f2.getCategory());
+                    ob.setSubArea(f2.getSubArea());
+                    formItemsList.add(ob);
+                    break;
+                }
+            }
+            else {
+                FormListObject ob = new FormListObject(f1.getFormName(), f1.getFormID(),
                         f1.getVersion(), f1.getMandatory(), f1.getOccurInt(),
-                        f1.getMultipleSub(), filledForms, instanceId, f1.isGridTheme(),f1.getOprNum());
+                        f1.getMultipleSub(), filledForms, instanceId, f1.isGridTheme(), f1.getOprNum());
                 ob.setIsDraft(isDraft);
-                ob.setDescription(f2.getDescription());
-                ob.setFunctionalArea(f2.getFunctionalArea());
-                ob.setFormCategory(f2.getCategory());
-                ob.setSubArea(f2.getSubArea());
+                ob.setDescription("");
+                ob.setFunctionalArea("");
+                ob.setFormCategory("");
+                ob.setSubArea("");
                 formItemsList.add(ob);
-                break;
             }
         }
         return formItemsList;
