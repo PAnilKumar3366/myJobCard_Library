@@ -29,7 +29,7 @@ public class CatalogProfile extends ZBaseEntity {
     }
 
     //get methods
-    public static ResponseObject getCodeGroups(String catalogCode,String catalogProfile) {
+    public static ResponseObject getCodeGroups(String catalogCode, String catalogProfile) {
         ResponseObject result = null;
         try {
             String resPath = ZCollections.CATALOG_PROFILE_COLLECTION;
@@ -48,6 +48,39 @@ public class CatalogProfile extends ZBaseEntity {
                     }
                 }
                 result.setContent(items);
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(CatalogProfile.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        if (result != null)
+            return result;
+        else
+            return new ResponseObject(ZConfigManager.Status.Error);
+    }
+
+    public static ResponseObject getCodeGroupsDesc(String catalogCode, String catalogProfile, String codeGroup) {
+        ResponseObject result = null;
+        try {
+            String resPath = ZCollections.CATALOG_PROFILE_COLLECTION;
+            if (catalogCode != null && !catalogCode.isEmpty())
+                resPath += "?$filter=(CatalogCode eq '" + catalogCode + "'";
+            if (catalogProfile != null && !catalogProfile.isEmpty())
+                resPath += " and CatalogProfile eq '" + catalogProfile + "'";
+            resPath += ")";
+            result = getObjListFromStore(ZCollections.CATALOG_PROFILE_COLLECTION, resPath);
+            if (!result.isError()) {
+                ArrayList<CatalogProfile> catalogProfiles = (ArrayList<CatalogProfile>) result.Content();
+//                ArrayList<SpinnerItem> items = new ArrayList<>();
+                String item = "";
+                if (catalogProfiles != null) {
+                    for (CatalogProfile catalog : catalogProfiles) {
+//                        items.add(new SpinnerItem(catalog.getCodeGroup(), catalog.getShortText()));
+                        if (catalog.getCodeGroup().equals(codeGroup)) {
+                            item = catalog.getShortText();
+                        }
+                    }
+                }
+                result.setContent(item);
             }
         } catch (Exception e) {
             DliteLogger.WriteLog(CatalogProfile.class, ZAppSettings.LogLevel.Error, e.getMessage());

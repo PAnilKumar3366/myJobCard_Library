@@ -59,6 +59,39 @@ public class CatalogCode extends ZBaseEntity {
             return new ResponseObject(ZConfigManager.Status.Error);
     }
 
+    public static ResponseObject getCodesDesc(String catalog, String codeGroup, String codeTxt) {
+        ResponseObject result = null;
+        try {
+            String resPath = ZCollections.CATALOG_CODE_COLLECTION;
+            if (catalog != null && !catalog.isEmpty())
+                resPath += "?$filter=(Catalog eq '" + catalog + "'";
+            if (codeGroup != null && !codeGroup.isEmpty())
+                resPath += " and CodeGroup eq '" + codeGroup + "'";
+            resPath += ")";
+            result = getObjListFromStore(ZCollections.CATALOG_CODE_COLLECTION, resPath);
+            if (!result.isError()) {
+                ArrayList<CatalogCode> codes = (ArrayList<CatalogCode>) result.Content();
+//                ArrayList<SpinnerItem> items = new ArrayList<>();
+                String item = "";
+                if (codes != null) {
+                    for (CatalogCode code : codes) {
+//                        items.add(new SpinnerItem(code.getCode(), code.getCodeText()));
+                        if (code.getCode().equals(codeTxt)) {
+                            item = code.getCodeText();
+                        }
+                    }
+                }
+                result.setContent(item);
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(CatalogProfile.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        if (result != null)
+            return result;
+        else
+            return new ResponseObject(ZConfigManager.Status.Error);
+    }
+
     public static ResponseObject getCatalogCode(String catalog, String codeGroup, String code) {
         ResponseObject result = null;
         try {
@@ -112,10 +145,11 @@ public class CatalogCode extends ZBaseEntity {
         else
             return new ResponseObject(ZConfigManager.Status.Error);
     }
-    public static ResponseObject getDamageGrpandCodeDescritions(String catalogCode,String damagecodeGrp,String damageCode){
+
+    public static ResponseObject getDamageGrpandCodeDescritions(String catalogCode, String damagecodeGrp, String damageCode) {
         ResponseObject result = null;
         String resPath = ZCollections.CATALOG_CODE_COLLECTION;
-        if (catalogCode != null && !catalogCode.isEmpty()&&damagecodeGrp != null && !damagecodeGrp.isEmpty()&&damageCode != null && !damageCode.isEmpty()) {
+        if (catalogCode != null && !catalogCode.isEmpty() && damagecodeGrp != null && !damagecodeGrp.isEmpty() && damageCode != null && !damageCode.isEmpty()) {
             resPath += "?$filter=(Catalog eq '" + catalogCode + "' and CodeGroup eq '" + damagecodeGrp + "' and Code eq '" + damageCode + "')";
             result = DataHelper.getInstance().getEntities(ZCollections.CATALOG_CODE_COLLECTION, resPath);
             if (!result.isError()) {
@@ -140,6 +174,7 @@ public class CatalogCode extends ZBaseEntity {
         }
         return result;
     }
+
     public String getCatalog() {
         return Catalog;
     }
