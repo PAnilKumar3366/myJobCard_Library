@@ -59,14 +59,14 @@ public class CatalogCode extends ZBaseEntity {
             return new ResponseObject(ZConfigManager.Status.Error);
     }
 
-    public static ResponseObject getCodesDesc(String catalog, String codeGroup, String codeTxt) {
+    public static ResponseObject getCodesDesc(String catalog, String codeTxt) {
         ResponseObject result = null;
         try {
             String resPath = ZCollections.CATALOG_CODE_COLLECTION;
             if (catalog != null && !catalog.isEmpty())
                 resPath += "?$filter=(Catalog eq '" + catalog + "'";
-            if (codeGroup != null && !codeGroup.isEmpty())
-                resPath += " and CodeGroup eq '" + codeGroup + "'";
+//            if (codeGroup != null && !codeGroup.isEmpty())
+//                resPath += " and CodeGroup eq '" + codeGroup + "'";
             resPath += ")";
             result = getObjListFromStore(ZCollections.CATALOG_CODE_COLLECTION, resPath);
             if (!result.isError()) {

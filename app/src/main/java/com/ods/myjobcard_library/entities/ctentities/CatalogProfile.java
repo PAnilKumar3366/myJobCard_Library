@@ -58,14 +58,14 @@ public class CatalogProfile extends ZBaseEntity {
             return new ResponseObject(ZConfigManager.Status.Error);
     }
 
-    public static ResponseObject getCodeGroupsDesc(String catalogCode, String catalogProfile, String codeGroup) {
+    public static ResponseObject getCodeGroupsDesc(String catalogCode, String codeGroup) {
         ResponseObject result = null;
         try {
             String resPath = ZCollections.CATALOG_PROFILE_COLLECTION;
             if (catalogCode != null && !catalogCode.isEmpty())
                 resPath += "?$filter=(CatalogCode eq '" + catalogCode + "'";
-            if (catalogProfile != null && !catalogProfile.isEmpty())
-                resPath += " and CatalogProfile eq '" + catalogProfile + "'";
+//            if (catalogProfile != null && !catalogProfile.isEmpty())
+//                resPath += " and CatalogProfile eq '" + catalogProfile + "'";
             resPath += ")";
             result = getObjListFromStore(ZCollections.CATALOG_PROFILE_COLLECTION, resPath);
             if (!result.isError()) {
