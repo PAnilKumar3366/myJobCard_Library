@@ -99,6 +99,45 @@ public class WorkCenter extends ZBaseEntity {
         return plantWorkCenters;
     }
 
+    /** method is used for getting the workcenter description by passing plant and its workcenterObj
+     * @param plant
+     * @param workCenterObj
+     * @return
+     */
+    public static ResponseObject getPlantWorkCentersDesc(String plant,String workCenterObj) {
+        DataHelper dataHelper = null;
+        ResponseObject result = null;
+        String workCenterDesc = "";
+        try {
+            if (plant != null && !plant.isEmpty()) {
+                dataHelper = DataHelper.getInstance();
+                String resPath = ZCollections.WORK_CENTER_COLLECTION;
+                resPath += "?$filter=Plant eq '" + plant + "'";
+                if (workCenterObj != null && !workCenterObj.isEmpty())
+                    resPath = resPath + " and WorkCenter eq '" + workCenterObj + "'";
+                result = dataHelper.getEntities(ZCollections.WORK_CENTER_COLLECTION, resPath);
+                if (!result.isError()) {
+                    result = FromEntity((List<ODataEntity>) result.Content());
+                    ArrayList<WorkCenter> workCenters = (ArrayList<WorkCenter>) result.Content();
+                    for (WorkCenter workCenter : workCenters) {
+
+                        if (workCenter.getWorkCenter().equals(workCenterObj)){
+                            workCenterDesc = workCenter.getDescription();
+                        }
+                    }
+                    result.setContent(workCenterDesc);
+                }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(WorkCenter.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        if (result != null)
+            return result;
+        else
+            return new ResponseObject(ZConfigManager.Status.Error);
+    }
+
+
     public static ResponseObject getWorkCenter(@NonNull String objectID) {
         DataHelper dataHelper = null;
         ResponseObject result = null;
