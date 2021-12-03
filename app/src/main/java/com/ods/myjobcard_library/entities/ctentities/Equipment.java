@@ -504,6 +504,10 @@ public class Equipment extends ZBaseEntity {
         return assetData;
     }
 
+    /**
+     * @param parentEquipmentId Parent equipment number
+     * @return The count of children / linked equipment
+     */
     public static int getEquipmentChildrenCount(String parentEquipmentId){
         int count = 0;
         try{
@@ -519,11 +523,19 @@ public class Equipment extends ZBaseEntity {
         return count;
     }
 
-    public static ArrayList<AssetHierarchy> getEquipmentChildren(String parentEquipmentId){
+    /**
+     * @param parentEquipmentId Parent equipment number
+     * @param skip Number of records to be skipped
+     * @param top Number of records to be picked, if set to 0 then all the records will be returned
+     * @return Collection of child / linked equipment under parent equipment
+     */
+    public static ArrayList<AssetHierarchy> getEquipmentChildren(String parentEquipmentId, int skip, int top){
         ArrayList<AssetHierarchy> children = new ArrayList<>();
         try {
             String entitySetName = ZCollections.EQUIPMENT_COLLECTION;
             String resPath = entitySetName + "?$filter=(SuperiorEquipment eq '" + parentEquipmentId + "')&$orderby=Equipment asc&$select=EquipDescription,Equipment";
+            if(top > 0)
+                resPath += ("&$skip="+ skip +"&$top=" + top);
             ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
             if (result != null && !result.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());

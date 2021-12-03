@@ -307,6 +307,10 @@ public class FunctionalLocation extends ZBaseEntity {
         return assetData;
     }
 
+    /**
+     * @param parentFLocId Parent functional location
+     * @return The count of children / linked functional locations & equipment
+     */
     public static int getFLocChildrenCount(String parentFLocId){
         int count = 0;
         try{
@@ -328,11 +332,19 @@ public class FunctionalLocation extends ZBaseEntity {
         return count;
     }
 
-    public static ArrayList<AssetHierarchy> getFLocChildren(String parentFLocId){
+    /**
+     * @param parentFLocId Parent functional location
+     * @param skip Number of records to be skipped
+     * @param top Number of records to be picked, if set to 0 then all the records will be returned
+     * @return Collection of child / linked functional locations and equipment under parent functional location
+     */
+    public static ArrayList<AssetHierarchy> getFLocChildren(String parentFLocId, int skip, int top){
         ArrayList<AssetHierarchy> children = new ArrayList<>();
         try {
             String entitySetName = ZCollections.FL_COLLECTION;
             String resPath = entitySetName + "?$filter=SupFunctLoc eq '" + parentFLocId + "'&$orderby=FunctionalLoc asc&$select=Description,FunctionalLoc";
+            if(top > 0)
+                resPath += ("&$skip="+ skip +"&$top=" + top);
             ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
             if (result != null && !result.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());
@@ -350,6 +362,8 @@ public class FunctionalLocation extends ZBaseEntity {
             }
             entitySetName = ZCollections.EQUIPMENT_COLLECTION;
             resPath = entitySetName + "?$filter=FuncLocation eq '" + parentFLocId + "' and (SuperiorEquipment eq null or SuperiorEquipment eq '')&$orderby=Equipment asc&$select=EquipDescription,Equipment";
+            if(top > 0)
+                resPath += ("&$skip="+ skip +"&$top=" + top);
             result = DataHelper.getInstance().getEntities(entitySetName, resPath);
             if (result != null && !result.isError()) {
                 List<ODataEntity> entities = ZBaseEntity.setODataEntityList(result.Content());

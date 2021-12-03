@@ -227,6 +227,16 @@ public class ZConfigManager extends ConfigManager {
     public static boolean ENABLE_DYNAMIC_HIERARCHY_EXPAND_OPTION = true;
 
     /**
+     * Number of child nodes to be loaded at a time in the hierarchy
+     */
+    public static int CHILD_NODES_LOAD_SIZE = 10;
+
+    /**
+     * Number of root nodes to be loaded at a time in the hierarchy
+     */
+    public static int ROOT_NODES_LOAD_SIZE = 50;
+
+    /**
      * Added new config flag to indicate whether user to cancel the final confirmation for the operation or not
      */
     public static boolean ENABLE_CANCEL_FINAL_CONFIRMATION = false;
