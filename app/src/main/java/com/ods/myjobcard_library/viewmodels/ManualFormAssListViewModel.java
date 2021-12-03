@@ -1,6 +1,7 @@
 package com.ods.myjobcard_library.viewmodels;
 
 import android.app.Application;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
@@ -9,13 +10,15 @@ import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.entities.forms.FormListObject;
 import com.ods.myjobcard_library.entities.forms.FormMasterMetadata;
 import com.ods.myjobcard_library.entities.forms.ManualFormAssignmentSetModel;
+import com.ods.myjobcard_library.entities.transaction.WorkOrder;
 import com.ods.myjobcard_library.utils.ManualCheckSheetData;
 import com.ods.ods_sdk.AppSettings;
-import com.ods.ods_sdk.entities.ResponseObject;
 import com.ods.ods_sdk.entities.odata.ZODataEntity;
 import com.ods.ods_sdk.utils.DliteLogger;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ManualFormAssListViewModel extends BaseViewModel {
 
@@ -29,12 +32,15 @@ public class ManualFormAssListViewModel extends BaseViewModel {
     private ArrayList<FormMasterMetadata> formMasterMetadataArrayList=new ArrayList<>();
     private FormMasterMetaDataHelper formMasterMetaDataHelper;
     private ManualFormAssignmentHelper manualFormAssignmentHelper;
+    private FormsHelper formsHelper;
+    private ArrayList<FormListObject> predefinedChkSheetList = new ArrayList<>();
 
     public ManualFormAssListViewModel(@NonNull @org.jetbrains.annotations.NotNull Application application) {
         super(application);
         manualListLiveData = new MutableLiveData<>();
         formMasterMetaDataHelper=new FormMasterMetaDataHelper();
         manualFormAssignmentHelper=new ManualFormAssignmentHelper();
+        formsHelper = new FormsHelper();
     }
 
     public void setManualListLiveData(ArrayList<ManualFormAssignmentSetModel> existedList) {
@@ -76,17 +82,41 @@ public class ManualFormAssListViewModel extends BaseViewModel {
         manualListLiveData.setValue(selectedList);
     }
 
-    public void onFetchFormMasterMetadata(int skipValue, int numRecords){
+    public void onFetchFormMasterMetadata(int skipValue, int numRecords, WorkOrder workOrder,String typeValue){
         ArrayList<ZODataEntity> zoDataEntityArrayList=formMasterMetaDataHelper.getZoDataManualFormMasterEntities(skipValue,numRecords);
-        formMasterMetadataArrayList=onFetchManualFormMasterEntities(zoDataEntityArrayList);
+        formMasterMetadataArrayList=onFetchManualFormMasterEntities(zoDataEntityArrayList,workOrder,typeValue);
         manualFormMasterLiveData.setValue(formMasterMetadataArrayList);
     }
-    protected ArrayList<FormMasterMetadata> onFetchManualFormMasterEntities(ArrayList<ZODataEntity> zODataEntities) {
+    protected ArrayList<FormMasterMetadata> onFetchManualFormMasterEntities(ArrayList<ZODataEntity> zODataEntities,WorkOrder workOrder,String typeValue) {
         formMasterMetadataArrayList = new ArrayList<>();
         try {
             for (ZODataEntity entity : zODataEntities) {
                 FormMasterMetadata formMasterMetadata = new FormMasterMetadata(entity);
                 formMasterMetadataArrayList.add(formMasterMetadata);
+            }
+            if(formMasterMetadataArrayList.size()>0) {
+                predefinedChkSheetList = formsHelper.fetchForms(workOrder, typeValue);
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        for(FormListObject formListObject:predefinedChkSheetList) {
+                            List<FormMasterMetadata> tempList=new ArrayList<>();
+                            tempList = formMasterMetadataArrayList.stream().filter(o -> o.getFormID().equals(formListObject.getFormid()) && o.getVersion().equals(formListObject.getVersion())).collect(Collectors.toList());
+                            if(tempList!=null&&tempList.size()>0)
+                                formMasterMetadataArrayList.removeAll(tempList);
+                        }
+                    }
+                    else {
+                        for(FormListObject formListObject:predefinedChkSheetList) {
+                            for (FormMasterMetadata formMasterMetadata : formMasterMetadataArrayList) {
+                                if (formMasterMetadata.getFormID().equals(formListObject.getFormid()) && formMasterMetadata.getVersion().equals(formListObject.getVersion())) {
+                                    formMasterMetadataArrayList.remove(formMasterMetadata);
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    DliteLogger.WriteLog(this.getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+                }
             }
         } catch (Exception e) {
             DliteLogger.WriteLog(getClass(), AppSettings.LogLevel.Error, e.getMessage());
