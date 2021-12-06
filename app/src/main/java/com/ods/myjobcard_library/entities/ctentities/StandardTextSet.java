@@ -81,8 +81,8 @@ public class StandardTextSet extends ZBaseEntity {
                 if (entities != null && entities.size() > 0) {
                     for (ODataEntity entity : entities) {
                         String textName = String.valueOf(entity.getProperties().get("StandardTextName").getValue());
-                        //String textId = String.valueOf(entity.getProperties().get("TextID").getValue());
-                        textNames.add(new SpinnerItem(textName, textName));
+                        String textId = String.valueOf(entity.getProperties().get("TextID").getValue());
+                        textNames.add(new SpinnerItem(textId, textName));
                     }
                 }
             }
