@@ -111,11 +111,39 @@ public class OnlineNotifiListViewModel extends BaseViewModel {
                     if (createdBy.get(0).contains(notification.getEnteredBy().toUpperCase()))
                         filterList.remove(notification);
                 }
+                if(filterHashmap.containsKey("StaffID")){
+                    ArrayList<String> items=filterHashmap.get("StaffID");
+                    if (!isTwoNumericStringValuesEqual(items.get(0), notification.getPartner())) {
+                        filterList.remove(notification);
+                        continue;
+                    }
+                }
+                if(filterHashmap.containsKey("MaintPlant")){
+                    if(notification.getMaintPlant()!=null && !notification.getMaintPlant().isEmpty()){
+                    if(!filterHashmap.get("MaintPlant").contains(notification.getMaintPlant())) {
+                        filterList.remove(notification);
+                        }
+                    }
+                }
+                if(filterHashmap.containsKey("PlanningPlant")){
+                    if(notification.getPlanningPlant()!=null && !notification.getPlanningPlant().isEmpty()){
+                        if(!filterHashmap.get("PlanningPlant").contains(notification.getPlanningPlant()))
+                            filterList.remove(notification);
+                    }
+                }
+                if(filterHashmap.containsKey("PlannerGroup")){
+                    if(notification.getPlannerGroup()!=null && !notification.getPlannerGroup().isEmpty()){
+                        if(!filterHashmap.get("PlannerGroup").contains(notification.getPlannerGroup()))
+                            filterList.remove(notification);
+                    }
+
+                }
             }
             filterNotifications.setValue(filterList);
         } catch (Exception e) {
             e.printStackTrace();
             DliteLogger.WriteLog(getClass(), ZAppSettings.LogLevel.Error, e.getMessage());
+            setError(e.getMessage());
         }
 
     }
