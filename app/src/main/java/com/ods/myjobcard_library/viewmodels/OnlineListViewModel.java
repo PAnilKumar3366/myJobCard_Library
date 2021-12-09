@@ -250,19 +250,20 @@ public class OnlineListViewModel extends BaseViewModel {
         try {
             EntityValue entityValue;
             EntityValueList noItemsEntityValues;
-            ArrayList<NotificationItem> notificationItemsList;
+            ArrayList<NotificationItem> notificationItemsList=null;
             for (ZODataEntity entity : zoDataEntities) {
                 Notification item = new Notification(entity);
+                notificationItemsList = new ArrayList<>();
                 entityValue = entity.getEntityValue();
                 if (fetchNoItems) {
                     noItemsEntityValues = entity.getEntityValue().getEntityType().getProperty("NavNOItem").getEntityList(entityValue);//Extracting the NotificationItems from Notification
-                    notificationItemsList = new ArrayList<>();
                     for (EntityValue itemEntity : noItemsEntityValues) {
                         NotificationItem notificationItem = new NotificationItem(itemEntity);
                         notificationItemsList.add(notificationItem);
                         notificationItems.add(notificationItem);
                     }
                 }
+                item.setNotificationItems(notificationItemsList);
                 onlineNoList.add(item);
             }
             OnlineDataList.getInstance().setOnlineNotificationItems(notificationItems);
