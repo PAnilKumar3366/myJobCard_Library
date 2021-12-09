@@ -85,11 +85,14 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
 
     public static ResponseObject UploadAttachment(String filePath, String fileName, boolean isImage, String description, Notification notification, boolean autoFlush) {
         ResponseObject result = null;
+        String docId="";
         try {
             result = PrepareAttachmentObject(filePath, fileName, isImage, description, notification);
             if (!result.isError()) {
                 UploadNotificationAttachmentContent uploadAttachmentFile = (UploadNotificationAttachmentContent) result.Content();
+                docId=uploadAttachmentFile.getDocID();
                 result = uploadAttachmentFile.SaveToStore(autoFlush);
+                result.setContent(docId);
             } else
                 result = new ResponseObject(ZConfigManager.Status.Error);
         } catch (Exception e) {
@@ -134,7 +137,6 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
             DliteLogger.WriteLog(UploadNotificationAttachmentContent.class, ZAppSettings.LogLevel.Error, e.getMessage());
             result = new ResponseObject(ZConfigManager.Status.Error);
         }
-        result.setContent(docID);
         return result;
     }
     //Setter & getter Methods
@@ -169,7 +171,7 @@ public class UploadNotificationAttachmentContent extends ZBaseEntity {
         try {
             String resPath = ZCollections.NO_ATTACHMENT_CONTENT_UPLOAD_COLLECTION;
             if (notification != null && !notification.isEmpty())
-                resPath += "?$filter=(Notification eq '" + notification + "' and BINARY_FLG ne 'N')&$select=DocID,FILE_SIZE,FILE_NAME,Description,Notification,MIMETYPE";
+                resPath += "?$filter=(Notification eq '" + notification + "' and BINARY_FLG ne 'N')&$select=DocID,FILE_SIZE,FILE_NAME,Description,Notification,MIMETYPE,URL";
             result = getObjListFromStore(ZCollections.NO_ATTACHMENT_CONTENT_UPLOAD_COLLECTION, resPath);
             if (!result.isError()) {
                 ArrayList<UploadNotificationAttachmentContent> content = (ArrayList<UploadNotificationAttachmentContent>) result.Content();

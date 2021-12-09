@@ -128,7 +128,7 @@ public class UploadAttachmentContent extends ZBaseEntity {
         try {
             String resPath = ZCollections.WO_ATTACHMENT_CONTENT_UPLOAD_COLLECTION;
             if (workOrderNum != null && !workOrderNum.isEmpty())
-                resPath += "?$filter=(WorkOrderNum eq '" + workOrderNum + "' and BINARY_FLG ne 'N')&$select=DocID,FILE_SIZE,FILE_NAME,Description,WorkOrderNum,MIMETYPE";
+                resPath += "?$filter=(WorkOrderNum eq '" + workOrderNum + "' and BINARY_FLG ne 'N')&$select=DocID,FILE_SIZE,FILE_NAME,Description,WorkOrderNum,MIMETYPE,URL";
             result = getObjListFromStore(ZCollections.WO_ATTACHMENT_CONTENT_UPLOAD_COLLECTION, resPath);
             if (!result.isError()) {
                 ArrayList<UploadAttachmentContent> codes = (ArrayList<UploadAttachmentContent>) result.Content();
