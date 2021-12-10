@@ -31,6 +31,8 @@ public class OperationViewModel extends BaseViewModel {
     private MutableLiveData<ArrayList<UnAssignedOperation>> UnAssignedOperationList = new MutableLiveData<>();
     private UnAssignedOperationsHelper unAssignedOperationsHelper;
     protected MutableLiveData<UnAssignedOperation> selectedUnOpr = new MutableLiveData<>();
+    public int getTotalOprCount;
+
 
     public OperationViewModel(@NonNull Application application) {
         super(application);
@@ -50,6 +52,10 @@ public class OperationViewModel extends BaseViewModel {
 
     public MutableLiveData<WorkOrder> getCurrentOpetationWorkOrder() {
         return currentOpetationWorkOrder;
+    }
+
+    public int getGetTotalOprCount() {
+        return Operation.getAllOperationCount();
     }
 
     public void setCurrentOpetationWorkOrder(String orderNum) {

@@ -2070,6 +2070,20 @@ public class Operation extends ZBaseEntity implements Serializable {
         return operationsList;
     }
 
+    public static int getAllOperationCount(){
+       int totalOprCount=0;
+        try {
+            ResponseObject response=DataHelper.getInstance().getEntities(ZCollections.OPR_COLLECTION ,ZCollections.OPR_COLLECTION+"/$count");
+            if (response != null && !response.isError()) {
+                Object rawData = response.Content();
+                totalOprCount = Integer.parseInt(rawData.toString());
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            DliteLogger.WriteLog(Operation.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return totalOprCount;
+    }
     public String getTruncatedOprNum(String trucOprNum) {
         String truncatedOprNumStr = trucOprNum;
         try {
