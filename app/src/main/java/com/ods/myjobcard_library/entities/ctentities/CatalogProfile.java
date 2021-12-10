@@ -37,7 +37,7 @@ public class CatalogProfile extends ZBaseEntity {
                 resPath += "?$filter=(CatalogCode eq '" + catalogCode + "'";
             if (catalogProfile != null && !catalogProfile.isEmpty())
                 resPath += " and CatalogProfile eq '" + catalogProfile + "'";
-            resPath += ")";
+            resPath += ")&$orderby=CodeGroup asc";
             result = getObjListFromStore(ZCollections.CATALOG_PROFILE_COLLECTION, resPath);
             if (!result.isError()) {
                 ArrayList<CatalogProfile> catalogProfiles = (ArrayList<CatalogProfile>) result.Content();

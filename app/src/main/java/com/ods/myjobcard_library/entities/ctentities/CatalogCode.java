@@ -38,7 +38,7 @@ public class CatalogCode extends ZBaseEntity {
                 resPath += "?$filter=(Catalog eq '" + catalog + "'";
             if (codeGroup != null && !codeGroup.isEmpty())
                 resPath += " and CodeGroup eq '" + codeGroup + "'";
-            resPath += ")";
+            resPath += ")&$orderby=Code asc";
             result = getObjListFromStore(ZCollections.CATALOG_CODE_COLLECTION, resPath);
             if (!result.isError()) {
                 ArrayList<CatalogCode> codes = (ArrayList<CatalogCode>) result.Content();
