@@ -158,7 +158,7 @@ public class ManualFormAssignmentSetModel extends ZBaseEntity {
     }
 
     public boolean isGridTheme() {
-        return getTheme().toLowerCase().contains("grid");
+        return getTheme() == null || getTheme().isEmpty() || getTheme().toLowerCase().contains("grid");
     }
 
     public String getOprNum() {
