@@ -185,6 +185,10 @@ public class StatusCategory extends ZBaseEntity {
         return statusCategories;
     }
 
+    /**
+     * @param object Object from enum Fetch_Object_Type for which the unique statuses to be fetched
+     * @return Arraylist of SpinnerItem, where the Id is status code and Description is status description
+     */
     public static ArrayList<SpinnerItem> getStatusesForObject(ZConfigManager.Fetch_Object_Type object) {
         ArrayList<SpinnerItem> statusCategories = new ArrayList<>();
         try {
