@@ -408,7 +408,7 @@ public class FormAssignmentSetModel extends ZBaseEntity {
     }
 
     public boolean isGridTheme() {
-        return getTheme().toLowerCase().contains("grid");
+        return getTheme() == null || getTheme().isEmpty() || getTheme().toLowerCase().contains("grid");
     }
     // this method is reading the data from offline store
 
