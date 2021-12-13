@@ -4,6 +4,7 @@ import com.ods.myjobcard_library.ZAppSettings;
 import com.ods.myjobcard_library.ZCollections;
 import com.ods.myjobcard_library.ZConfigManager;
 import com.ods.myjobcard_library.entities.ZBaseEntity;
+import com.ods.myjobcard_library.entities.ctentities.SpinnerItem;
 import com.ods.ods_sdk.AppSettings;
 import com.ods.ods_sdk.StoreHelpers.DataHelper;
 import com.ods.ods_sdk.entities.ResponseObject;
@@ -11,7 +12,9 @@ import com.ods.ods_sdk.utils.DliteLogger;
 import com.sap.smp.client.odata.ODataEntity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class StatusCategory extends ZBaseEntity {
     public ZAppSettings.NotificationUserStatus notificationStatus;
@@ -175,6 +178,38 @@ public class StatusCategory extends ZBaseEntity {
                         StatusCategory statusCategory = new StatusCategory(entity);
                         statusCategories.add(statusCategory);
                     }
+            }
+        } catch (Exception e) {
+            DliteLogger.WriteLog(StatusCategory.class, ZAppSettings.LogLevel.Error, e.getMessage());
+        }
+        return statusCategories;
+    }
+
+    public static ArrayList<SpinnerItem> getStatusesForObject(ZConfigManager.Fetch_Object_Type object) {
+        ArrayList<SpinnerItem> statusCategories = new ArrayList<>();
+        try {
+            String objectStr = object.equals(ZConfigManager.Fetch_Object_Type.WorkOrder) ? "WORKORDERLEVEL"
+                    : object.equals(ZConfigManager.Fetch_Object_Type.Operation) ? "OPERATIONLEVEL" : "NOTIFICATIONLEVEL";
+            String entitySetName = ZCollections.STATUS_CATEGORY_SET_COLLECTION;
+            String resPath = entitySetName + "?$filter=tolower(StatuscCategory) eq '" + objectStr.toLowerCase() + "'";
+            ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
+            if (result != null && !result.isError()) {
+                List<ODataEntity> entities = (List<ODataEntity>) result.Content();
+                if (entities != null && entities.size() > 0) {
+                    Set<String> uniqueStatuses = new HashSet<>();
+                    //ArrayList<String> allStatuses = new ArrayList<>();
+                    for (ODataEntity entity : entities) {
+                        StatusCategory statusCategory = new StatusCategory(entity);
+                        //allStatuses.add(statusCategory.getStatusCode()+"-"+statusCategory.getStatusDescKey());
+                        uniqueStatuses.add(statusCategory.getStatusCode()+"-"+statusCategory.getStatusDescKey());
+                    }
+                    //Set<String> uniqueStatuses = new HashSet<>(allStatuses);
+                    for(String status : uniqueStatuses) {
+                        String id = status.split("-")[0];
+                        String description = status.split("-")[1];
+                        statusCategories.add(new SpinnerItem(id, description));
+                    }
+                }
             }
         } catch (Exception e) {
             DliteLogger.WriteLog(StatusCategory.class, ZAppSettings.LogLevel.Error, e.getMessage());
