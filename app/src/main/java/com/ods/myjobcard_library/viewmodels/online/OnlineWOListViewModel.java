@@ -183,6 +183,46 @@ public class OnlineWOListViewModel extends BaseViewModel {
                         filterList.remove(order);
                     }
                 }
+                if(filterHashmap.containsKey("CreatedBy")){
+                    ArrayList<String> item=filterHashmap.get("CreatedBy");
+                    if(order.getEnteredBy()!=null && !order.getEnteredBy().isEmpty()) {
+                        if (item.contains(order.getEnteredBy()))
+                            filterList.remove(order);
+                    }
+                }
+                if(filterHashmap.containsKey("MPG"))//MainPlantGroup
+                {
+                    ArrayList<String> item=filterHashmap.get("MPG");
+                    if(order.getResponsiblPlannerGrp()!=null && !order.getResponsiblPlannerGrp().isEmpty())
+                        if(item != null && item.contains(order.getResponsiblPlannerGrp())){
+                            filterList.remove(order);
+                        }
+                }
+                if(filterHashmap.containsKey("MaintPlant")){
+                    ArrayList<String> item=filterHashmap.get("MaintPlant");
+                    if(order.getMaintPlant()!=null && !order.getMaintPlant().isEmpty()){
+                        if(item!=null && item.contains(order.getMaintPlant())){
+                            filterList.remove(order);
+                        }
+
+                    }
+                }
+                if(filterHashmap.containsKey("PlanningPlant")){
+                    ArrayList<String> item=filterHashmap.get("PlanningPlant");
+                    if(order.getMaintPlanningPlant()!=null && !order.getMaintPlanningPlant().isEmpty()){
+                        if(item!=null && item.contains(order.getMaintPlanningPlant())) {
+                            filterList.remove(order);
+                        }
+                    }
+                }
+                if(filterHashmap.containsKey("EQTechID")){
+                    ArrayList<String> item=filterHashmap.get("EQTechID");
+                    if(order.getTechID()!=null && !order.getTechID().isEmpty()){
+                        if(item!=null && item.contains(order.getTechID()))
+                            filterList.remove(order);
+                    }
+
+                }
             }
             filterListLiveData.setValue(filterList);
         } catch (Exception e) {
@@ -229,6 +269,8 @@ public class OnlineWOListViewModel extends BaseViewModel {
                     if (createdBy.get(0).contains(order.getEnteredBy().toUpperCase()))
                         filterList.remove(order);
                 }
+
+
             }
             filterOprListLiveData.setValue(filterList);
         } catch (Exception e) {
