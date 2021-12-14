@@ -218,10 +218,13 @@ public class OnlineListViewModel extends BaseViewModel {
                 //ArrayList<Operation> workOrderOperations = new ArrayList<>();
                 if (fetchOpr) {
                     oprEntityList = entityValue.getEntityType().getProperty("NAVOPERA").getEntityList(entityValue);//Extracting the WorkOrder Operations from WorkOrder
+                    ArrayList<Operation> temp=new ArrayList<>();
                     for (EntityValue oprEntity : oprEntityList) {
                         //workOrderOperations.add(new Operation(oprEntity));
                         operations.add(new Operation(oprEntity));
+                        temp.add(new Operation(oprEntity));
                     }
+                    item.setWorkOrderOperations(temp);
                 }
                 onlineWo.add(item);
             }
