@@ -70,11 +70,11 @@ public class StandardTextSet extends ZBaseEntity {
         return result;
     }
 
-    public static ArrayList<SpinnerItem> getStandardTextNames() {
+    public static ArrayList<SpinnerItem> getStandardTextNames(int skipValue, int numRecords) {
         ArrayList<SpinnerItem> textNames = new ArrayList<>();
         try {
             String entitySetName = ZCollections.STANDARDTEXT_SET;
-            String resPath = entitySetName + "?$select=StandardTextName,TextID";
+            String resPath = entitySetName + "?$select=StandardTextName,TextID&$skip=" + skipValue + " &$top=" + numRecords;
             ResponseObject result = DataHelper.getInstance().getEntities(entitySetName, resPath);
             if (result != null && !result.isError()) {
                 List<ODataEntity> entities = (List<ODataEntity>) result.Content();
