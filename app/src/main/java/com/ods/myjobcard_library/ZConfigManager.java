@@ -103,6 +103,7 @@ public class ZConfigManager extends ConfigManager {
     public static int TEXT_MAX_LENGTH_LARGE = 255;
     public static int MAX_MEASUREMENT_DOC_COUNT = 5;
     public static int MAX_RECORDS_LOAD_COUNT = 100;
+    public static final long AUTO_LOGOUT_TIMEOUT = 15*60*1000;
     public static String USER_ROLE_SUPERVISOR = "SUPERVISOR";
     public static String USER_ROLE_TECHNICIAN = "TECHNICIAN";
     public static String USER_LANDING_SCREEN_CLASSNAME = "dashboardscreen";//"com.ods.myjobcard.UI.assetTree.TreeListActivity";//
