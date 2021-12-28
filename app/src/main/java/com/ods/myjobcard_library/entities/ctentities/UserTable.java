@@ -46,6 +46,11 @@ public class UserTable extends ZBaseEntity {
     private static HashSet<String> UserWorkCenters;
     private static HashSet<String> UserWorkCenterObjectIds;
 
+
+
+    private static HashSet<String> UserWRKPlant;
+    private static HashSet<String> UserMaintenancePlant;
+
     public UserTable() {
         initializeEntityProperties();
     }
@@ -86,6 +91,7 @@ public class UserTable extends ZBaseEntity {
                     }
                     if (ut.SettingName.equalsIgnoreCase("IWK")) {
                         UserPlant = UserPlant == null || UserPlant.isEmpty() ? ut.SettingValue : UserPlant;
+
                     }
                     if (ut.SettingName.equalsIgnoreCase("VAP")) {
                         UserWorkCenter = UserWorkCenter == null || UserWorkCenter.isEmpty() ? ut.SettingValue : UserWorkCenter;
@@ -101,9 +107,22 @@ public class UserTable extends ZBaseEntity {
                     if (ut.SettingName.equalsIgnoreCase("AGR")) {
                         UserOprWorkCenter = UserOprWorkCenter == null || UserOprWorkCenter.isEmpty() ? ut.SettingValue : UserOprWorkCenter;
                     }
+                    if(ut.SettingName.equalsIgnoreCase("WRK")){
+                        //UserWRKPlant = UserWRKPlant == null || UserWRKPlant.isEmpty() ? ut.SettingValue : UserWRKPlant;
+                        if(UserWRKPlant==null)
+                            UserWRKPlant=new HashSet<>();
+                        UserWRKPlant.add(ut.SettingValue);
+                    }
+                    if(ut.SettingName.equalsIgnoreCase("SWK")){
+                        //UserMaintenancePlant = UserMaintenancePlant == null || UserMaintenancePlant.isEmpty() ? ut.SettingValue : UserMaintenancePlant;
+                        if(UserMaintenancePlant==null)
+                            UserMaintenancePlant=new HashSet<>();
+                        UserMaintenancePlant.add(ut.SettingValue);
+                    }
                     if (ut.SettingName.equalsIgnoreCase("BUS_AREA")) {
                         UserBusArea = ut.SettingValue;
                     }
+
                     if (ut.SettingName.equalsIgnoreCase("KOS")) {
                         UserCostCenter = ut.SettingValue;
                     }
@@ -122,6 +141,8 @@ public class UserTable extends ZBaseEntity {
                     if (ut.SettingName.equalsIgnoreCase("ADD_ASSIGNMENT_TYPE")) {
                         UserAddAssignmentType = ut.SettingValue;
                     }
+
+
                     if (UserLastName != null && UserFirstName != null && UserPersonnelNumber != null) {
                         isInitialized = true;
                     }
@@ -172,6 +193,8 @@ public class UserTable extends ZBaseEntity {
             UserWorkCenters = null;
             UserWorkCenterObjectIds = null;
             isInitialized = false;
+            UserWRKPlant=null;
+            UserMaintenancePlant=null;
             result = new ResponseObject(ZConfigManager.Status.Success, "", null);
         } catch (Exception e) {
             DliteLogger.WriteLog(UserTable.class, ZAppSettings.LogLevel.Error, e.getMessage());
@@ -335,7 +358,21 @@ public class UserTable extends ZBaseEntity {
             UserWorkCenterObjectIds = new HashSet<>();
         return new ArrayList<>(UserWorkCenterObjectIds);
     }
+    public static ArrayList<String> getUserWRKPlant() {
+        if(!isInitialized)
+            getUserDetails();
+        if(UserWRKPlant==null)
+            UserWRKPlant=new HashSet<>();
+        return new ArrayList<>(UserWRKPlant);
+    }
 
+    public static ArrayList<String> getUserMaintenancePlant() {
+        if(!isInitialized)
+            getUserDetails();
+        if(UserMaintenancePlant==null)
+            UserMaintenancePlant=new HashSet<>();
+        return new ArrayList<>(UserMaintenancePlant);
+    }
     public static ResponseObject setUserDetails(PersonResponsible user) {
         ResponseObject response = null;
         try {
